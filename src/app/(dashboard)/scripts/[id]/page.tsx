@@ -43,7 +43,7 @@ export default async function ScriptDetailPage({ params }: Params) {
     );
 
   return (
-    <div className="max-w-5xl mx-auto px-8 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
       {/* Back + actions */}
       <div className="flex items-center justify-between">
         <Link
@@ -65,7 +65,7 @@ export default async function ScriptDetailPage({ params }: Params) {
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-2.5 flex-wrap">
-          <h1 className="text-[26px] font-semibold text-stone-900 tracking-tight leading-tight">
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">
             {script.name}
           </h1>
           {script.is_default && (

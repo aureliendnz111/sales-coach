@@ -64,39 +64,40 @@ export function ScriptCard({ script }: { script: Script }) {
       </div>
 
       {/* Stats */}
-      <div className="hidden sm:flex items-center gap-5 shrink-0 text-xs text-stone-400">
-        <span className="flex items-center gap-1.5 tabular-nums">
-          <FileText className="w-3 h-3" />
+      <div className="hidden sm:flex items-center shrink-0 text-xs text-stone-400 w-[220px]">
+        <span className="flex items-center gap-1.5 tabular-nums w-[72px]">
+          <FileText className="w-3 h-3 shrink-0" />
           {script.steps?.[0]?.count ?? 0} étapes
         </span>
-        <span className="flex items-center gap-1.5 tabular-nums">
-          <ShieldAlert className="w-3 h-3" />
+        <span className="flex items-center gap-1.5 tabular-nums w-[90px]">
+          <ShieldAlert className="w-3 h-3 shrink-0" />
           {script.objections?.[0]?.count ?? 0} objections
         </span>
-        {script.duration_minutes && (
-          <span className="flex items-center gap-1.5 tabular-nums">
-            <Clock className="w-3 h-3" />
-            {script.duration_minutes} min
-          </span>
-        )}
+        <span className="flex items-center gap-1.5 tabular-nums w-[58px]">
+          {script.duration_minutes ? (
+            <><Clock className="w-3 h-3 shrink-0" />{script.duration_minutes} min</>
+          ) : null}
+        </span>
       </div>
 
-      {/* Set default (hover only) */}
-      {!script.is_default && !script.archived_at && (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0 text-stone-300 hover:text-amber-500 hover:bg-amber-50 shrink-0"
-          onClick={handleSetDefault}
-          disabled={settingDefault}
-          title="Définir par défaut"
-        >
-          {settingDefault
-            ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            : <Star className="w-3.5 h-3.5" />
-          }
-        </Button>
-      )}
+      {/* Set default (hover only) — always reserves space */}
+      <div className="w-7 shrink-0 flex items-center justify-center">
+        {!script.is_default && !script.archived_at && (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0 text-stone-300 hover:text-amber-500 hover:bg-amber-50"
+            onClick={handleSetDefault}
+            disabled={settingDefault}
+            title="Définir par défaut"
+          >
+            {settingDefault
+              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              : <Star className="w-3.5 h-3.5" />
+            }
+          </Button>
+        )}
+      </div>
     </Link>
   );
 }

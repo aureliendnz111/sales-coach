@@ -1,39 +1,72 @@
-import { auth } from "@clerk/nextjs/server";
-import { createClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ScriptCard } from "@/components/scripts/ScriptCard";
-import Link from "next/link";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Archive, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-export default async function ScriptsPage() {
-  const { userId } = await auth();
-  const supabase = await createClient();
+type Script = {
+  id: string; name: string; goal?: string | null;
+  is_default?: boolean; archived_at?: string | null;
+  duration_minutes?: number | null;
+  steps: { count: number }[]; objections: { count: number }[];
+};
 
-  const { data: scripts } = await supabase
-    .from("scripts")
-    .select("*, steps(count), objections(count)")
-    .eq("user_id", userId!)
-    .order("created_at", { ascending: false });
+export default function ScriptsPage() {
+  const router = useRouter();
+  const [scripts, setScripts] = useState<Script[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showArchived, setShowArchived] = useState(false);
 
-  const active = scripts?.filter(s => !s.archived_at) ?? [];
-  const archived = scripts?.filter(s => s.archived_at) ?? [];
+  useEffect(() => {
+    setLoading(true);
+    fetch("/api/scripts/list?all=true")
+      .then(r => r.json())
+      .then(d => { setScripts(d.scripts ?? []); setLoading(false); });
+  }, []);
+
+  const active = scripts.filter(s => !s.archived_at);
+  const archived = scripts.filter(s => s.archived_at);
+  const displayed = showArchived ? archived : active;
 
   return (
-    <div className="max-w-3xl mx-auto px-8 py-12 space-y-8">
-      {/* Header */}
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[24px] font-semibold text-stone-900 tracking-tight">Scripts</h1>
-          <p className="text-stone-500 text-sm mt-0.5">Vos process de vente et réponses aux objections</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Scripts</h1>
+          <p className="text-sm text-stone-400 mt-0.5">Vos process de vente et réponses aux objections</p>
         </div>
-        <Button size="sm" asChild className="gap-1.5 h-8 text-xs">
-          <Link href="/scripts/new">
-            <Plus className="w-3.5 h-3.5" /> Nouveau
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {archived.length > 0 && (
+            <button
+              onClick={() => setShowArchived(a => !a)}
+              className={cn(
+                "flex items-center gap-1.5 text-[13px] px-3.5 py-2 rounded-lg border transition-colors",
+                showArchived
+                  ? "bg-stone-100 border-stone-300 text-stone-700 font-medium"
+                  : "border-stone-200 text-stone-500 hover:bg-stone-50"
+              )}
+            >
+              <Archive className="w-3.5 h-3.5" />
+              {showArchived ? "Masquer les archives" : "Archives"}
+            </button>
+          )}
+          {!showArchived && (
+            <button
+              onClick={() => router.push("/scripts/new")}
+              className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" /> Nouveau script
+            </button>
+          )}
+        </div>
       </div>
 
-      {active.length === 0 && archived.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center py-20 text-stone-400 gap-2">
+          <Loader2 className="w-4 h-4 animate-spin" /> Chargement…
+        </div>
+      ) : displayed.length === 0 && !showArchived ? (
         <div className="border-2 border-dashed border-stone-200 rounded-xl flex flex-col items-center justify-center py-16 text-center gap-3">
           <div className="w-12 h-12 bg-stone-100 rounded-xl flex items-center justify-center">
             <FileText className="w-6 h-6 text-stone-400" />
@@ -42,38 +75,25 @@ export default async function ScriptsPage() {
             <p className="font-medium text-stone-800 text-sm">Aucun script pour l'instant</p>
             <p className="text-stone-400 text-xs mt-1">Créez votre premier script ou importez un template.</p>
           </div>
-          <Button asChild size="sm" className="mt-1 h-8 text-xs">
-            <Link href="/scripts/new">Créer un script</Link>
-          </Button>
+          <button
+            onClick={() => router.push("/scripts/new")}
+            className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors mt-1"
+          >
+            <Plus className="w-4 h-4" /> Créer un script
+          </button>
+        </div>
+      ) : displayed.length === 0 && showArchived ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center gap-2">
+          <p className="text-[14px] font-medium text-stone-600">Aucun script archivé</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {active.length > 0 && (
-            <div className="border border-stone-200 rounded-xl overflow-hidden divide-y divide-stone-100">
-              {active.map(script => (
-                <ScriptCard
-                  key={script.id}
-                  script={script as Parameters<typeof ScriptCard>[0]["script"]}
-                />
-              ))}
-            </div>
-          )}
-
-          {archived.length > 0 && (
-            <div>
-              <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2 px-1">
-                Archivés ({archived.length})
-              </p>
-              <div className="border border-stone-200 rounded-xl overflow-hidden divide-y divide-stone-100 opacity-60">
-                {archived.map(script => (
-                  <ScriptCard
-                    key={script.id}
-                    script={script as Parameters<typeof ScriptCard>[0]["script"]}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+        <div className="border border-stone-200 rounded-xl overflow-hidden divide-y divide-stone-100">
+          {displayed.map(script => (
+            <ScriptCard
+              key={script.id}
+              script={script as Parameters<typeof ScriptCard>[0]["script"]}
+            />
+          ))}
         </div>
       )}
     </div>

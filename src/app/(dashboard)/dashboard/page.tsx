@@ -20,7 +20,7 @@ export default async function DashboardPage() {
   const count = scriptCount ?? 0;
 
   return (
-    <div className="max-w-2xl mx-auto px-8 py-12 space-y-10">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-10">
       <DashboardGreeting initialFirstName={firstName} />
 
       {count === 0 && (

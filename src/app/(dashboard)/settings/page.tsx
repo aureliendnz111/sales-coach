@@ -122,9 +122,9 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4 space-y-6">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-stone-900">Paramètres</h1>
+        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Paramètres</h1>
         <p className="text-sm text-stone-400 mt-0.5">Gérez votre profil et votre sécurité.</p>
       </div>
 

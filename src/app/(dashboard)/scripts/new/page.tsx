@@ -61,11 +61,11 @@ export default function NewScriptPage() {
 
   if (mode === "guided") {
     return (
-      <div className="max-w-2xl mx-auto px-8 py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
         <BackButton onClick={() => setMode(null)} />
         <div>
-          <h1 className="text-[24px] font-semibold text-stone-900 tracking-tight">Créer avec l'IA</h1>
-          <p className="text-stone-500 text-sm mt-1">Réponds à quelques questions et Claude génère ton script complet.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Créer avec l'IA</h1>
+          <p className="text-sm text-stone-400 mt-0.5">Réponds à quelques questions et Claude génère ton script complet.</p>
         </div>
         <GuidedWizard />
       </div>
@@ -74,11 +74,11 @@ export default function NewScriptPage() {
 
   if (mode === "template") {
     return (
-      <div className="max-w-2xl mx-auto px-8 py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
         <BackButton onClick={() => setMode(null)} />
         <div>
-          <h1 className="text-[24px] font-semibold text-stone-900 tracking-tight">Partir d'un template</h1>
-          <p className="text-stone-500 text-sm mt-1">Choisis un script éprouvé et adapte-le à ton offre.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Partir d'un template</h1>
+          <p className="text-sm text-stone-400 mt-0.5">Choisis un script éprouvé et adapte-le à ton offre.</p>
         </div>
         <TemplateSelector />
       </div>
@@ -87,11 +87,11 @@ export default function NewScriptPage() {
 
   if (mode === "scratch") {
     return (
-      <div className="max-w-2xl mx-auto px-8 py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
         <BackButton onClick={() => setMode(null)} />
         <div>
-          <h1 className="text-[24px] font-semibold text-stone-900 tracking-tight">Créer from scratch</h1>
-          <p className="text-stone-500 text-sm mt-1">Construis ton script étape par étape, à ta façon.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Créer from scratch</h1>
+          <p className="text-sm text-stone-400 mt-0.5">Construis ton script étape par étape, à ta façon.</p>
         </div>
         <ScratchBuilder />
       </div>
@@ -99,7 +99,7 @@ export default function NewScriptPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-8 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
       <div>
         <Link
           href="/scripts"
@@ -107,8 +107,8 @@ export default function NewScriptPage() {
         >
           <ChevronLeft className="w-4 h-4" /> Scripts
         </Link>
-        <h1 className="text-[24px] font-semibold text-stone-900 tracking-tight">Nouveau script</h1>
-        <p className="text-stone-500 text-sm mt-1">Comment veux-tu créer ton script de vente ?</p>
+        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouveau script</h1>
+        <p className="text-sm text-stone-400 mt-0.5">Comment veux-tu créer ton script de vente ?</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
