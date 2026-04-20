@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { ClerkProvider, Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 import { TRPCProvider } from "@/trpc/provider";
 import "./globals.css";
 
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Sales Coach AI",
+  title: "Rumos.ai",
   description: "Votre copilote IA pour les calls de closing",
 };
 

@@ -5,7 +5,7 @@ export const TEMPLATES = [
     description: "Process de closing en 9 étapes pour vendre un accompagnement business à des entrepreneurs. Qualification approfondie, projection, storytelling et traitement de 7 objections.",
     category: "Business",
     tags: ["Coaching business", "Entrepreneurs", "High ticket", "30 min"],
-    author: "Sales Coach AI",
+    author: "Rumos.ai",
     script: {
       name: "Coaching Business — Entrepreneurs",
       goal: "Closer le prospect sur votre accompagnement business",
@@ -132,7 +132,7 @@ export const TEMPLATES = [
     description: "Process de closing pour vendre un accompagnement en gestion des finances personnelles. Qualification de la situation financière, projection sur les objectifs d'épargne et traitement de 6 objections.",
     category: "Finances",
     tags: ["Coaching finances", "B2C", "Finances perso", "30 min"],
-    author: "Sales Coach AI",
+    author: "Rumos.ai",
     script: {
       name: "Coaching Finances Personnelles",
       goal: "Closer le prospect sur votre accompagnement en gestion des finances personnelles",
@@ -276,7 +276,7 @@ export const TEMPLATES = [
     description: "Process de closing pour vendre un accompagnement running ou sportif. De la qualification du niveau actuel jusqu'au closing, avec projection sur l'objectif course et traitement de 6 objections.",
     category: "Sport",
     tags: ["Coaching sportif", "Running", "B2C", "Objectifs", "30 min"],
-    author: "Sales Coach AI",
+    author: "Rumos.ai",
     script: {
       name: "Coaching Running & Objectifs Sportifs",
       goal: "Closer le prospect sur votre accompagnement running/sportif",

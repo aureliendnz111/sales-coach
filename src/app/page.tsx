@@ -14,7 +14,7 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen gap-6 p-8 text-center">
-      <h1 className="text-4xl font-bold tracking-tight">Sales Coach AI</h1>
+      <h1 className="text-4xl font-bold tracking-tight">Rumos.ai</h1>
       <p className="text-muted-foreground text-lg max-w-md">
         Votre copilote IA pour les calls de closing. Script builder + suggestions en temps réel.
       </p>
