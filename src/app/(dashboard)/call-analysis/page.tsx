@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Archive, Loader2, PhoneCall, ArchiveX } from "lucide-react";
+import { Plus, Trash2, Archive, Loader2, PhoneCall, ArchiveX, RefreshCw } from "lucide-react";
 import { OutcomeBadge, Outcome } from "@/components/call-analysis/OutcomeBadge";
 import { cn } from "@/lib/utils";
 
@@ -53,6 +53,12 @@ export default function CallAnalysisPage() {
     e.stopPropagation();
     await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "done" }) });
     setAnalyses(a => a.filter(x => x.id !== id));
+  }
+
+  async function retry(id: string, e: React.MouseEvent) {
+    e.stopPropagation();
+    setAnalyses(a => a.map(x => x.id === id ? { ...x, status: "analyzing" } : x));
+    await fetch(`/api/call-analysis/${id}`, { method: "POST" });
   }
 
   async function remove(id: string, e: React.MouseEvent) {
@@ -155,6 +161,11 @@ export default function CallAnalysisPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {a.status === "error" && (
+                        <button onClick={e => retry(a.id, e)} title="Relancer l'analyse" className="p-1.5 rounded-md text-stone-400 hover:text-sky-600 hover:bg-sky-50 transition-colors">
+                          <RefreshCw className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       {showArchived ? (
                         <button onClick={e => unarchive(a.id, e)} title="Désarchiver" className="p-1.5 rounded-md text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition-colors">
                           <ArchiveX className="w-3.5 h-3.5" />

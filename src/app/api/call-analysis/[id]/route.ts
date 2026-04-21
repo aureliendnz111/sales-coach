@@ -42,6 +42,40 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   return NextResponse.json({ success: true });
 }
 
+export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+
+  const { id } = await params;
+
+  const { data: record, error: fetchError } = await supabase
+    .from("call_analyses")
+    .select("id")
+    .eq("id", id)
+    .eq("user_id", userId)
+    .single();
+
+  if (fetchError || !record) return NextResponse.json({ error: "Non trouvé" }, { status: 404 });
+
+  await supabase.from("call_analyses").update({ status: "analyzing" }).eq("id", id);
+
+  const netlifyUrl = process.env.URL;
+  if (netlifyUrl) {
+    try {
+      await fetch(`${netlifyUrl}/.netlify/functions/analyze-call-bg`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+    } catch (e) {
+      await supabase.from("call_analyses").update({ status: "error" }).eq("id", id);
+      return NextResponse.json({ error: "Impossible de relancer l'analyse" }, { status: 500 });
+    }
+  }
+
+  return NextResponse.json({ success: true });
+}
+
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
