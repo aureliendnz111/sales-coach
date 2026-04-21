@@ -53,12 +53,12 @@ export default function NewAnalysisPage() {
   async function submit() {
     if (!transcript.trim()) { setError("Le transcript est requis."); return; }
     setError("");
-    router.push("/call-analysis");
     fetch("/api/call-analysis", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
     });
+    setTimeout(() => router.push("/call-analysis"), 400);
   }
 
   return (
