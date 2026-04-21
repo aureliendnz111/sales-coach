@@ -79,7 +79,7 @@ export default function CallAnalysisPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Analyse de calls</h1>
-          <p className="text-sm text-stone-400 mt-0.5">Scores, recommandations IA et historique de vos appels.</p>
+          <p className="text-sm text-stone-500 mt-0.5">Scores, recommandations IA et historique de vos appels.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -116,7 +116,7 @@ export default function CallAnalysisPage() {
           </div>
           <div>
             <p className="text-[14px] font-medium text-stone-600">Aucune analyse pour l'instant</p>
-            <p className="text-[13px] text-stone-400 mt-1">Importez un transcript pour commencer.</p>
+            <p className="text-[13px] text-stone-500 mt-1">Importez un transcript pour commencer.</p>
           </div>
           <button onClick={() => router.push("/call-analysis/new")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors">
             <Plus className="w-4 h-4" /> Nouvelle analyse
@@ -145,10 +145,10 @@ export default function CallAnalysisPage() {
                   <td className="px-4 py-3">
                     <p className="text-[13px] font-medium text-stone-800">{a.prospect_name ?? <span className="text-stone-400 italic">Sans nom</span>}</p>
                   </td>
-                  <td className="px-4 py-3 text-[12.5px] text-stone-500">
+                  <td className="px-4 py-3 text-[12.5px] text-stone-600">
                     {a.call_date ? new Date(a.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "—"}
                   </td>
-                  <td className="px-4 py-3 text-[12.5px] text-stone-500 max-w-[160px] truncate">
+                  <td className="px-4 py-3 text-[12.5px] text-stone-600 max-w-[160px] truncate">
                     {a.scripts?.name ?? <span className="text-stone-300">Analyse générale</span>}
                   </td>
                   <td className="px-4 py-3">
@@ -156,7 +156,7 @@ export default function CallAnalysisPage() {
                   </td>
                   <td className="px-4 py-3 text-center">
                     {a.status === "analyzing" ? (
-                      <span className="flex items-center justify-center gap-1.5 text-[12px] text-stone-400">
+                      <span className="flex items-center justify-center gap-1.5 text-[12px] text-stone-500">
                         <Loader2 className="w-3 h-3 animate-spin" /> En cours…
                       </span>
                     ) : a.status === "error" ? (

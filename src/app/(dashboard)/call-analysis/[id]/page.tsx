@@ -80,7 +80,7 @@ export default function AnalysisDetailPage() {
       <Loader2 className="w-8 h-8 animate-spin text-stone-400" />
       <div>
         <p className="text-[15px] font-medium text-stone-700">Analyse en cours…</p>
-        <p className="text-[13px] text-stone-400 mt-1">L'IA analyse le transcript. Cela prend 15 à 30 secondes.</p>
+        <p className="text-[13px] text-stone-500 mt-1">L'IA analyse le transcript. Cela prend 15 à 30 secondes.</p>
       </div>
     </div>
   );
@@ -88,7 +88,7 @@ export default function AnalysisDetailPage() {
   if (analysis.status === "error") return (
     <div className="max-w-lg mx-auto py-16 text-center space-y-3">
       <p className="text-[15px] font-medium text-rose-600">L'analyse a échoué.</p>
-      <p className="text-[13px] text-stone-400">Veuillez réessayer avec un nouveau transcript.</p>
+      <p className="text-[13px] text-stone-500">Veuillez réessayer avec un nouveau transcript.</p>
       <button onClick={() => router.push("/call-analysis/new")} className="text-[13px] text-stone-600 underline">Nouvelle analyse</button>
     </div>
   );
@@ -112,7 +112,7 @@ export default function AnalysisDetailPage() {
             <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">
               {analysis.prospect_name ?? "Appel sans nom"}
             </h1>
-            <div className="flex items-center gap-3 mt-1 text-[12px] text-stone-400">
+            <div className="flex items-center gap-3 mt-1 text-[12px] text-stone-500">
               {analysis.call_date && <span>{new Date(analysis.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>}
               {analysis.scripts?.name && <span>· {analysis.scripts.name}</span>}
             </div>
@@ -120,13 +120,13 @@ export default function AnalysisDetailPage() {
         </div>
         <div className="text-right shrink-0">
           <div className={cn("text-4xl font-bold tabular-nums", overallColor)}>{overall}</div>
-          <div className="text-[11px] text-stone-400 mt-0.5">Score global</div>
+          <div className="text-[11px] text-stone-500 mt-0.5">Score global</div>
         </div>
       </div>
 
       {/* Outcome selector */}
       <div className="border border-stone-200 rounded-xl bg-white p-4">
-        <p className="text-[12px] text-stone-500 font-medium mb-2.5">Résultat de l'appel {savingOutcome && <span className="text-stone-300">· Sauvegarde…</span>}</p>
+        <p className="text-[12px] text-stone-600 font-medium mb-2.5">Résultat de l'appel {savingOutcome && <span className="text-stone-300">· Sauvegarde…</span>}</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
             const c = OUTCOME_CONFIG[key];

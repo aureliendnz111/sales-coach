@@ -34,7 +34,7 @@ export default function ScriptsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Scripts</h1>
-          <p className="text-sm text-stone-400 mt-0.5">Vos process de vente et réponses aux objections</p>
+          <p className="text-sm text-stone-500 mt-0.5">Vos process de vente et réponses aux objections</p>
         </div>
         <div className="flex items-center gap-2">
           {archived.length > 0 && (

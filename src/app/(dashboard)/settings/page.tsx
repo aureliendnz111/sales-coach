@@ -36,7 +36,7 @@ function Input({ value, onChange, placeholder, type = "text", disabled }: {
         onChange={e => onChange?.(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
-        className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 disabled:bg-stone-50 disabled:text-stone-400 transition-colors"
+        className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 bg-white text-stone-800 placeholder:text-stone-400 focus:outline-none focus:border-stone-400 disabled:bg-stone-50 disabled:text-stone-400 transition-colors"
       />
       {type === "password" && (
         <button
@@ -125,7 +125,7 @@ export default function SettingsPage() {
     <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div>
         <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Paramètres</h1>
-        <p className="text-sm text-stone-400 mt-0.5">Gérez votre profil et votre sécurité.</p>
+        <p className="text-sm text-stone-500 mt-0.5">Gérez votre profil et votre sécurité.</p>
       </div>
 
       <Section title={<span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" />Profil</span> as unknown as string}>
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                 <Camera className="w-3.5 h-3.5" />
                 {avatarUploading ? "Envoi…" : "Changer la photo"}
               </button>
-              <p className="text-[11px] text-stone-400">JPG, PNG ou GIF — max 10 Mo</p>
+              <p className="text-[11px] text-stone-500">JPG, PNG ou GIF — max 10 Mo</p>
             </div>
             <input
               ref={fileInputRef}
@@ -174,7 +174,7 @@ export default function SettingsPage() {
         </Field>
         <Field label="Email">
           <Input value={user?.emailAddresses[0]?.emailAddress ?? ""} disabled />
-          <p className="text-[11px] text-stone-400 mt-1">L'email ne peut pas être modifié ici.</p>
+          <p className="text-[11px] text-stone-500 mt-1">L'email ne peut pas être modifié ici.</p>
         </Field>
         <div className="flex justify-end pt-1">
           <SaveButton loading={profileSaving} saved={profileSaved} onClick={saveProfile} />
@@ -206,7 +206,7 @@ export default function SettingsPage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-[13px] text-stone-700 font-medium">Se déconnecter</p>
-            <p className="text-[12px] text-stone-400">Vous serez redirigé vers la page d'accueil.</p>
+            <p className="text-[12px] text-stone-500">Vous serez redirigé vers la page d'accueil.</p>
           </div>
           <button
             onClick={() => signOut({ redirectUrl: "/" })}

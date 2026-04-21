@@ -48,7 +48,7 @@ export default async function ScriptDetailPage({ params }: Params) {
       <div className="flex items-center justify-between">
         <Link
           href="/scripts"
-          className="flex items-center gap-1 text-sm text-stone-400 hover:text-stone-700 transition-colors"
+          className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors"
         >
           <ChevronLeft className="w-4 h-4" /> Scripts
         </Link>

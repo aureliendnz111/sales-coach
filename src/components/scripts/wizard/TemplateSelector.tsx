@@ -51,7 +51,7 @@ export function TemplateSelector() {
     return (
       <div className="space-y-6 pb-8">
         <div className="flex items-center justify-between">
-          <button onClick={() => setPreview(null)} className="flex items-center gap-1 text-sm text-stone-400 hover:text-stone-700 transition-colors">
+          <button onClick={() => setPreview(null)} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors">
             <ChevronLeft className="w-4 h-4" /> Templates
           </button>
           <Button onClick={() => useTemplate(previewedTemplate.id)} disabled={!!loading} className="gap-2 h-8 text-xs">
@@ -63,7 +63,7 @@ export function TemplateSelector() {
         <div className="border border-stone-200 rounded-xl p-5 bg-white space-y-3">
           <div className="flex items-center gap-2">
             <CategoryBadge category={previewedTemplate.category} />
-            <p className="text-[11px] text-stone-400">Par {previewedTemplate.author}</p>
+            <p className="text-[11px] text-stone-500">Par {previewedTemplate.author}</p>
           </div>
           <h2 className="text-[18px] font-semibold text-stone-900">{s.name}</h2>
           <p className="text-sm text-stone-500">{s.goal}</p>
@@ -127,7 +127,7 @@ export function TemplateSelector() {
             <div>
               <div className="flex items-center gap-2 mb-1.5">
                 <CategoryBadge category={template.category} />
-                <p className="text-[11px] text-stone-400">Par {template.author}</p>
+                <p className="text-[11px] text-stone-500">Par {template.author}</p>
               </div>
               <p className="font-semibold text-[14px] text-stone-900">{template.name}</p>
               <p className="text-xs text-stone-500 mt-0.5">{template.description}</p>

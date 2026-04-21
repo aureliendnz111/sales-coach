@@ -87,7 +87,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
           <>
             <div className="flex-1 min-w-0 text-left">
               <p className="text-[12.5px] font-medium text-stone-800 truncate leading-tight">{displayName}</p>
-              <p className="text-[11px] text-stone-400 truncate leading-tight">{email}</p>
+              <p className="text-[11px] text-stone-500 truncate leading-tight">{email}</p>
             </div>
             <ChevronUp className={cn("w-3.5 h-3.5 text-stone-400 shrink-0 transition-transform", open ? "rotate-0" : "rotate-180")} />
           </>

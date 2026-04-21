@@ -65,14 +65,14 @@ export default function NewAnalysisPage() {
     <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div>
         <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvelle analyse</h1>
-        <p className="text-sm text-stone-400 mt-0.5">Importez un transcript pour obtenir un score et des recommandations IA.</p>
+        <p className="text-sm text-stone-500 mt-0.5">Importez un transcript pour obtenir un score et des recommandations IA.</p>
       </div>
 
       {/* Recorder tools */}
       <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
           <h2 className="text-[13px] font-semibold text-stone-700">Obtenir un transcript</h2>
-          <p className="text-[12px] text-stone-400 mt-0.5">Ces outils enregistrent et transcrivent automatiquement vos calls Meet, Zoom ou Teams.</p>
+          <p className="text-[12px] text-stone-500 mt-0.5">Ces outils enregistrent et transcrivent automatiquement vos calls Meet, Zoom ou Teams.</p>
         </div>
         <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-4">
           {[
@@ -92,7 +92,7 @@ export default function NewAnalysisPage() {
                 <span className="text-[13px] font-semibold text-stone-800">{tool.name}</span>
                 <span className="text-[10px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-full font-medium leading-none">{tool.tag}</span>
               </div>
-              <p className="text-[11.5px] text-stone-400 leading-snug">{tool.desc}</p>
+              <p className="text-[11.5px] text-stone-500 leading-snug">{tool.desc}</p>
             </a>
           ))}
         </div>
@@ -118,7 +118,7 @@ export default function NewAnalysisPage() {
             >
               <Upload className="w-7 h-7 text-stone-300" />
               <p className="text-[13px] font-medium text-stone-500">Glisser un fichier .txt ici</p>
-              <p className="text-[11px] text-stone-400">ou cliquer pour parcourir</p>
+              <p className="text-[11px] text-stone-500">ou cliquer pour parcourir</p>
               <input ref={fileInputRef} type="file" accept=".txt,.md" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
             </div>
           )}
@@ -139,7 +139,7 @@ export default function NewAnalysisPage() {
               onChange={e => { setTranscript(e.target.value); if (e.target.value) setFilename(""); }}
               placeholder={transcript ? "" : "Ou collez votre transcript ici…\n\nExemple :\nAurélien : Bonjour, comment ça va ?\nMarc : Bien merci…"}
               rows={transcript ? 10 : 6}
-              className="w-full text-[13px] border border-stone-200 rounded-xl px-3 py-2.5 bg-white text-stone-800 placeholder:text-stone-300 focus:outline-none focus:border-stone-400 resize-none transition-colors"
+              className="w-full text-[13px] border border-stone-200 rounded-xl px-3 py-2.5 bg-white text-stone-800 placeholder:text-stone-400 focus:outline-none focus:border-stone-400 resize-none transition-colors"
             />
             {transcript && (
               <div className="absolute top-2 right-2 text-[10px] text-stone-400">
@@ -158,17 +158,17 @@ export default function NewAnalysisPage() {
         <div className="px-5 py-4 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[12px] text-stone-500 font-medium">Nom du prospect</label>
+              <label className="text-[12px] text-stone-600 font-medium">Nom du prospect</label>
               <input value={prospectName} onChange={e => setProspectName(e.target.value)} placeholder="Ex : Marie Dupont" className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-stone-400 transition-colors" />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[12px] text-stone-500 font-medium">Date de l'appel</label>
+              <label className="text-[12px] text-stone-600 font-medium">Date de l'appel</label>
               <input type="date" value={callDate} onChange={e => setCallDate(e.target.value)} className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-stone-400 transition-colors" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[12px] text-stone-500 font-medium">Script de référence <span className="text-stone-300">(optionnel)</span></label>
+            <label className="text-[12px] text-stone-600 font-medium">Script de référence <span className="text-stone-300">(optionnel)</span></label>
             <div ref={scriptDropdownRef} className="relative">
               <button
                 type="button"
@@ -194,7 +194,7 @@ export default function NewAnalysisPage() {
                   <button
                     type="button"
                     onClick={() => { setScriptId(""); setScriptDropdown(false); }}
-                    className="flex items-center justify-between w-full px-3 py-2 text-[13px] text-stone-400 hover:bg-stone-50 transition-colors"
+                    className="flex items-center justify-between w-full px-3 py-2 text-[13px] text-stone-500 hover:bg-stone-50 transition-colors"
                   >
                     Sans script — analyse générale
                     {!scriptId && <Check className="w-3.5 h-3.5 text-stone-500" />}
@@ -222,7 +222,7 @@ export default function NewAnalysisPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[12px] text-stone-500 font-medium">Résultat de l'appel <span className="text-stone-300">(optionnel)</span></label>
+            <label className="text-[12px] text-stone-600 font-medium">Résultat de l'appel <span className="text-stone-300">(optionnel)</span></label>
             <div className="grid grid-cols-2 gap-2">
               {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
                 const c = OUTCOME_CONFIG[key];

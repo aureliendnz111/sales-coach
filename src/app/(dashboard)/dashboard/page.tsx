@@ -64,7 +64,7 @@ export default async function DashboardPage() {
             <FileText className="w-3.5 h-3.5" /> Scripts actifs
           </div>
           <p className="text-[32px] font-bold text-stone-900 tabular-nums leading-none pt-1">{scripts}</p>
-          <p className="text-[11px] text-stone-400">script{scripts > 1 ? "s" : ""} disponible{scripts > 1 ? "s" : ""}</p>
+          <p className="text-[11px] text-stone-500">script{scripts > 1 ? "s" : ""} disponible{scripts > 1 ? "s" : ""}</p>
         </div>
 
         <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-1">
@@ -72,7 +72,7 @@ export default async function DashboardPage() {
             <PhoneCall className="w-3.5 h-3.5" /> Calls ce mois
           </div>
           <p className="text-[32px] font-bold text-stone-900 tabular-nums leading-none pt-1">{calls}</p>
-          <p className="text-[11px] text-stone-400">call{calls > 1 ? "s" : ""} analysé{calls > 1 ? "s" : ""}</p>
+          <p className="text-[11px] text-stone-500">call{calls > 1 ? "s" : ""} analysé{calls > 1 ? "s" : ""}</p>
         </div>
 
         <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-1">
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
           <p className={cn("text-[32px] font-bold tabular-nums leading-none pt-1", scoreColor)}>
             {avgScore ?? "—"}
           </p>
-          <p className="text-[11px] text-stone-400">{overallScores.length > 0 ? `sur ${overallScores.length} call${overallScores.length > 1 ? "s" : ""} ce mois` : "aucun call ce mois"}</p>
+          <p className="text-[11px] text-stone-500">{overallScores.length > 0 ? `sur ${overallScores.length} call${overallScores.length > 1 ? "s" : ""} ce mois` : "aucun call ce mois"}</p>
         </div>
       </div>
 

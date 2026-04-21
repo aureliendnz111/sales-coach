@@ -11,7 +11,7 @@ const OUTCOME_CONFIG: Record<string, { label: string; bg: string; text: string; 
 };
 
 export function OutcomeBadge({ outcome }: { outcome: Outcome }) {
-  if (!outcome) return <span className="text-[12px] text-stone-400 italic">Non renseigné</span>;
+  if (!outcome) return <span className="text-[12px] text-stone-500 italic">Non renseigné</span>;
   const c = OUTCOME_CONFIG[outcome];
   return (
     <span className={cn("inline-flex items-center gap-1 text-[12px] font-medium px-2 py-0.5 rounded-full", c.bg, c.text)}>

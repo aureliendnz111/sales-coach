@@ -39,7 +39,7 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
     <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
       <div className="px-5 py-3.5 border-b border-stone-100 flex items-center justify-between">
         <h2 className="text-[13px] font-semibold text-stone-700">Dernières analyses</h2>
-        <Link href="/call-analysis" className="text-[12px] text-stone-400 hover:text-stone-700 transition-colors">
+        <Link href="/call-analysis" className="text-[12px] text-stone-500 hover:text-stone-700 transition-colors">
           Voir tout →
         </Link>
       </div>
@@ -57,7 +57,7 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
               >
                 <td className="px-5 py-3">
                   <p className="text-[13px] font-medium text-stone-800">{a.prospect_name ?? <span className="text-stone-400 italic text-[12px]">Sans nom</span>}</p>
-                  {a.call_date && <p className="text-[11px] text-stone-400">{new Date(a.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}</p>}
+                  {a.call_date && <p className="text-[11px] text-stone-500">{new Date(a.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}</p>}
                 </td>
                 <td className="px-5 py-3">
                   {outcome && (
@@ -66,7 +66,7 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
                 </td>
                 <td className="px-5 py-3 text-right">
                   {a.status === "analyzing" ? (
-                    <span className="text-[12px] text-stone-400">En cours…</span>
+                    <span className="text-[12px] text-stone-500">En cours…</span>
                   ) : a.status === "error" ? (
                     <span className="text-[12px] text-rose-400">Erreur</span>
                   ) : overall !== null ? (
