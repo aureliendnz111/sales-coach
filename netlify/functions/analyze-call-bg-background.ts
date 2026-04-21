@@ -6,16 +6,16 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export default async (req: Request): Promise<Response> => {
+export const handler = async (event: { body: string | null }) => {
   let id: string | undefined;
   try {
-    const body = await req.json();
+    const body = JSON.parse(event.body || "{}");
     id = body.id;
   } catch {
-    return new Response("Invalid body", { status: 400 });
+    return { statusCode: 400, body: "Invalid body" };
   }
 
-  if (!id) return new Response("Missing id", { status: 400 });
+  if (!id) return { statusCode: 400, body: "Missing id" };
 
   const { data: record } = await supabase
     .from("call_analyses")
@@ -23,7 +23,7 @@ export default async (req: Request): Promise<Response> => {
     .eq("id", id)
     .single();
 
-  if (!record) return new Response("Not found", { status: 404 });
+  if (!record) return { statusCode: 404, body: "Not found" };
 
   let scriptContext = "";
   const script_id = record.script_id;
@@ -90,58 +90,31 @@ Analyse le transcript et retourne UNIQUEMENT ce JSON (sans texte avant/après) :
   }
 }
 
-Pour key_moments : détecte les timestamps dans le transcript (formats [MM:SS], [HH:MM:SS], ou en début de ligne). Indique les 4 à 8 moments les plus significatifs de l'appel (début d'une étape clé, objection importante, moment de closing…). Si le transcript n'a pas de timestamps, retourne un tableau vide [].
-Pour strengths et improvements : sois concret et actionnable, pas générique. Cite si possible ce qui s'est passé dans l'appel.
+Pour key_moments : détecte les timestamps dans le transcript. Indique les 4 à 8 moments les plus significatifs. Si pas de timestamps, retourne [].
+Pour strengths et improvements : sois concret et actionnable, cite ce qui s'est passé dans l'appel.
 
-Règles de scoring — IMPORTANT : sois juste et bienveillant, pas sévère :
+Règles de scoring — sois juste et bienveillant, pas sévère :
+- Un appel professionnel correct : 65-80
+- Un très bon appel : 80-92
+- Exceptionnel : 92+
+- Moins de 50 uniquement si vraiment catastrophique
 
-CALIBRATION (obligatoire) :
-- Un appel professionnel correct doit scorer entre 65 et 80
-- Un très bon appel score entre 80 et 92
-- Un appel exceptionnel score 92+
-- Moins de 50 uniquement si l'appel est vraiment catastrophique
-- Ne pénalise pas ce qui n'est pas mentionné dans le transcript — l'absence de preuve n'est pas une preuve d'absence
-
-DÉTECTION DES ÉTAPES — RÈGLE FONDAMENTALE :
-Tu dois détecter l'INTENTION et non les mots exacts. Voici des équivalences universelles en vente :
-
-"Présentation de l'offre" / "Proposition commerciale" est couverte si l'une de ces situations se produit :
-→ Le coach explique ce qu'il propose (programme, coaching, service, formation…)
-→ Le coach mentionne une durée, un format, un nombre de séances, un accompagnement
-→ Le coach mentionne un prix, un tarif, un investissement, un forfait
-→ Le coach dit "je vais te présenter", "laisse-moi t'expliquer", "voici comment ça se passe"
-
-"Tentative de closing" / "Conclusion" est couverte si :
-→ Le coach annonce un prix ("c'est X euros", "l'investissement c'est", "le tarif c'est")
-→ Le coach demande une décision ("qu'est-ce que tu en penses ?", "tu veux qu'on y aille ?", "on démarre ?")
-→ Le prospect dit oui, accepte, valide, ou demande comment payer
-→ Il y a une discussion sur les modalités de paiement ou les prochaines étapes concrètes
-
-"Découverte" / "Qualification" est couverte si :
-→ Le coach pose des questions sur la situation actuelle du prospect
-→ Le coach explore les problèmes, les douleurs, les objectifs, les motivations
-→ Le coach cherche à comprendre pourquoi le prospect est là
-
-"Accroche" / "Introduction" est couverte si :
-→ Il y a une présentation mutuelle ou une mise en contexte de l'appel
-→ Le coach explique l'objectif de l'échange
-
-"Projection" est couverte si :
-→ Le coach aide le prospect à imaginer sa situation après l'accompagnement
-→ Il y a une discussion sur les résultats attendus, les bénéfices, la transformation
+DÉTECTION DES ÉTAPES — détecte l'INTENTION, pas les mots exacts :
+- "Présentation de l'offre" : coach explique programme/service, mentionne durée/format/prix
+- "Tentative de closing" : annonce un prix, demande une décision, prospect accepte/valide
+- "Découverte" : questions sur situation actuelle, problèmes, objectifs du prospect
+- "Accroche" : présentation mutuelle, mise en contexte de l'appel
+- "Projection" : aide le prospect à imaginer sa situation après l'accompagnement
 
 CRITÈRES :
-- process : la conversation suit-elle une progression logique ?${script_id ? ` Compare aux étapes du script fourni en utilisant les équivalences ci-dessus. Une étape est validée si son INTENTION a été couverte à n'importe quel moment de l'appel. Score élevé si les étapes principales (découverte, proposition, conclusion) sont présentes, même dans un ordre légèrement différent.` : " Évalue la structure générale sans script de référence."}
-- discovery : le coach a-t-il posé des questions pour comprendre la situation, les douleurs et les objectifs du prospect ?
-- objections : les objections ont-elles été accueillies calmement et traitées ? S'il n'y a pas eu d'objections, score 75 par défaut.
-- posture : le coach semblait-il à l'aise, professionnel, dans une posture de force ? Pas trop timide ni trop agressif ?
-- conclusion : y a-t-il eu une proposition claire ou une tentative de closing ? Des prochaines étapes définies ? IMPORTANT : si le transcript mentionne un prix ou si le prospect accepte quelque chose, le score doit être ≥ 75.
+- process : progression logique${script_id ? ", compare aux étapes du script (intention, pas mots exacts)" : ""}
+- discovery : qualité des questions de qualification
+- objections : gestion des objections (75 par défaut si pas d'objections)
+- posture : aisance, professionnalisme, posture de force
+- conclusion : proposition claire ou closing, prochaines étapes (≥ 75 si prix mentionné ou prospect accepte)
 - overall : moyenne pondérée (process 20%, discovery 25%, objections 20%, posture 15%, conclusion 20%)
 
-RECOMMANDATIONS : formule-les de manière constructive et encourageante. Commence par ce qui a bien fonctionné, puis suggère 1-2 axes d'amélioration concrets. Pas de liste exhaustive de reproches.
-
-Pour le talk_ratio, estime la répartition en comptant les lignes de texte par speaker.
-Réponds UNIQUEMENT avec le JSON valide`;
+Recommandations constructives et encourageantes. Réponds UNIQUEMENT avec le JSON valide.`;
 
   try {
     const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -152,12 +125,14 @@ Réponds UNIQUEMENT avec le JSON valide`;
     });
 
     const text = message.content[0].type === "text" ? message.content[0].text.trim() : "";
+    console.log("[analyze-call-bg] Claude response length:", text.length);
+
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error("No JSON found in response: " + text.slice(0, 200));
+    if (!jsonMatch) throw new Error("No JSON found: " + text.slice(0, 200));
 
     const analysis = JSON.parse(jsonMatch[0]);
 
-    await supabase.from("call_analyses").update({
+    const { error: updateError } = await supabase.from("call_analyses").update({
       scores: analysis.scores,
       recommendations: {
         ...analysis.recommendations,
@@ -169,12 +144,12 @@ Réponds UNIQUEMENT avec le JSON valide`;
       status: "done",
     }).eq("id", id);
 
+    if (updateError) console.error("[analyze-call-bg] Supabase update error:", updateError);
+
+    return { statusCode: 200 };
   } catch (e) {
-    console.error("[analyze-call-bg] Error:", e);
+    console.error("[analyze-call-bg] Error:", String(e));
     await supabase.from("call_analyses").update({ status: "error" }).eq("id", id);
+    return { statusCode: 500, body: String(e) };
   }
-
-  return new Response("OK");
 };
-
-export const config = { background: true };

@@ -11,5 +11,5 @@
 [functions."*"]
   timeout = 120
 
-[functions."analyze-call-bg"]
+[functions."analyze-call-bg-background"]
   timeout = 900

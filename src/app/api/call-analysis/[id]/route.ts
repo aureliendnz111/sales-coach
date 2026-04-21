@@ -62,7 +62,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   const netlifyUrl = process.env.URL;
   if (netlifyUrl) {
     try {
-      await fetch(`${netlifyUrl}/.netlify/functions/analyze-call-bg`, {
+      await fetch(`${netlifyUrl}/.netlify/functions/analyze-call-bg-background`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id }),
