@@ -7,7 +7,7 @@ import "./globals.css";
 const geist = Geist({ variable: "--font-geist", subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Rumos.ai",
+  title: "ceciestuntest.com",
   description: "Votre copilote IA pour les calls de closing",
 };
 
