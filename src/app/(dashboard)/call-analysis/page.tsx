@@ -35,6 +35,12 @@ export default function CallAnalysisPage() {
 
   useEffect(() => { load(showArchived); }, [showArchived]);
 
+  // Catch newly created analyses that arrive just after page mount
+  useEffect(() => {
+    const t = setTimeout(() => load(false, true), 1500);
+    return () => clearTimeout(t);
+  }, []);
+
   // Auto-refresh while analyses are pending (silent — no loading flash)
   useEffect(() => {
     const hasPending = analyses.some(a => a.status === "analyzing");

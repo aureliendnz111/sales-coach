@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileText, X, Loader2, ChevronDown, Check } from "lucide-react";
+import { Upload, FileText, X, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OUTCOME_CONFIG } from "@/components/call-analysis/OutcomeBadge";
 
@@ -18,7 +18,6 @@ export default function NewAnalysisPage() {
   const [outcome, setOutcome] = useState("");
   const [prospectName, setProspectName] = useState("");
   const [callDate, setCallDate] = useState(new Date().toISOString().split("T")[0]);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [scriptDropdown, setScriptDropdown] = useState(false);
@@ -53,20 +52,13 @@ export default function NewAnalysisPage() {
 
   async function submit() {
     if (!transcript.trim()) { setError("Le transcript est requis."); return; }
-    setError(""); setLoading(true);
-    try {
-      const res = await fetch("/api/call-analysis", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
-      });
-      const data = await res.json();
-      if (data.id) { router.push("/call-analysis"); return; }
-      if (!res.ok) throw new Error(data.error ?? "Erreur inconnue");
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur lors de l'analyse.");
-      setLoading(false);
-    }
+    setError("");
+    router.push("/call-analysis");
+    fetch("/api/call-analysis", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
+    });
   }
 
   return (
@@ -231,10 +223,10 @@ export default function NewAnalysisPage() {
         </button>
         <button
           onClick={submit}
-          disabled={loading || !transcript.trim()}
+          disabled={!transcript.trim()}
           className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
         >
-          {loading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Envoi en cours…</> : "Lancer l'analyse"}
+          Lancer l'analyse
         </button>
       </div>
     </div>
