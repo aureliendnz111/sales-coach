@@ -68,6 +68,36 @@ export default function NewAnalysisPage() {
         <p className="text-sm text-stone-400 mt-0.5">Importez un transcript pour obtenir un score et des recommandations IA.</p>
       </div>
 
+      {/* Recorder tools */}
+      <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-stone-100">
+          <h2 className="text-[13px] font-semibold text-stone-700">Obtenir un transcript</h2>
+          <p className="text-[12px] text-stone-400 mt-0.5">Ces outils enregistrent et transcrivent automatiquement vos calls Meet, Zoom ou Teams.</p>
+        </div>
+        <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-4">
+          {[
+            { name: "tl;dv", tag: "Gratuit", desc: "Enregistre & résume vos réunions", url: "https://tldv.io" },
+            { name: "Fathom", tag: "Gratuit", desc: "Notetaker IA, highlights auto", url: "https://fathom.video" },
+            { name: "Fireflies", tag: "Freemium", desc: "Transcription + recherche dans vos calls", url: "https://fireflies.ai" },
+            { name: "Otter.ai", tag: "Freemium", desc: "Transcription en temps réel", url: "https://otter.ai" },
+          ].map(tool => (
+            <a
+              key={tool.name}
+              href={tool.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white px-4 py-3.5 flex flex-col gap-1 hover:bg-stone-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-[13px] font-semibold text-stone-800">{tool.name}</span>
+                <span className="text-[10px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-full font-medium leading-none">{tool.tag}</span>
+              </div>
+              <p className="text-[11.5px] text-stone-400 leading-snug">{tool.desc}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* Transcript */}
       <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
