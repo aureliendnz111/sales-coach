@@ -1,72 +1,33 @@
-import { auth } from "@clerk/nextjs/server";
-import { createClient } from "@supabase/supabase-js";
 import Anthropic from "@anthropic-ai/sdk";
-import { NextResponse } from "next/server";
-
-export const maxDuration = 120;
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-export async function GET(req: Request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-
-  const { searchParams } = new URL(req.url);
-  const archived = searchParams.get("archived") === "true";
-
-  let query = supabase
-    .from("call_analyses")
-    .select("id, prospect_name, call_date, outcome, status, scores, created_at, script_id, scripts(name)")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-
-  query = archived ? query.eq("status", "archived") : query.neq("status", "archived");
-
-  const { data, error } = await query;
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ analyses: data });
-}
-
-export async function POST(req: Request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
-
-  const { transcript_text, transcript_filename, script_id, prospect_name, call_date, outcome } = await req.json();
-
-  if (!transcript_text?.trim()) return NextResponse.json({ error: "Transcript manquant" }, { status: 400 });
-
-  // Insert record
-  const { data: record, error: insertError } = await supabase
-    .from("call_analyses")
-    .insert({ user_id: userId, transcript_text, transcript_filename, script_id, prospect_name, call_date, outcome, status: "analyzing" })
-    .select()
-    .single();
-
-  if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
-
-  // On Netlify: fire background function and return immediately (avoids 30s timeout)
-  const netlifyUrl = process.env.URL;
-  if (netlifyUrl) {
-    try {
-      await fetch(`${netlifyUrl}/.netlify/functions/analyze-call-bg`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: record.id }),
-      });
-    } catch (e) {
-      console.error("[call-analysis] Failed to trigger background function:", e);
-      await supabase.from("call_analyses").update({ status: "error" }).eq("id", record.id);
-      return NextResponse.json({ error: "Impossible de démarrer l'analyse", id: record.id }, { status: 500 });
-    }
-    return NextResponse.json({ id: record.id });
+export default async (req: Request): Promise<Response> => {
+  let id: string | undefined;
+  try {
+    const body = await req.json();
+    id = body.id;
+  } catch {
+    return new Response("Invalid body", { status: 400 });
   }
 
-  // Local dev: run analysis synchronously
-  // Fetch script if provided
+  if (!id) return new Response("Missing id", { status: 400 });
+
+  const { data: record } = await supabase
+    .from("call_analyses")
+    .select("id, transcript_text, script_id")
+    .eq("id", id)
+    .single();
+
+  if (!record) return new Response("Not found", { status: 404 });
+
   let scriptContext = "";
+  const script_id = record.script_id;
+
   if (script_id) {
     const { data: script } = await supabase.from("scripts").select("name, goal").eq("id", script_id).single();
     const { data: steps } = await supabase.from("steps").select("order, name, goal, questions, key_phrases").eq("script_id", script_id).order("order");
@@ -78,17 +39,17 @@ SCRIPT DE RÉFÉRENCE : "${script.name}"
 Objectif : ${script.goal ?? "Non défini"}
 
 ÉTAPES DU SCRIPT (pour chaque étape, détecte si l'INTENTION a été couverte dans le transcript, pas les mots exacts) :
-${steps?.map(s => `${s.order}. ${s.name}${s.goal ? `\n   Objectif : ${s.goal}` : ""}${s.key_phrases?.length ? `\n   Signaux possibles : ${s.key_phrases.join(", ")}` : ""}${s.questions?.length ? `\n   Questions types : ${s.questions.slice(0, 2).join(" | ")}` : ""}`).join("\n") ?? "Aucune"}
+${steps?.map((s: { order: number; name: string; goal?: string; key_phrases?: string[]; questions?: string[] }) => `${s.order}. ${s.name}${s.goal ? `\n   Objectif : ${s.goal}` : ""}${s.key_phrases?.length ? `\n   Signaux possibles : ${s.key_phrases.join(", ")}` : ""}${s.questions?.length ? `\n   Questions types : ${s.questions.slice(0, 2).join(" | ")}` : ""}`).join("\n") ?? "Aucune"}
 
 OBJECTIONS PRÉVUES :
-${objections?.map(o => `- "${o.label}" (${o.category}) → ${o.key_reframe ?? o.responses?.[0] ?? ""}`).join("\n") ?? "Aucune"}`;
+${objections?.map((o: { label: string; category: string; key_reframe?: string; responses?: string[] }) => `- "${o.label}" (${o.category}) → ${o.key_reframe ?? o.responses?.[0] ?? ""}`).join("\n") ?? "Aucune"}`;
     }
   }
 
   const prompt = `Tu es un expert en vente et closing. Analyse ce transcript d'appel de vente et retourne un JSON structuré avec des scores et recommandations.
 
 ${scriptContext ? scriptContext + "\n\n" : ""}TRANSCRIPT DE L'APPEL :
-${transcript_text.slice(0, 60000)}
+${record.transcript_text.slice(0, 60000)}
 
 Analyse le transcript et retourne UNIQUEMENT ce JSON (sans texte avant/après) :
 {
@@ -191,14 +152,12 @@ Réponds UNIQUEMENT avec le JSON valide`;
     });
 
     const text = message.content[0].type === "text" ? message.content[0].text.trim() : "";
-    console.log("[call-analysis] Claude raw response:", text.slice(0, 300));
-
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) throw new Error("No JSON found in response: " + text.slice(0, 200));
 
     const analysis = JSON.parse(jsonMatch[0]);
 
-    const { error: updateError } = await supabase.from("call_analyses").update({
+    await supabase.from("call_analyses").update({
       scores: analysis.scores,
       recommendations: {
         ...analysis.recommendations,
@@ -208,14 +167,14 @@ Réponds UNIQUEMENT avec le JSON valide`;
       talk_ratio: analysis.talk_ratio,
       key_moments: analysis.key_moments ?? [],
       status: "done",
-    }).eq("id", record.id);
+    }).eq("id", id);
 
-    if (updateError) console.error("[call-analysis] Supabase update error:", updateError);
-
-    return NextResponse.json({ id: record.id, analysis });
   } catch (e) {
-    console.error("[call-analysis] Error:", e);
-    await supabase.from("call_analyses").update({ status: "error" }).eq("id", record.id);
-    return NextResponse.json({ error: String(e), id: record.id }, { status: 500 });
+    console.error("[analyze-call-bg] Error:", e);
+    await supabase.from("call_analyses").update({ status: "error" }).eq("id", id);
   }
-}
+
+  return new Response("OK");
+};
+
+export const config = { background: true };

@@ -35,6 +35,14 @@ export default function CallAnalysisPage() {
 
   useEffect(() => { load(showArchived); }, [showArchived]);
 
+  // Auto-refresh while analyses are pending
+  useEffect(() => {
+    const hasPending = analyses.some(a => a.status === "analyzing");
+    if (!hasPending) return;
+    const interval = setInterval(() => load(showArchived), 4000);
+    return () => clearInterval(interval);
+  }, [analyses, showArchived]);
+
   async function archive(id: string, e: React.MouseEvent) {
     e.stopPropagation();
     await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status: "archived" }) });
@@ -136,7 +144,9 @@ export default function CallAnalysisPage() {
                   </td>
                   <td className="px-4 py-3 text-center">
                     {a.status === "analyzing" ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-stone-400 mx-auto" />
+                      <span className="flex items-center justify-center gap-1.5 text-[12px] text-stone-400">
+                        <Loader2 className="w-3 h-3 animate-spin" /> En cours…
+                      </span>
                     ) : a.status === "error" ? (
                       <span className="text-[12px] text-rose-400">Erreur</span>
                     ) : (

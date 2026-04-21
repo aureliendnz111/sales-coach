@@ -61,7 +61,7 @@ export default function NewAnalysisPage() {
         body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
       });
       const data = await res.json();
-      if (data.id) { router.push(`/call-analysis/${data.id}`); return; }
+      if (data.id) { router.push("/call-analysis"); return; }
       if (!res.ok) throw new Error(data.error ?? "Erreur inconnue");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erreur lors de l'analyse.");
@@ -234,7 +234,7 @@ export default function NewAnalysisPage() {
           disabled={loading || !transcript.trim()}
           className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
         >
-          {loading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Analyse en cours…</> : "Lancer l'analyse"}
+          {loading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Envoi en cours…</> : "Lancer l'analyse"}
         </button>
       </div>
     </div>

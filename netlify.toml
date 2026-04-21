@@ -5,5 +5,11 @@
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
+[functions]
+  directory = "netlify/functions"
+
 [functions."*"]
   timeout = 120
+
+[functions."analyze-call-bg"]
+  timeout = 900
