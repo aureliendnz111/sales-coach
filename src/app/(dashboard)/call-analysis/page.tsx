@@ -25,21 +25,21 @@ export default function CallAnalysisPage() {
   const [loading, setLoading] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
 
-  async function load(archived = false) {
-    setLoading(true);
+  async function load(archived = false, silent = false) {
+    if (!silent) setLoading(true);
     const res = await fetch(`/api/call-analysis${archived ? "?archived=true" : ""}`);
     const data = await res.json();
     setAnalyses(data.analyses ?? []);
-    setLoading(false);
+    if (!silent) setLoading(false);
   }
 
   useEffect(() => { load(showArchived); }, [showArchived]);
 
-  // Auto-refresh while analyses are pending
+  // Auto-refresh while analyses are pending (silent — no loading flash)
   useEffect(() => {
     const hasPending = analyses.some(a => a.status === "analyzing");
     if (!hasPending) return;
-    const interval = setInterval(() => load(showArchived), 4000);
+    const interval = setInterval(() => load(showArchived, true), 4000);
     return () => clearInterval(interval);
   }, [analyses, showArchived]);
 
