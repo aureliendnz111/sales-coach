@@ -17,7 +17,7 @@ type RecentAnalysis = {
 };
 
 const OUTCOME_LABELS: Record<string, { label: string; color: string }> = {
-  closed:      { label: "Signé",        color: "text-emerald-600 bg-emerald-50" },
+  closed:      { label: "Closé",        color: "text-emerald-600 bg-emerald-50" },
   next_call:   { label: "Prochain RDV", color: "text-sky-600 bg-sky-50" },
   no_decision: { label: "Sans décision",color: "text-stone-500 bg-stone-100" },
   lost:        { label: "Perdu",         color: "text-rose-600 bg-rose-50" },
