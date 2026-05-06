@@ -25,10 +25,10 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
 
   if (analyses.length === 0) {
     return (
-      <div className="border border-stone-200 rounded-xl bg-white p-8 flex flex-col items-center gap-3 text-center">
+      <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-8 flex flex-col items-center gap-3 text-center">
         <PhoneCall className="w-8 h-8 text-stone-200" />
         <p className="text-[13px] text-stone-500 font-medium">Aucune analyse pour l'instant</p>
-        <Link href="/call-analysis/new" className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors">
+        <Link href="/call-analysis/new" className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors">
           <Plus className="w-3.5 h-3.5" /> Analyser un call
         </Link>
       </div>
@@ -36,7 +36,7 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
   }
 
   return (
-    <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+    <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
       <div className="px-5 py-3.5 border-b border-stone-100 flex items-center justify-between">
         <h2 className="text-[13px] font-semibold text-stone-700">Dernières analyses</h2>
         <Link href="/call-analysis" className="text-[12px] text-stone-500 hover:text-stone-700 transition-colors">

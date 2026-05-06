@@ -69,7 +69,7 @@ export default function NewAnalysisPage() {
       </div>
 
       {/* Recorder tools */}
-      <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+      <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
           <h2 className="text-[13px] font-semibold text-stone-700">Obtenir un transcript</h2>
           <p className="text-[12px] text-stone-500 mt-0.5">Ces outils enregistrent et transcrivent automatiquement vos calls Meet, Zoom ou Teams.</p>
@@ -99,7 +99,7 @@ export default function NewAnalysisPage() {
       </div>
 
       {/* Transcript */}
-      <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+      <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
           <h2 className="text-[13px] font-semibold text-stone-700">Transcript de l'appel</h2>
         </div>
@@ -151,7 +151,7 @@ export default function NewAnalysisPage() {
       </div>
 
       {/* Metadata */}
-      <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+      <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
           <h2 className="text-[13px] font-semibold text-stone-700">Informations</h2>
         </div>
@@ -254,7 +254,7 @@ export default function NewAnalysisPage() {
         <button
           onClick={submit}
           disabled={!transcript.trim()}
-          className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
         >
           Lancer l'analyse
         </button>

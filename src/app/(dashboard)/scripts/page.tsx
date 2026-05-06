@@ -54,7 +54,7 @@ export default function ScriptsPage() {
           {!showArchived && (
             <button
               onClick={() => router.push("/scripts/new")}
-              className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors"
+              className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors"
             >
               <Plus className="w-4 h-4" /> Nouveau script
             </button>
@@ -77,7 +77,7 @@ export default function ScriptsPage() {
           </div>
           <button
             onClick={() => router.push("/scripts/new")}
-            className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors mt-1"
+            className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors mt-1"
           >
             <Plus className="w-4 h-4" /> Créer un script
           </button>

@@ -45,7 +45,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   const email = user.emailAddresses[0]?.emailAddress;
 
   const avatar = (
-    <div className="w-7 h-7 rounded-full bg-stone-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0 overflow-hidden">
+    <div className="w-7 h-7 rounded-full bg-violet-500 text-white text-[11px] font-bold flex items-center justify-center shrink-0 overflow-hidden">
       {user.hasImage
         ? <img src={user.imageUrl} alt="" className="w-full h-full object-cover" />
         : initials
@@ -56,15 +56,15 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   return (
     <div ref={ref} className="relative">
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden z-50">
+        <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-slate-200 rounded-xl shadow-lg overflow-hidden z-50">
           <button
             onClick={() => { router.push("/settings"); setOpen(false); }}
-            className="flex items-center gap-2.5 w-full px-3 py-2.5 text-[13px] text-stone-700 hover:bg-stone-50 transition-colors"
+            className="flex items-center gap-2.5 w-full px-3 py-2.5 text-[13px] text-slate-700 hover:bg-slate-50 transition-colors"
           >
-            <Settings className="w-3.5 h-3.5 text-stone-400" />
+            <Settings className="w-3.5 h-3.5 text-slate-400" />
             {!collapsed && "Paramètres"}
           </button>
-          <div className="border-t border-stone-100" />
+          <div className="border-t border-slate-100" />
           <button
             onClick={() => signOut({ redirectUrl: "/" })}
             className="flex items-center gap-2.5 w-full px-3 py-2.5 text-[13px] text-rose-600 hover:bg-rose-50 transition-colors"
@@ -78,7 +78,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       <button
         onClick={() => setOpen(!open)}
         className={cn(
-          "flex items-center w-full rounded-lg px-2 py-2 hover:bg-stone-200/40 transition-colors group",
+          "flex items-center w-full rounded-lg px-2 py-2 hover:bg-white/5 transition-colors",
           collapsed ? "justify-center" : "gap-2.5"
         )}
       >
@@ -86,10 +86,10 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
         {!collapsed && (
           <>
             <div className="flex-1 min-w-0 text-left">
-              <p className="text-[12.5px] font-medium text-stone-800 truncate leading-tight">{displayName}</p>
-              <p className="text-[11px] text-stone-500 truncate leading-tight">{email}</p>
+              <p className="text-[12.5px] font-medium text-white truncate leading-tight">{displayName}</p>
+              <p className="text-[11px] text-slate-400 truncate leading-tight">{email}</p>
             </div>
-            <ChevronUp className={cn("w-3.5 h-3.5 text-stone-400 shrink-0 transition-transform", open ? "rotate-0" : "rotate-180")} />
+            <ChevronUp className={cn("w-3.5 h-3.5 text-slate-500 shrink-0 transition-transform", open ? "rotate-0" : "rotate-180")} />
           </>
         )}
       </button>
@@ -115,19 +115,19 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      "relative shrink-0 h-screen border-r border-stone-200 bg-stone-50 flex flex-col px-2 py-3 transition-all duration-200",
-      collapsed ? "w-[52px]" : "w-[232px]"
+      "relative shrink-0 h-screen bg-slate-900 flex flex-col px-3 py-4 transition-all duration-200",
+      collapsed ? "w-[60px]" : "w-[240px]"
     )}>
       {/* Logo */}
-      <div className={cn("px-3 py-2 mb-3 flex items-center", collapsed ? "justify-center" : "gap-2.5")}>
-        <div className="w-6 h-6 bg-stone-900 rounded-md flex items-center justify-center shrink-0">
+      <div className={cn("px-2 py-1.5 mb-5 flex items-center", collapsed ? "justify-center" : "gap-2.5")}>
+        <div className="w-7 h-7 bg-violet-600 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-violet-900/40">
           <span className="text-white text-[11px] font-bold">R</span>
         </div>
-        {!collapsed && <span className="font-semibold text-[13px] text-stone-800 leading-none">ceciestuntest.com</span>}
+        {!collapsed && <span className="font-semibold text-[13.5px] text-white leading-none tracking-tight">ceciestuntest.com</span>}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-px">
+      <nav className="flex-1 space-y-0.5">
         {NAV.map(({ href, icon: Icon, label, ...rest }) => {
           const soon = "soon" in rest ? rest.soon : false;
           const active = pathname === href || pathname.startsWith(href + "/");
@@ -137,19 +137,19 @@ export function Sidebar() {
               href={href}
               title={collapsed ? label : undefined}
               className={cn(
-                "flex items-center rounded-md text-[13.5px] transition-colors",
-                collapsed ? "justify-center px-2 py-[7px]" : "gap-2 px-3 py-[6px]",
+                "flex items-center rounded-lg text-[13px] transition-all",
+                collapsed ? "justify-center px-2 py-2.5" : "gap-2.5 px-3 py-2",
                 active
-                  ? "bg-stone-200/70 text-stone-900 font-medium"
-                  : "text-stone-600 hover:bg-stone-200/40 hover:text-stone-900"
+                  ? "bg-violet-500/20 text-white font-medium"
+                  : "text-slate-400 hover:bg-white/5 hover:text-slate-100"
               )}
             >
-              <Icon className={cn("w-4 h-4 shrink-0", active ? "text-stone-700" : "text-stone-400")} />
+              <Icon className={cn("w-4 h-4 shrink-0 transition-colors", active ? "text-violet-400" : "text-slate-500")} />
               {!collapsed && (
                 <>
                   <span className="flex-1">{label}</span>
                   {soon && (
-                    <span className="text-[10px] bg-stone-200 text-stone-500 px-1.5 py-0.5 rounded-full font-medium leading-none">
+                    <span className="text-[10px] bg-white/10 text-slate-400 px-1.5 py-0.5 rounded-full font-medium leading-none">
                       Bientôt
                     </span>
                   )}
@@ -161,14 +161,14 @@ export function Sidebar() {
       </nav>
 
       {/* User */}
-      <div className="border-t border-stone-200 pt-2">
+      <div className="border-t border-white/10 pt-2">
         <UserMenu collapsed={collapsed} />
       </div>
 
       {/* Toggle button */}
       <button
         onClick={toggle}
-        className="absolute -right-3 top-8 w-6 h-6 bg-white border border-stone-200 rounded-full flex items-center justify-center text-stone-400 hover:text-stone-700 hover:border-stone-300 hover:bg-stone-50 transition-colors shadow-sm cursor-pointer"
+        className="absolute -right-3 top-8 w-6 h-6 bg-slate-800 border border-slate-700 rounded-full flex items-center justify-center text-slate-400 hover:text-white hover:border-slate-600 transition-colors shadow-md cursor-pointer"
       >
         <ChevronLeft className={cn("w-3.5 h-3.5 transition-transform duration-200", collapsed && "rotate-180")} />
       </button>

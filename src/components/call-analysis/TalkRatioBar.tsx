@@ -7,7 +7,7 @@ export function TalkRatioBar({ ratio }: { ratio: TalkRatio }) {
   const coachDiff = ratio.coach - idealCoach;
 
   return (
-    <div className="border border-stone-200 rounded-xl bg-white p-4 space-y-3">
+    <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-[13px] font-medium text-stone-700">Répartition de la parole</span>
         <span className="text-[11px] text-stone-500">Idéal : ~40% coach / 60% prospect</span>

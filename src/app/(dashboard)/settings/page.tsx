@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+    <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
       <div className="px-5 py-3.5 border-b border-stone-100">
         <h2 className="text-[13px] font-semibold text-stone-700">{title}</h2>
       </div>
@@ -56,7 +56,7 @@ function SaveButton({ loading, saved, onClick }: { loading: boolean; saved: bool
     <button
       onClick={onClick}
       disabled={loading || saved}
-      className="flex items-center gap-1.5 text-[12.5px] font-medium px-3.5 py-1.5 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
+      className="flex items-center gap-1.5 text-[12.5px] font-medium px-3.5 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
     >
       {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : saved ? <Check className="w-3.5 h-3.5" /> : null}
       {saved ? "Enregistré" : "Enregistrer"}

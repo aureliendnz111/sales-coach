@@ -12,7 +12,7 @@ function scoreColor(s: number) {
 export function ScoreGauge({ label, score, recommendation, icon }: Props) {
   const c = scoreColor(score);
   return (
-    <div className="border border-stone-200 rounded-xl bg-white p-4 space-y-3">
+    <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-[13px] font-medium text-stone-700">
           {icon}

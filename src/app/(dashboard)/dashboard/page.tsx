@@ -59,7 +59,7 @@ export default async function DashboardPage() {
 
       {/* Metrics */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-1">
+        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
           <div className="flex items-center gap-2 text-stone-400 text-[11px] font-semibold uppercase tracking-wider">
             <FileText className="w-3.5 h-3.5" /> Scripts actifs
           </div>
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
           <p className="text-[11px] text-stone-500">script{scripts > 1 ? "s" : ""} disponible{scripts > 1 ? "s" : ""}</p>
         </div>
 
-        <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-1">
+        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
           <div className="flex items-center gap-2 text-stone-400 text-[11px] font-semibold uppercase tracking-wider">
             <PhoneCall className="w-3.5 h-3.5" /> Calls ce mois
           </div>
@@ -75,7 +75,7 @@ export default async function DashboardPage() {
           <p className="text-[11px] text-stone-500">call{calls > 1 ? "s" : ""} analysé{calls > 1 ? "s" : ""}</p>
         </div>
 
-        <div className="bg-white border border-stone-200 rounded-xl p-5 space-y-1">
+        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
           <div className="flex items-center gap-2 text-stone-400 text-[11px] font-semibold uppercase tracking-wider">
             <TrendingUp className="w-3.5 h-3.5" /> Score moyen
           </div>

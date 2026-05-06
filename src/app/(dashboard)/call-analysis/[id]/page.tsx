@@ -125,7 +125,7 @@ export default function AnalysisDetailPage() {
       </div>
 
       {/* Outcome selector */}
-      <div className="border border-stone-200 rounded-xl bg-white p-4">
+      <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
         <p className="text-[12px] text-stone-600 font-medium mb-2.5">Résultat de l'appel {savingOutcome && <span className="text-stone-300">· Sauvegarde…</span>}</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
@@ -188,7 +188,7 @@ export default function AnalysisDetailPage() {
 
       {/* Moments clés */}
       {keyMoments.length > 0 && (
-        <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+        <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
           <div className="px-5 py-3.5 border-b border-stone-100 flex items-center gap-2">
             <Clock className="w-3.5 h-3.5 text-stone-400" />
             <h2 className="text-[13px] font-semibold text-stone-700">Moments clés</h2>
