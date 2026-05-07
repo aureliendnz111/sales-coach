@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, BookOpen, Trophy, MessageSquare, Zap, Mic, CheckCircle2, TrendingUp, TrendingDown, Clock } from "lucide-react";
+import { Loader2, ArrowLeft, BookOpen, MessageSquare, Zap, Mic, CheckCircle2, TrendingUp, TrendingDown, Clock, Pencil } from "lucide-react";
 import { ScoreGauge } from "@/components/call-analysis/ScoreGauge";
 import { TalkRatioBar } from "@/components/call-analysis/TalkRatioBar";
 import { OutcomeBadge, OUTCOME_CONFIG, Outcome } from "@/components/call-analysis/OutcomeBadge";
@@ -47,6 +47,9 @@ export default function AnalysisDetailPage() {
   const [leadStatusUpdatedAt, setLeadStatusUpdatedAt] = useState<string | null>(null);
   const [savingOutcome, setSavingOutcome] = useState(false);
   const [savingLeadStatus, setSavingLeadStatus] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [nameValue, setNameValue] = useState("");
+  const nameInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -73,6 +76,20 @@ export default function AnalysisDetailPage() {
     setSavingOutcome(true);
     await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ outcome: newValue }) });
     setSavingOutcome(false);
+  }
+
+  function startEditName() {
+    setNameValue(analysis?.prospect_name ?? "");
+    setEditingName(true);
+    setTimeout(() => nameInputRef.current?.focus(), 0);
+  }
+
+  async function saveName() {
+    setEditingName(false);
+    const trimmed = nameValue.trim();
+    if (trimmed === (analysis?.prospect_name ?? "")) return;
+    setAnalysis(a => a ? { ...a, prospect_name: trimmed || null } : a);
+    await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prospect_name: trimmed || null }) });
   }
 
   async function updateLeadStatus(value: Outcome) {
@@ -128,10 +145,24 @@ export default function AnalysisDetailPage() {
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">
-              {analysis.prospect_name ?? "Appel sans nom"}
-            </h1>
-            <div className="flex items-center gap-3 mt-1 text-[12px] text-stone-500">
+            {editingName ? (
+              <input
+                ref={nameInputRef}
+                value={nameValue}
+                onChange={e => setNameValue(e.target.value)}
+                onBlur={saveName}
+                onKeyDown={e => { if (e.key === "Enter") saveName(); if (e.key === "Escape") setEditingName(false); }}
+                className="text-[22px] font-semibold text-stone-900 tracking-tight border-b-2 border-stone-400 focus:outline-none focus:border-stone-700 bg-transparent w-72"
+              />
+            ) : (
+              <button onClick={startEditName} className="flex items-center gap-2 group/hname text-left">
+                <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">
+                  {analysis.prospect_name ?? <span className="text-stone-400">Appel sans nom</span>}
+                </h1>
+                <Pencil className="w-3.5 h-3.5 text-stone-300 group-hover/hname:text-stone-500 transition-colors mt-0.5" />
+              </button>
+            )}
+            <div className="flex items-center gap-3 mt-1.5 text-[12px] text-stone-500">
               {analysis.call_date && <span>{new Date(analysis.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>}
               {analysis.scripts?.name && <span>· {analysis.scripts.name}</span>}
             </div>

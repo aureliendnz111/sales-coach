@@ -1,7 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Archive, Loader2, PhoneCall, ArchiveX, RefreshCw } from "lucide-react";
+import { Plus, Trash2, Archive, Loader2, PhoneCall, ArchiveX, RefreshCw, Pencil } from "lucide-react";
 import { OutcomeBadge, Outcome } from "@/components/call-analysis/OutcomeBadge";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,51 @@ type Analysis = {
   created_at: string;
   scripts: { name: string } | null;
 };
+
+function EditableName({ id, name, onSave }: { id: string; name: string | null; onSave: (id: string, name: string) => void }) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(name ?? "");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function startEdit(e: React.MouseEvent) {
+    e.stopPropagation();
+    setValue(name ?? "");
+    setEditing(true);
+    setTimeout(() => inputRef.current?.focus(), 0);
+  }
+
+  async function save(e?: React.MouseEvent | React.FocusEvent | React.KeyboardEvent) {
+    e?.stopPropagation();
+    setEditing(false);
+    const trimmed = value.trim();
+    if (trimmed === (name ?? "")) return;
+    onSave(id, trimmed);
+    await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prospect_name: trimmed || null }) });
+  }
+
+  if (editing) {
+    return (
+      <input
+        ref={inputRef}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        onBlur={save}
+        onKeyDown={e => { if (e.key === "Enter") save(e); if (e.key === "Escape") setEditing(false); }}
+        onClick={e => e.stopPropagation()}
+        className="text-[13px] font-medium text-stone-800 border border-stone-300 rounded px-1.5 py-0.5 focus:outline-none focus:border-stone-500 w-40"
+      />
+    );
+  }
+
+  return (
+    <button onClick={startEdit} className="flex items-center gap-1.5 group/name text-left">
+      <span className="text-[13px] font-medium text-stone-800">
+        {name ?? <span className="text-stone-400 italic">Sans nom</span>}
+      </span>
+      <Pencil className="w-3 h-3 text-stone-300 group-hover/name:text-stone-500 shrink-0 transition-colors" />
+    </button>
+  );
+}
 
 function ScoreBadge({ score }: { score: number | null }) {
   if (score === null) return <span className="text-stone-300 text-[12px]">—</span>;
@@ -65,6 +110,10 @@ export default function CallAnalysisPage() {
     e.stopPropagation();
     setAnalyses(a => a.map(x => x.id === id ? { ...x, status: "analyzing" } : x));
     await fetch(`/api/call-analysis/${id}`, { method: "POST" });
+  }
+
+  function renameProsepct(id: string, name: string) {
+    setAnalyses(a => a.map(x => x.id === id ? { ...x, prospect_name: name || null } : x));
   }
 
   async function remove(id: string, e: React.MouseEvent) {
@@ -143,7 +192,7 @@ export default function CallAnalysisPage() {
                   className="hover:bg-stone-50 cursor-pointer transition-colors group"
                 >
                   <td className="px-4 py-3">
-                    <p className="text-[13px] font-medium text-stone-800">{a.prospect_name ?? <span className="text-stone-400 italic">Sans nom</span>}</p>
+                    <EditableName id={a.id} name={a.prospect_name} onSave={renameProsepct} />
                   </td>
                   <td className="px-4 py-3 text-[12.5px] text-stone-600">
                     {a.call_date ? new Date(a.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "—"}
