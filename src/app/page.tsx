@@ -8,6 +8,21 @@ import { RumiosLogo } from "@/components/RumiosLogo";
 
 type Lang = "fr" | "en";
 
+const PREVIEW_TABS: Record<Lang, { label: string; src: string; caption: string }[]> = {
+  fr: [
+    { label: "Dashboard", src: "/screenshot-2.png", caption: "Vue d'ensemble de votre activité — scripts, calls et score moyen." },
+    { label: "Script", src: "/screenshot-5.png", caption: "Vos étapes et objections structurées, prêtes à guider chaque appel." },
+    { label: "Templates", src: "/screenshot-4.png", caption: "Partez d'un template éprouvé et adaptez-le à votre offre en quelques minutes." },
+    { label: "Analyses", src: "/screenshot-analyses.png", caption: "Score détaillé, synthèse IA, points forts et axes d'amélioration après chaque call." },
+  ],
+  en: [
+    { label: "Dashboard", src: "/screenshot-2.png", caption: "Overview of your activity — scripts, calls, and average score." },
+    { label: "Script", src: "/screenshot-5.png", caption: "Your steps and objections structured, ready to guide every call." },
+    { label: "Templates", src: "/screenshot-4.png", caption: "Start from a proven template and tailor it to your offer in minutes." },
+    { label: "Analyses", src: "/screenshot-analyses.png", caption: "Detailed score, AI synthesis, strengths and improvement areas after every call." },
+  ],
+};
+
 const CONTENT = {
   fr: {
     nav: { signin: "Se connecter", signup: "Essayer gratuitement" },
@@ -300,6 +315,7 @@ export default function HomePage() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   const [lang, setLang] = useState<Lang>("fr");
+  const [activePreview, setActivePreview] = useState(0);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) router.push("/dashboard");
@@ -420,6 +436,47 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Product Preview */}
+      <section className="py-24 px-6 bg-stone-50 border-y border-stone-100">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">
+              {lang === "fr" ? "Aperçu" : "Preview"}
+            </p>
+            <h2 className="text-[34px] font-bold tracking-tight">
+              {lang === "fr" ? "Voyez Rumios en action." : "See Rumios in action."}
+            </h2>
+          </div>
+          <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
+            {PREVIEW_TABS[lang].map((tab, i) => (
+              <button
+                key={i}
+                onClick={() => setActivePreview(i)}
+                className={cn(
+                  "text-[13px] font-medium px-4 py-2 rounded-full transition-colors",
+                  activePreview === i
+                    ? "bg-stone-900 text-white"
+                    : "bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+          <div className="rounded-2xl border border-stone-200 overflow-hidden shadow-xl">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={PREVIEW_TABS[lang][activePreview].src}
+              alt={PREVIEW_TABS[lang][activePreview].label}
+              className="w-full h-auto"
+            />
+          </div>
+          <p className="text-center text-[13px] text-stone-400 mt-4">
+            {PREVIEW_TABS[lang][activePreview].caption}
+          </p>
         </div>
       </section>
 
