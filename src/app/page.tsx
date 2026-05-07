@@ -251,29 +251,29 @@ const CONTENT = {
 function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const c = CONTENT[lang];
   return (
-    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50">
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-fit">
       <div className="flex items-center gap-1 bg-stone-900 text-white rounded-full px-3 py-2 shadow-2xl shadow-stone-900/30 border border-white/10">
         {/* Logo */}
         <div className="flex items-center gap-1.5 px-2 mr-1">
           <RumiosLogo size={18} inverted />
           <span className="text-[12px] font-semibold tracking-tight">RUMIOS</span>
         </div>
-        <div className="w-px h-4 bg-white/10" />
-        {/* Nav links */}
+        <div className="hidden md:block w-px h-4 bg-white/10" />
+        {/* Nav links — desktop only */}
         {c.floatingNav.map((item) => (
           <a
             key={item.href}
             href={item.href}
-            className="text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/10 transition-colors"
+            className="hidden md:block text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/10 transition-colors"
           >
             {item.label}
           </a>
         ))}
-        <div className="w-px h-4 bg-white/10" />
-        {/* Lang toggle */}
+        <div className="hidden md:block w-px h-4 bg-white/10" />
+        {/* Lang toggle — desktop only */}
         <button
           onClick={() => setLang(lang === "fr" ? "en" : "fr")}
-          className="text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors"
+          className="hidden md:block text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors"
         >
           {lang === "fr" ? "EN" : "FR"}
         </button>
@@ -328,28 +328,28 @@ export default function HomePage() {
       <FloatingNav lang={lang} setLang={setLang} />
 
       {/* Hero */}
-      <section className="pt-28 pb-20 px-6">
+      <section className="pt-20 pb-14 px-5 md:pt-28 md:pb-20 md:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-600 text-[12px] font-medium px-3.5 py-1.5 rounded-full mb-8">
+          <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-600 text-[12px] font-medium px-3.5 py-1.5 rounded-full mb-6 md:mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             {c.badge}
           </div>
-          <h1 className="text-[52px] font-bold tracking-tight leading-[1.1] mb-5">
+          <h1 className="text-[36px] md:text-[52px] font-bold tracking-tight leading-[1.1] mb-4 md:mb-5">
             <span className="text-stone-900">{c.hero.headline.split(". ")[0]}.</span>
             {" "}
             <span className="text-stone-400">{c.hero.headline.split(". ")[1]}</span>
           </h1>
-          <p className="text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-9">
+          <p className="text-[15px] md:text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-7 md:mb-9">
             {c.hero.sub}
           </p>
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <SignUpButton mode="modal">
-              <button className="flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 transition-colors">
+              <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 transition-colors">
                 {c.hero.cta} <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </SignUpButton>
             <SignInButton mode="modal">
-              <button className="text-[14px] text-stone-500 hover:text-stone-900 px-5 py-2.5 rounded-lg border border-stone-200 hover:border-stone-300 transition-colors">
+              <button className="w-full sm:w-auto text-[14px] text-stone-500 hover:text-stone-900 px-5 py-2.5 rounded-lg border border-stone-200 hover:border-stone-300 transition-colors">
                 {c.hero.ctaSecondary}
               </button>
             </SignInButton>
@@ -357,7 +357,7 @@ export default function HomePage() {
         </div>
 
         {/* Score card */}
-        <div className="max-w-xl mx-auto mt-14">
+        <div className="max-w-xl mx-auto mt-10 md:mt-14">
           <div className="bg-white rounded-2xl border border-stone-200 shadow-xl overflow-hidden">
             <div className="bg-stone-900 px-5 py-4 flex items-start justify-between">
               <div>
@@ -369,7 +369,7 @@ export default function HomePage() {
                 <p className="text-[11px] text-stone-500 mt-0.5">{c.mockCard.scoreLabel}</p>
               </div>
             </div>
-            <div className="px-5 py-4 grid grid-cols-3 gap-3 border-b border-stone-100">
+            <div className="px-5 py-4 grid grid-cols-2 sm:grid-cols-3 gap-3 border-b border-stone-100">
               {c.mockCard.items.map((item, i) => (
                 <div key={i} className="space-y-1.5">
                   <div className="flex items-center justify-between">
@@ -397,12 +397,12 @@ export default function HomePage() {
       </section>
 
       {/* Problem */}
-      <section className="py-20 px-6 bg-stone-50 border-y border-stone-100">
+      <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-4">{c.problem.label}</p>
-          <h2 className="text-[34px] font-bold tracking-tight leading-tight mb-4">{c.problem.headline}</h2>
-          <p className="text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-10">{c.problem.sub}</p>
-          <div className="grid grid-cols-3 gap-4 text-left">
+          <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight leading-tight mb-4">{c.problem.headline}</h2>
+          <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-8 md:mb-10">{c.problem.sub}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
             {c.problem.pains.map((item, i) => (
               <div key={i} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
                 <p className="text-[13.5px] font-semibold text-stone-800 mb-1.5">{item.title}</p>
@@ -414,13 +414,13 @@ export default function HomePage() {
       </section>
 
       {/* Features */}
-      <section id="features" className="py-24 px-6">
+      <section id="features" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.features.label}</p>
-            <h2 className="text-[34px] font-bold tracking-tight">{c.features.headline}</h2>
+            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.features.headline}</h2>
           </div>
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             {c.features.items.map((f) => (
               <div key={f.title} className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-stone-300 hover:shadow-sm transition-all">
                 <div className="flex items-start justify-between">
@@ -440,13 +440,13 @@ export default function HomePage() {
       </section>
 
       {/* Product Preview */}
-      <section className="py-24 px-6 bg-stone-50 border-y border-stone-100">
+      <section className="py-14 px-5 md:py-24 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 md:mb-10">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">
               {lang === "fr" ? "Aperçu" : "Preview"}
             </p>
-            <h2 className="text-[34px] font-bold tracking-tight">
+            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">
               {lang === "fr" ? "Voyez Rumios en action." : "See Rumios in action."}
             </h2>
           </div>
@@ -481,14 +481,14 @@ export default function HomePage() {
       </section>
 
       {/* Metrics */}
-      <section className="py-20 px-6 bg-stone-900 text-white">
+      <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-900 text-white">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 md:mb-10">
             <p className="text-[11px] font-semibold text-stone-500 uppercase tracking-widest mb-3">{c.metrics.label}</p>
-            <h2 className="text-[32px] font-bold tracking-tight mb-3">{c.metrics.headline}</h2>
-            <p className="text-[15px] text-stone-400 max-w-lg mx-auto">{c.metrics.sub}</p>
+            <h2 className="text-[26px] md:text-[32px] font-bold tracking-tight mb-3">{c.metrics.headline}</h2>
+            <p className="text-[14px] md:text-[15px] text-stone-400 max-w-lg mx-auto">{c.metrics.sub}</p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {c.metrics.items.map((m) => (
               <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3">
                 <div className="w-8 h-8 bg-white/8 rounded-lg flex items-center justify-center shrink-0">
@@ -505,19 +505,19 @@ export default function HomePage() {
       </section>
 
       {/* How it works */}
-      <section id="how" className="py-24 px-6">
+      <section id="how" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.steps.label}</p>
-            <h2 className="text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
+            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
           </div>
           <div className="space-y-3">
             {c.steps.items.map((step) => (
-              <div key={step.number} className="flex items-start gap-6 px-7 py-6 bg-white border border-stone-200 rounded-2xl hover:border-stone-300 transition-colors">
-                <span className="text-[36px] font-bold text-stone-100 leading-none tabular-nums shrink-0 mt-0.5">{step.number}</span>
+              <div key={step.number} className="flex items-start gap-4 md:gap-6 px-5 py-5 md:px-7 md:py-6 bg-white border border-stone-200 rounded-2xl hover:border-stone-300 transition-colors">
+                <span className="text-[32px] md:text-[36px] font-bold text-stone-100 leading-none tabular-nums shrink-0 mt-0.5">{step.number}</span>
                 <div>
-                  <h3 className="text-[15px] font-semibold text-stone-900 mb-1.5">{step.title}</h3>
-                  <p className="text-[13.5px] text-stone-500 leading-relaxed">{step.description}</p>
+                  <h3 className="text-[14px] md:text-[15px] font-semibold text-stone-900 mb-1.5">{step.title}</h3>
+                  <p className="text-[13px] md:text-[13.5px] text-stone-500 leading-relaxed">{step.description}</p>
                 </div>
               </div>
             ))}
@@ -526,13 +526,13 @@ export default function HomePage() {
       </section>
 
       {/* For who */}
-      <section className="py-20 px-6 bg-stone-50 border-y border-stone-100">
+      <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 md:mb-10">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.profiles.label}</p>
-            <h2 className="text-[32px] font-bold tracking-tight">{c.profiles.headline}</h2>
+            <h2 className="text-[26px] md:text-[32px] font-bold tracking-tight">{c.profiles.headline}</h2>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {c.profiles.items.map((p) => (
               <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-6">
                 <div className="text-2xl mb-3">{p.emoji}</div>
@@ -545,11 +545,11 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-24 px-6">
+      <section id="faq" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.faq.label}</p>
-            <h2 className="text-[34px] font-bold tracking-tight">{c.faq.headline}</h2>
+            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.faq.headline}</h2>
           </div>
           <div className="space-y-2">
             {c.faq.items.map((item, i) => (
@@ -560,10 +560,10 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="py-28 px-6 bg-stone-50 border-t border-stone-100">
+      <section className="py-16 px-5 md:py-28 md:px-6 bg-stone-50 border-t border-stone-100">
         <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-[40px] font-bold tracking-tight leading-tight mb-4">{c.cta.headline}</h2>
-          <p className="text-[15px] text-stone-500 leading-relaxed mb-7">{c.cta.sub}</p>
+          <h2 className="text-[30px] md:text-[40px] font-bold tracking-tight leading-tight mb-4">{c.cta.headline}</h2>
+          <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed mb-7">{c.cta.sub}</p>
           <SignUpButton mode="modal">
             <button className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-7 py-3 rounded-lg hover:bg-stone-700 transition-colors">
               {c.cta.button} <ArrowRight className="w-4 h-4" />
@@ -574,8 +574,8 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-stone-100 py-7 px-6">
-        <div className="max-w-5xl mx-auto flex items-center justify-between text-[12px] text-stone-400">
+      <footer className="border-t border-stone-100 py-6 px-5 md:py-7 md:px-6">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between text-[12px] text-stone-400">
           <div className="flex items-center gap-2">
             <RumiosLogo size={18} />
             <span className="font-medium text-stone-500">RUMIOS</span>
