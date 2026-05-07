@@ -1,7 +1,7 @@
 "use client";
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -232,13 +232,10 @@ const CONTENT = {
   },
 } as const;
 
-function FloatingNav({ lang, setLang, visible }: { lang: Lang; setLang: (l: Lang) => void; visible: boolean }) {
+function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const c = CONTENT[lang];
   return (
-    <div className={cn(
-      "fixed bottom-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300",
-      visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
-    )}>
+    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50">
       <div className="flex items-center gap-1 bg-stone-900 text-white rounded-full px-3 py-2 shadow-2xl shadow-stone-900/30 border border-white/10">
         {/* Logo */}
         <div className="flex items-center gap-1.5 px-2 mr-1">
@@ -299,68 +296,24 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-function Navbar({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
-  const c = CONTENT[lang].nav;
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-100">
-      <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-stone-900 rounded-md flex items-center justify-center shrink-0">
-            <span className="text-white text-[10px] font-bold">R</span>
-          </div>
-          <span className="font-semibold text-[14px] text-stone-900 tracking-tight">RUMIOS</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setLang(lang === "fr" ? "en" : "fr")}
-            className="text-[12px] font-medium text-stone-400 hover:text-stone-700 px-2.5 py-1 rounded-md border border-stone-200 hover:border-stone-300 transition-colors"
-          >
-            {lang === "fr" ? "EN" : "FR"}
-          </button>
-          <SignInButton mode="modal">
-            <button className="text-[13px] text-stone-600 hover:text-stone-900 transition-colors px-3 py-1.5 rounded-lg hover:bg-stone-100">
-              {c.signin}
-            </button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <button className="text-[13px] font-medium bg-stone-900 text-white px-4 py-1.5 rounded-lg hover:bg-stone-700 transition-colors">
-              {c.signup}
-            </button>
-          </SignUpButton>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 export default function HomePage() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   const [lang, setLang] = useState<Lang>("fr");
-  const [floatingVisible, setFloatingVisible] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) router.push("/dashboard");
   }, [isLoaded, isSignedIn, router]);
 
-  useEffect(() => {
-    function onScroll() {
-      setFloatingVisible(window.scrollY > 480);
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
   const c = CONTENT[lang];
 
   return (
     <div className="bg-white text-stone-900 min-h-screen">
-      <Navbar lang={lang} setLang={setLang} />
-      <FloatingNav lang={lang} setLang={setLang} visible={floatingVisible} />
+      <FloatingNav lang={lang} setLang={setLang} />
 
       {/* Hero */}
-      <section ref={heroRef} className="pt-32 pb-20 px-6">
+      <section className="pt-28 pb-20 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-600 text-[12px] font-medium px-3.5 py-1.5 rounded-full mb-8">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
