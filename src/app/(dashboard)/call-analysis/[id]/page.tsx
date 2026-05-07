@@ -11,7 +11,7 @@ type KeyMoment = { time: string; label: string; category: string };
 
 type Analysis = {
   id: string; prospect_name: string | null; call_date: string | null;
-  outcome: Outcome; status: string;
+  outcome: Outcome; outcome_updated_at: string | null; status: string;
   scores: Record<string, number> | null;
   recommendations: Record<string, string | string[]> | null;
   talk_ratio: { coach: number; prospect: number; coach_name?: string; prospect_name?: string } | null;
@@ -41,6 +41,7 @@ export default function AnalysisDetailPage() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [outcome, setOutcome] = useState<Outcome>(null);
+  const [outcomeUpdatedAt, setOutcomeUpdatedAt] = useState<string | null>(null);
   const [savingOutcome, setSavingOutcome] = useState(false);
 
   useEffect(() => {
@@ -51,6 +52,7 @@ export default function AnalysisDetailPage() {
       if (data.analysis) {
         setAnalysis(data.analysis);
         setOutcome(data.analysis.outcome);
+        setOutcomeUpdatedAt(data.analysis.outcome_updated_at);
         setLoading(false);
         if (data.analysis.status === "done" || data.analysis.status === "error") clearInterval(interval);
       }
@@ -61,8 +63,12 @@ export default function AnalysisDetailPage() {
   }, [id]);
 
   async function updateOutcome(value: Outcome) {
-    setOutcome(value); setSavingOutcome(true);
-    await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ outcome: value }) });
+    const newValue = outcome === value ? null : value;
+    setOutcome(newValue);
+    setSavingOutcome(true);
+    const now = new Date().toISOString();
+    await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ outcome: newValue }) });
+    setOutcomeUpdatedAt(now);
     setSavingOutcome(false);
   }
 
@@ -124,14 +130,24 @@ export default function AnalysisDetailPage() {
         </div>
       </div>
 
-      {/* Outcome selector */}
+      {/* Lead status */}
       <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
-        <p className="text-[12px] text-stone-600 font-medium mb-2.5">Résultat de l'appel {savingOutcome && <span className="text-stone-300">· Sauvegarde…</span>}</p>
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">Statut du lead</p>
+          <div className="flex items-center gap-2 text-[11px] text-stone-400">
+            {savingOutcome && <span>Sauvegarde…</span>}
+            {!savingOutcome && outcomeUpdatedAt && (
+              <span>
+                Mis à jour le {new Date(outcomeUpdatedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} à {new Date(outcomeUpdatedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
             const c = OUTCOME_CONFIG[key];
             return (
-              <button key={key} onClick={() => updateOutcome(outcome === key ? null : key)}
+              <button key={key} onClick={() => updateOutcome(key)}
                 className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border text-[12.5px] transition-colors",
                   outcome === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-600 hover:bg-stone-50"
                 )}>
