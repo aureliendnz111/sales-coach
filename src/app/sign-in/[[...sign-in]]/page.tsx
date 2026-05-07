@@ -9,7 +9,7 @@ export default function SignInPage() {
         <RumiosLogo size={22} />
         <span className="font-semibold text-[14px] text-stone-800 tracking-tight">RUMIOS</span>
       </Link>
-      <SignIn appearance={{ elements: { dividerRow: "hidden" } }} />
+      <SignIn />
       <p className="mt-6 text-[13px] text-stone-400">
         Pas encore de compte ?{" "}
         <Link href="/sign-up" className="text-stone-700 font-medium hover:underline cursor-pointer">

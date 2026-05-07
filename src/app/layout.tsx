@@ -45,15 +45,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           card: { boxShadow: "0 4px 24px rgba(0,0,0,0.08)", border: "1px solid #e7e5e4" },
           headerTitle: { fontSize: "18px", fontWeight: "700", color: "#1c1917" },
           headerSubtitle: { fontSize: "13px", color: "#78716c" },
-          socialButtonsBlockButton__google: { display: "none" },
-          socialButtonsProviderIcon__google: { display: "none" },
-          formButtonPrimary: { backgroundColor: "#18181b", fontSize: "13.5px", fontWeight: "500", "&:hover": { backgroundColor: "#3f3f46" } },
-          formFieldInput: { fontSize: "13.5px", borderColor: "#e7e5e4", "&:focus": { borderColor: "#18181b", boxShadow: "none" } },
+          formButtonPrimary: { backgroundColor: "#18181b", fontSize: "13.5px", fontWeight: "500" },
+          formFieldInput: { fontSize: "13.5px", borderColor: "#e7e5e4" },
           formFieldLabel: { fontSize: "12.5px", fontWeight: "500", color: "#44403c" },
-          footerPages: { display: "none" },
+          dividerRow: { display: "none" },
           identityPreviewEditButton: { color: "#18181b" },
-          dividerLine: { backgroundColor: "#f5f5f4" },
-          dividerText: { color: "#a8a29e", fontSize: "12px" },
         },
       }}
     >
