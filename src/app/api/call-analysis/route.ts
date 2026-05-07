@@ -53,13 +53,17 @@ export async function POST(req: Request) {
 
   // On Netlify: fire background function and return immediately (avoids 30s timeout)
   const netlifyUrl = process.env.URL;
+  console.log("[call-analysis] process.env.URL =", netlifyUrl);
   if (netlifyUrl) {
+    const bgUrl = `${netlifyUrl}/.netlify/functions/analyze-call-bg-background`;
+    console.log("[call-analysis] Triggering background function:", bgUrl, "for id:", record.id);
     try {
-      await fetch(`${netlifyUrl}/.netlify/functions/analyze-call-bg-background`, {
+      const bgRes = await fetch(bgUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: record.id }),
       });
+      console.log("[call-analysis] Background function response status:", bgRes.status);
     } catch (e) {
       console.error("[call-analysis] Failed to trigger background function:", e);
       await supabase.from("call_analyses").update({ status: "error" }).eq("id", record.id);
