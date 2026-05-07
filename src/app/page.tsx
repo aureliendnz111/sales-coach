@@ -3,11 +3,17 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X } from "lucide-react";
+import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 
 type Lang = "fr" | "en";
+
+const PROBLEM_STYLES = [
+  { icon: AlertTriangle, iconBg: "bg-rose-50", iconColor: "text-rose-500", accent: "border-rose-100" },
+  { icon: RefreshCw,     iconBg: "bg-orange-50", iconColor: "text-orange-500", accent: "border-orange-100" },
+  { icon: TrendingDown,  iconBg: "bg-red-50", iconColor: "text-red-500", accent: "border-red-100" },
+] as const;
 
 const FEATURE_STYLES = [
   { iconBg: "bg-blue-50", iconColor: "text-blue-600" },
@@ -455,12 +461,21 @@ export default function HomePage() {
           <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight leading-tight mb-4">{c.problem.headline}</h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-8 md:mb-10">{c.problem.sub}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
-            {c.problem.pains.map((item, i) => (
-              <div key={i} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                <p className="text-[13.5px] font-semibold text-stone-800 mb-1.5">{item.title}</p>
-                <p className="text-[12.5px] text-stone-500 leading-relaxed">{item.desc}</p>
-              </div>
-            ))}
+            {c.problem.pains.map((item, i) => {
+              const style = PROBLEM_STYLES[i];
+              const Icon = style.icon;
+              return (
+                <div key={i} className={cn("bg-white border rounded-2xl p-6 flex flex-col gap-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-200", style.accent)}>
+                  <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center", style.iconBg)}>
+                    <Icon className={cn("w-5 h-5", style.iconColor)} />
+                  </div>
+                  <div>
+                    <p className="text-[15px] font-semibold text-stone-900 mb-2 leading-snug">{item.title}</p>
+                    <p className="text-[13px] text-stone-500 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
