@@ -16,6 +16,8 @@ const FEATURE_STYLES = [
   { iconBg: "bg-violet-50", iconColor: "text-violet-600" },
 ] as const;
 
+const STEP_COLORS = ["text-blue-300", "text-violet-300", "text-emerald-300"] as const;
+
 const METRIC_COLORS = [
   "text-orange-400",
   "text-violet-400",
@@ -562,9 +564,9 @@ export default function HomePage() {
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
           </div>
           <div className="space-y-3">
-            {c.steps.items.map((step) => (
-              <div key={step.number} className="flex items-start gap-4 md:gap-6 px-5 py-5 md:px-7 md:py-6 bg-white border border-stone-200 rounded-2xl hover:border-stone-300 transition-colors">
-                <span className="text-[32px] md:text-[36px] font-bold text-stone-100 leading-none tabular-nums shrink-0 mt-0.5">{step.number}</span>
+            {c.steps.items.map((step, i) => (
+              <div key={step.number} className="flex items-start gap-4 md:gap-6 px-5 py-5 md:px-7 md:py-6 bg-white border border-stone-200 rounded-2xl hover:border-stone-300 hover:shadow-sm transition-all duration-200">
+                <span className={cn("text-[32px] md:text-[36px] font-bold leading-none tabular-nums shrink-0 mt-0.5", STEP_COLORS[i])}>{step.number}</span>
                 <div>
                   <h3 className="text-[14px] md:text-[15px] font-semibold text-stone-900 mb-1.5">{step.title}</h3>
                   <p className="text-[13px] md:text-[13.5px] text-stone-500 leading-relaxed">{step.description}</p>
