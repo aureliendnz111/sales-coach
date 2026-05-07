@@ -2,7 +2,7 @@
 import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus } from "lucide-react";
+import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 
@@ -250,40 +250,81 @@ const CONTENT = {
 
 function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const c = CONTENT[lang];
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   return (
-    <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-fit">
-      <div className="flex items-center gap-1 bg-stone-900 text-white rounded-full px-3 py-2 shadow-2xl shadow-stone-900/30 border border-white/10">
+    <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] md:w-auto">
+      {/* Main bar */}
+      <div className="flex items-center justify-between md:justify-start gap-1 bg-stone-900 text-white rounded-full px-3 py-2 shadow-2xl shadow-stone-900/30 border border-white/10">
         {/* Logo */}
-        <div className="flex items-center gap-1.5 px-2 mr-1">
+        <div className="flex items-center gap-1.5 px-2 md:mr-1">
           <RumiosLogo size={18} inverted />
           <span className="text-[12px] font-semibold tracking-tight">RUMIOS</span>
         </div>
-        <div className="hidden md:block w-px h-4 bg-white/10" />
-        {/* Nav links — desktop only */}
-        {c.floatingNav.map((item) => (
-          <a
-            key={item.href}
-            href={item.href}
-            className="hidden md:block text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/10 transition-colors"
+
+        {/* Desktop nav links */}
+        <div className="hidden md:flex items-center gap-1">
+          <div className="w-px h-4 bg-white/10" />
+          {c.floatingNav.map((item) => (
+            <a key={item.href} href={item.href} className="text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/10 transition-colors">
+              {item.label}
+            </a>
+          ))}
+          <div className="w-px h-4 bg-white/10" />
+          <button onClick={() => setLang(lang === "fr" ? "en" : "fr")} className="text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors">
+            {lang === "fr" ? "EN" : "FR"}
+          </button>
+        </div>
+
+        {/* Mobile right side: burger + CTA */}
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={() => setMobileOpen(o => !o)}
+            className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+            aria-label="Menu"
           >
-            {item.label}
-          </a>
-        ))}
-        <div className="hidden md:block w-px h-4 bg-white/10" />
-        {/* Lang toggle — desktop only */}
-        <button
-          onClick={() => setLang(lang === "fr" ? "en" : "fr")}
-          className="hidden md:block text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors"
-        >
-          {lang === "fr" ? "EN" : "FR"}
-        </button>
-        {/* CTA */}
+            {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+          <SignUpButton mode="modal">
+            <button className="text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors">
+              {lang === "fr" ? "Commencer" : "Get started"}
+            </button>
+          </SignUpButton>
+        </div>
+
+        {/* Desktop CTA */}
         <SignUpButton mode="modal">
-          <button className="ml-1 text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors">
+          <button className="hidden md:block ml-1 text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors">
             {lang === "fr" ? "Commencer" : "Get started"}
           </button>
         </SignUpButton>
       </div>
+
+      {/* Mobile dropdown */}
+      {mobileOpen && (
+        <div className="md:hidden mt-2 bg-stone-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/30">
+          <div className="px-2 py-2 space-y-0.5">
+            {c.floatingNav.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center px-4 py-3 text-[14px] text-stone-300 hover:text-white hover:bg-white/8 rounded-xl transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+          <div className="border-t border-white/10 px-2 py-2">
+            <button
+              onClick={() => { setLang(lang === "fr" ? "en" : "fr"); setMobileOpen(false); }}
+              className="flex items-center w-full px-4 py-3 text-[13px] text-stone-400 hover:text-white hover:bg-white/8 rounded-xl transition-colors"
+            >
+              {lang === "fr" ? "Switch to English" : "Passer en français"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
