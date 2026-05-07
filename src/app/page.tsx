@@ -396,7 +396,7 @@ export default function HomePage() {
             {c.badge.split(" ventes")[0]} ventes<br />
             {c.badge.split(" ventes")[1]}
           </h1>
-          <p className="text-[20px] md:text-[24px] font-medium text-stone-400 tracking-tight mb-5 md:mb-7">
+          <p className="text-[20px] md:text-[24px] font-medium text-stone-400 tracking-tight mt-5 md:mt-7 mb-5 md:mb-7">
             {c.hero.headline}
           </p>
           <p className="text-[15px] md:text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-7 md:mb-9">
