@@ -111,9 +111,9 @@ const CONTENT = {
       label: "Comment ça marche",
       headline: "Trois étapes. Dix minutes.",
       items: [
-        { number: "01", title: "Créez votre script", description: "Décrivez votre offre ou partez d'un template. Rumios structure vos étapes, vos questions et vos réponses aux objections courantes." },
-        { number: "02", title: "Collez le transcript de votre call", description: "Enregistrez avec tl;dv, Fathom ou Otter.ai, puis collez le texte dans Rumios. L'analyse démarre en quelques secondes." },
-        { number: "03", title: "Lisez le feedback, corrigez, progressez", description: "Score détaillé, erreurs identifiées, recommandations concrètes. Suivez votre progression call après call." },
+        { number: "01", title: "Créez votre script", description: "Décrivez votre offre ou partez d'un template. Rumios structure vos étapes, vos questions clés et vos réponses aux objections. C'est votre référence pour chaque call." },
+        { number: "02", title: "Collez le transcript de votre call", description: "Enregistrez avec tl;dv, Fathom ou Otter.ai, puis collez le transcript dans Rumios. L'IA compare votre call à votre script et calcule un score sur 100 en quelques secondes." },
+        { number: "03", title: "Lisez le feedback, corrigez, progressez", description: "Score détaillé sur 6 dimensions, écarts par rapport à votre script, erreurs identifiées et trois actions concrètes pour le prochain call. Suivez votre progression dans le temps." },
       ],
     },
     profiles: {
@@ -231,9 +231,9 @@ const CONTENT = {
       label: "How it works",
       headline: "Three steps. Ten minutes.",
       items: [
-        { number: "01", title: "Build your script", description: "Describe your offer or start from a template. Rumios structures your stages, questions, and answers to common objections." },
-        { number: "02", title: "Paste your call transcript", description: "Record with tl;dv, Fathom, or Otter.ai, then paste the text into Rumios. Analysis starts in seconds." },
-        { number: "03", title: "Read the feedback. Fix it. Repeat.", description: "Detailed score, identified mistakes, concrete recommendations. Track your progress call after call." },
+        { number: "01", title: "Build your script", description: "Describe your offer or start from a template. Rumios structures your stages, key questions, and objection responses. This becomes your reference for every call." },
+        { number: "02", title: "Paste your call transcript", description: "Record with tl;dv, Fathom, or Otter.ai, then paste the transcript into Rumios. The AI compares your call against your script and generates a score out of 100 in seconds." },
+        { number: "03", title: "Read the feedback. Fix it. Repeat.", description: "Detailed score across 6 dimensions, gaps vs. your script, identified mistakes, and three concrete actions for the next call. Track your improvement over time." },
       ],
     },
     profiles: {
