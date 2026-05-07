@@ -123,7 +123,7 @@ export function Sidebar() {
         <div className="w-6 h-6 bg-stone-900 rounded-md flex items-center justify-center shrink-0">
           <span className="text-white text-[11px] font-bold">R</span>
         </div>
-        {!collapsed && <span className="font-semibold text-[13px] text-stone-800 leading-none">ceciestuntest.com</span>}
+        {!collapsed && <span className="font-semibold text-[13px] text-stone-800 leading-none tracking-tight">RUMIOS</span>}
       </div>
 
       {/* Nav */}
