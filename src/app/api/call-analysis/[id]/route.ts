@@ -29,9 +29,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   const { id } = await params;
   const body = await req.json();
-  const allowed = ["outcome", "status", "prospect_name", "call_date"];
+  const allowed = ["outcome", "lead_status", "status", "prospect_name", "call_date"];
   const updates = Object.fromEntries(Object.entries(body).filter(([k]) => allowed.includes(k)));
   if ("outcome" in updates) updates.outcome_updated_at = new Date().toISOString();
+  if ("lead_status" in updates) updates.lead_status_updated_at = new Date().toISOString();
 
   const { error } = await supabase
     .from("call_analyses")

@@ -11,7 +11,9 @@ type KeyMoment = { time: string; label: string; category: string };
 
 type Analysis = {
   id: string; prospect_name: string | null; call_date: string | null;
-  outcome: Outcome; outcome_updated_at: string | null; status: string;
+  outcome: Outcome; outcome_updated_at: string | null;
+  lead_status: Outcome; lead_status_updated_at: string | null;
+  status: string;
   scores: Record<string, number> | null;
   recommendations: Record<string, string | string[]> | null;
   talk_ratio: { coach: number; prospect: number; coach_name?: string; prospect_name?: string } | null;
@@ -41,8 +43,10 @@ export default function AnalysisDetailPage() {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [outcome, setOutcome] = useState<Outcome>(null);
-  const [outcomeUpdatedAt, setOutcomeUpdatedAt] = useState<string | null>(null);
+  const [leadStatus, setLeadStatus] = useState<Outcome>(null);
+  const [leadStatusUpdatedAt, setLeadStatusUpdatedAt] = useState<string | null>(null);
   const [savingOutcome, setSavingOutcome] = useState(false);
+  const [savingLeadStatus, setSavingLeadStatus] = useState(false);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -52,7 +56,8 @@ export default function AnalysisDetailPage() {
       if (data.analysis) {
         setAnalysis(data.analysis);
         setOutcome(data.analysis.outcome);
-        setOutcomeUpdatedAt(data.analysis.outcome_updated_at);
+        setLeadStatus(data.analysis.lead_status);
+        setLeadStatusUpdatedAt(data.analysis.lead_status_updated_at);
         setLoading(false);
         if (data.analysis.status === "done" || data.analysis.status === "error") clearInterval(interval);
       }
@@ -66,10 +71,18 @@ export default function AnalysisDetailPage() {
     const newValue = outcome === value ? null : value;
     setOutcome(newValue);
     setSavingOutcome(true);
-    const now = new Date().toISOString();
     await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ outcome: newValue }) });
-    setOutcomeUpdatedAt(now);
     setSavingOutcome(false);
+  }
+
+  async function updateLeadStatus(value: Outcome) {
+    const newValue = leadStatus === value ? null : value;
+    setLeadStatus(newValue);
+    setSavingLeadStatus(true);
+    const now = new Date().toISOString();
+    await fetch(`/api/call-analysis/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ lead_status: newValue }) });
+    setLeadStatusUpdatedAt(now);
+    setSavingLeadStatus(false);
   }
 
   if (loading) return (
@@ -130,31 +143,54 @@ export default function AnalysisDetailPage() {
         </div>
       </div>
 
-      {/* Lead status */}
-      <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">Statut du lead</p>
-          <div className="flex items-center gap-2 text-[11px] text-stone-400">
-            {savingOutcome && <span>Sauvegarde…</span>}
-            {!savingOutcome && outcomeUpdatedAt && (
-              <span>
-                Mis à jour le {new Date(outcomeUpdatedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })} à {new Date(outcomeUpdatedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
-              </span>
-            )}
+      {/* Résultat de l'appel + Statut du lead */}
+      <div className="grid grid-cols-2 gap-4">
+        {/* Résultat de l'appel — figé après le call */}
+        <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">Résultat de l'appel</p>
+            {savingOutcome && <span className="text-[11px] text-stone-400">Sauvegarde…</span>}
           </div>
+          <div className="grid grid-cols-2 gap-2">
+            {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
+              const c = OUTCOME_CONFIG[key];
+              return (
+                <button key={key} onClick={() => updateOutcome(key)}
+                  className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border text-[12.5px] transition-colors",
+                    outcome === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-500 hover:bg-stone-50"
+                  )}>
+                  {c.icon}{c.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-stone-400 mt-2.5">Résultat immédiat à l'issue du call.</p>
         </div>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
-            const c = OUTCOME_CONFIG[key];
-            return (
-              <button key={key} onClick={() => updateOutcome(key)}
-                className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border text-[12.5px] transition-colors",
-                  outcome === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-600 hover:bg-stone-50"
-                )}>
-                {c.icon}{c.label}
-              </button>
-            );
-          })}
+
+        {/* Statut du lead — mis à jour dans le temps */}
+        <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">Statut du lead</p>
+            {savingLeadStatus && <span className="text-[11px] text-stone-400">Sauvegarde…</span>}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
+              const c = OUTCOME_CONFIG[key];
+              return (
+                <button key={key} onClick={() => updateLeadStatus(key)}
+                  className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border text-[12.5px] transition-colors",
+                    leadStatus === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-500 hover:bg-stone-50"
+                  )}>
+                  {c.icon}{c.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="text-[11px] text-stone-400 mt-2.5">
+            {leadStatusUpdatedAt
+              ? <>Mis à jour le {new Date(leadStatusUpdatedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} à {new Date(leadStatusUpdatedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</>
+              : "Évolution du lead dans le temps."}
+          </p>
         </div>
       </div>
 
