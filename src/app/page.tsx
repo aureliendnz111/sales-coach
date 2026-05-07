@@ -56,7 +56,7 @@ const CONTENT = {
       { label: "Comment ça marche", href: "#how" },
       { label: "FAQ", href: "#faq" },
     ],
-    badge: "Script Builder et Analyse de calls disponibles",
+    badge: "Augmentez vos ventes de 20 à 50 %",
     hero: {
       headline: "Closez plus. Perdez moins.",
       sub: "Rumios analyse vos appels de vente, score votre performance sur 6 dimensions et vous dit précisément quoi corriger avant le prochain appel.",
@@ -176,7 +176,7 @@ const CONTENT = {
       { label: "How it works", href: "#how" },
       { label: "FAQ", href: "#faq" },
     ],
-    badge: "Script Builder and Call Analysis available now",
+    badge: "Increase your sales by 20 to 50%",
     hero: {
       headline: "Close more. Lose less.",
       sub: "Rumios analyzes your sales calls, scores your performance across 6 dimensions, and tells you exactly what to fix before your next call.",
