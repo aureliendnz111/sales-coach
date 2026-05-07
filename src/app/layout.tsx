@@ -14,6 +14,20 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <ClerkProvider
+      localization={{
+        signIn: {
+          start: {
+            title: "Se connecter à Rumios",
+            subtitle: "Bienvenue, entrez vos informations ci-dessous.",
+          },
+        },
+        signUp: {
+          start: {
+            title: "Créer un compte Rumios",
+            subtitle: "Commencez gratuitement, sans carte bancaire.",
+          },
+        },
+      }}
       appearance={{
         variables: {
           colorPrimary: "#18181b",
