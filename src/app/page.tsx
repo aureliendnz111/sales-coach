@@ -69,10 +69,10 @@ const CONTENT = {
       label: "La solution",
       headline: "Tout ce qu'il faut pour mieux vendre en appel.",
       items: [
-        { icon: FileText, title: "Construisez votre script une bonne fois pour toutes", description: "Partez de zéro ou d'un template. Structurez vos étapes, vos questions clés, vos réponses aux objections. Votre process, formalisé.", tag: "Disponible", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: PhoneCall, title: "Un vrai diagnostic après chaque call", description: "Collez le transcript. Recevez un score sur 100, vos points forts, ce qui a bloqué et trois actions concrètes pour le prochain appel.", tag: "Disponible", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: Zap, title: "Un copilote pendant l'appel", description: "Suggestions en temps réel basées sur votre script. Sachez toujours où vous en êtes et quoi dire face à chaque objection.", tag: "Bientôt", tagColor: "bg-stone-100 text-stone-500" },
-        { icon: Swords, title: "Entraînez-vous avant de jouer", description: "Simulez un appel complet face à une IA qui joue le prospect. Rodez votre pitch, testez vos réponses, sans aucun enjeu.", tag: "Bientôt", tagColor: "bg-stone-100 text-stone-500" },
+        { icon: FileText, title: "Builder", description: "Partez de zéro ou d'un template. Structurez vos étapes, vos questions clés, vos réponses aux objections. Votre process, formalisé.", tag: "Disponible", tagColor: "bg-emerald-50 text-emerald-700" },
+        { icon: PhoneCall, title: "Analyse", description: "Collez le transcript. Recevez un score sur 100, vos points forts, ce qui a bloqué et trois actions concrètes pour le prochain appel.", tag: "Disponible", tagColor: "bg-emerald-50 text-emerald-700" },
+        { icon: Zap, title: "Copilot", description: "Suggestions en temps réel basées sur votre script. Sachez toujours où vous en êtes et quoi dire face à chaque objection.", tag: "Bientôt", tagColor: "bg-stone-100 text-stone-500" },
+        { icon: Swords, title: "Playground", description: "Simulez un appel complet face à une IA qui joue le prospect. Rodez votre pitch, testez vos réponses, sans aucun enjeu.", tag: "Bientôt", tagColor: "bg-stone-100 text-stone-500" },
       ],
     },
     metrics: {
@@ -189,10 +189,10 @@ const CONTENT = {
       label: "The solution",
       headline: "Everything you need to sell better on calls.",
       items: [
-        { icon: FileText, title: "Build your script once and for all", description: "Start from scratch or a template. Structure your stages, key questions, and objection responses. Your process, formalized.", tag: "Available", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: PhoneCall, title: "A real diagnosis after every call", description: "Paste the transcript. Get a score out of 100, your strengths, what blocked the deal, and three concrete actions for the next call.", tag: "Available", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: Zap, title: "A copilot during the call", description: "Real-time suggestions based on your script. Always know where you are and what to say when an objection comes up.", tag: "Coming soon", tagColor: "bg-stone-100 text-stone-500" },
-        { icon: Swords, title: "Train before you play", description: "Simulate a full sales call against an AI playing the prospect. Test your responses, sharpen your pitch, with nothing at stake.", tag: "Coming soon", tagColor: "bg-stone-100 text-stone-500" },
+        { icon: FileText, title: "Builder", description: "Start from scratch or a template. Structure your stages, key questions, and objection responses. Your process, formalized.", tag: "Available", tagColor: "bg-emerald-50 text-emerald-700" },
+        { icon: PhoneCall, title: "Analyse", description: "Paste the transcript. Get a score out of 100, your strengths, what blocked the deal, and three concrete actions for the next call.", tag: "Available", tagColor: "bg-emerald-50 text-emerald-700" },
+        { icon: Zap, title: "Copilot", description: "Real-time suggestions based on your script. Always know where you are and what to say when an objection comes up.", tag: "Coming soon", tagColor: "bg-stone-100 text-stone-500" },
+        { icon: Swords, title: "Playground", description: "Simulate a full sales call against an AI playing the prospect. Test your responses, sharpen your pitch, with nothing at stake.", tag: "Coming soon", tagColor: "bg-stone-100 text-stone-500" },
       ],
     },
     metrics: {
