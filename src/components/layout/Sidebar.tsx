@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { LayoutDashboard, FileText, Headphones, PhoneCall, BarChart2, Swords, LogOut, Settings, ChevronUp, ChevronLeft } from "lucide-react";
+import { RumiosLogo } from "@/components/RumiosLogo";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 
@@ -120,9 +121,7 @@ export function Sidebar() {
     )}>
       {/* Logo */}
       <div className={cn("px-3 py-2 mb-3 flex items-center", collapsed ? "justify-center" : "gap-2.5")}>
-        <div className="w-6 h-6 bg-stone-900 rounded-md flex items-center justify-center shrink-0">
-          <span className="text-white text-[11px] font-bold">R</span>
-        </div>
+        <RumiosLogo size={22} />
         {!collapsed && <span className="font-semibold text-[13px] text-stone-800 leading-none tracking-tight">RUMIOS</span>}
       </div>
 

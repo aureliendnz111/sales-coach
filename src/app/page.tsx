@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RumiosLogo } from "@/components/RumiosLogo";
 
 type Lang = "fr" | "en";
 
@@ -239,9 +240,7 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
       <div className="flex items-center gap-1 bg-stone-900 text-white rounded-full px-3 py-2 shadow-2xl shadow-stone-900/30 border border-white/10">
         {/* Logo */}
         <div className="flex items-center gap-1.5 px-2 mr-1">
-          <div className="w-4 h-4 bg-white rounded-[4px] flex items-center justify-center shrink-0">
-            <span className="text-stone-900 text-[8px] font-bold">R</span>
-          </div>
+          <RumiosLogo size={18} inverted />
           <span className="text-[12px] font-semibold tracking-tight">RUMIOS</span>
         </div>
         <div className="w-px h-4 bg-white/10" />
@@ -521,9 +520,7 @@ export default function HomePage() {
       <footer className="border-t border-stone-100 py-7 px-6">
         <div className="max-w-5xl mx-auto flex items-center justify-between text-[12px] text-stone-400">
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 bg-stone-900 rounded-md flex items-center justify-center shrink-0">
-              <span className="text-white text-[9px] font-bold">R</span>
-            </div>
+            <RumiosLogo size={18} />
             <span className="font-medium text-stone-500">RUMIOS</span>
             <span className="text-stone-300">·</span>
             <span>rumios.ai</span>
