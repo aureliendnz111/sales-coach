@@ -613,8 +613,8 @@ export default function HomePage() {
 
       {/* CTA */}
       <section className="py-16 px-5 md:py-28 md:px-6 bg-stone-50 border-t border-stone-100">
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-[30px] md:text-[40px] font-bold tracking-tight leading-tight mb-4">{c.cta.headline}</h2>
+        <div className="max-w-xl md:max-w-3xl mx-auto text-center">
+          <h2 className="text-[30px] md:text-[40px] font-bold tracking-tight leading-tight mb-4 md:whitespace-nowrap">{c.cta.headline}</h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed mb-7">{c.cta.sub}</p>
           <Link href="/sign-up" className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-7 py-3 rounded-lg hover:bg-stone-700 hover:shadow-lg hover:shadow-stone-900/20 hover:-translate-y-0.5 transition-all cursor-pointer">
             {c.cta.button} <ArrowRight className="w-4 h-4" />
