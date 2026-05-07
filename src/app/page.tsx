@@ -390,7 +390,7 @@ export default function HomePage() {
       <FloatingNav lang={lang} setLang={setLang} />
 
       {/* Hero */}
-      <section className="pt-20 pb-14 px-5 md:pt-28 md:pb-20 md:px-6">
+      <section className="pt-28 pb-14 px-5 md:pt-36 md:pb-20 md:px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-[38px] md:text-[56px] font-bold tracking-tight leading-[1.1] mb-3 md:mb-4">
             {c.badge.split(" ventes")[0]} ventes<br />
