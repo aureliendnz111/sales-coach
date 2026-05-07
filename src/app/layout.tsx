@@ -48,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           formButtonPrimary: { backgroundColor: "#18181b", fontSize: "13.5px", fontWeight: "500" },
           formFieldInput: { fontSize: "13.5px", borderColor: "#e7e5e4" },
           formFieldLabel: { fontSize: "12.5px", fontWeight: "500", color: "#44403c" },
+          socialButtonsRoot: { display: "none" },
           dividerRow: { display: "none" },
           identityPreviewEditButton: { color: "#18181b" },
         },
