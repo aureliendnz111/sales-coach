@@ -131,6 +131,40 @@ const CONTENT = {
         { emoji: "🚀", title: "Entrepreneurs et freelances", desc: "La vente n'est pas votre métier, mais elle conditionne votre croissance. Rumios vous donne les outils pour la maîtriser." },
       ],
     },
+    pricing: {
+      label: "Tarifs",
+      headline: "Simple. Transparent.",
+      free: {
+        name: "Gratuit",
+        desc: "Pour démarrer et tester Rumios.",
+        price: "0 €",
+        period: "pour toujours",
+        cta: "Commencer gratuitement",
+        features: [
+          "2 scripts actifs",
+          "5 analyses de calls / mois",
+          "Accès aux templates",
+          "Score sur 6 dimensions",
+          "Synthèse IA après chaque call",
+        ],
+      },
+      pro: {
+        name: "Pro",
+        desc: "Pour les coachs et closers qui scalent.",
+        price: "Bientôt",
+        period: "",
+        cta: "Être notifié",
+        badge: "Bientôt",
+        features: [
+          "Scripts illimités",
+          "Analyses illimitées",
+          "Analytics & suivi de progression",
+          "Playground — simulation d'appels",
+          "Live Copilot en temps réel",
+          "Support prioritaire",
+        ],
+      },
+    },
     faq: {
       label: "Questions fréquentes",
       headline: "Tout ce que vous voulez savoir.",
@@ -250,6 +284,40 @@ const CONTENT = {
         { emoji: "🧑‍💼", title: "Coaches", desc: "You sell your coaching over the phone. Structure your closing, measure what blocks, and improve with every conversation." },
         { emoji: "🚀", title: "Entrepreneurs and freelancers", desc: "Sales isn't your job, but it drives your growth. Rumios gives you the tools to get good at it." },
       ],
+    },
+    pricing: {
+      label: "Pricing",
+      headline: "Simple. Transparent.",
+      free: {
+        name: "Free",
+        desc: "To get started and try Rumios.",
+        price: "$0",
+        period: "forever",
+        cta: "Get started for free",
+        features: [
+          "2 active scripts",
+          "5 call analyses / month",
+          "Access to templates",
+          "Score across 6 dimensions",
+          "AI summary after every call",
+        ],
+      },
+      pro: {
+        name: "Pro",
+        desc: "For coaches and closers who scale.",
+        price: "Coming soon",
+        period: "",
+        cta: "Get notified",
+        badge: "Coming soon",
+        features: [
+          "Unlimited scripts",
+          "Unlimited analyses",
+          "Analytics & progress tracking",
+          "Playground — call simulation",
+          "Live Copilot in real time",
+          "Priority support",
+        ],
+      },
     },
     faq: {
       label: "FAQ",
@@ -633,6 +701,62 @@ export default function HomePage() {
                 <p className="text-[13px] text-stone-500 leading-relaxed">{p.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section id="pricing" className="py-14 px-5 md:py-24 md:px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8 md:mb-12">
+            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.pricing.label}</p>
+            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.pricing.headline}</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {/* Free plan */}
+            <div className="bg-white border border-stone-200 rounded-2xl p-7 flex flex-col hover:shadow-md transition-shadow duration-200">
+              <div className="mb-6">
+                <h3 className="text-[17px] font-bold text-stone-900 mb-1">{c.pricing.free.name}</h3>
+                <p className="text-[13px] text-stone-500">{c.pricing.free.desc}</p>
+              </div>
+              <div className="mb-7">
+                <span className="text-[42px] font-bold text-stone-900 tracking-tight">{c.pricing.free.price}</span>
+                {c.pricing.free.period && <span className="text-[13px] text-stone-400 ml-2">{c.pricing.free.period}</span>}
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {c.pricing.free.features.map((feat, i) => (
+                  <li key={i} className="flex items-center gap-2.5 text-[13.5px] text-stone-700">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/sign-up" className="flex items-center justify-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-3 rounded-lg hover:bg-stone-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-stone-900/20 transition-all cursor-pointer">
+                {c.pricing.free.cta} <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Pro plan */}
+            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-7 flex flex-col relative overflow-hidden">
+              <div className="absolute top-5 right-5">
+                <span className="text-[11px] font-medium bg-stone-900 text-white px-2.5 py-1 rounded-full">{c.pricing.pro.badge}</span>
+              </div>
+              <div className="mb-6">
+                <h3 className="text-[17px] font-bold text-stone-500 mb-1">{c.pricing.pro.name}</h3>
+                <p className="text-[13px] text-stone-400">{c.pricing.pro.desc}</p>
+              </div>
+              <div className="mb-7">
+                <span className="text-[42px] font-bold text-stone-300 tracking-tight">{c.pricing.pro.price}</span>
+              </div>
+              <ul className="space-y-3 mb-8 flex-1">
+                {c.pricing.pro.features.map((feat, i) => (
+                  <li key={i} className="flex items-center gap-2.5 text-[13.5px] text-stone-400">
+                    <CheckCircle2 className="w-4 h-4 text-stone-300 shrink-0" />
+                    {feat}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
