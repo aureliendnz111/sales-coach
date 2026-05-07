@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Upload, FileText, X, ChevronDown, Check } from "lucide-react";
+import { Upload, FileText, X, ChevronDown, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OUTCOME_CONFIG } from "@/components/call-analysis/OutcomeBadge";
 
@@ -19,6 +19,7 @@ export default function NewAnalysisPage() {
   const [prospectName, setProspectName] = useState("");
   const [callDate, setCallDate] = useState(new Date().toISOString().split("T")[0]);
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const [usageAnalyses, setUsageAnalyses] = useState<{ used: number; max: number } | null>(null);
   const [scriptDropdown, setScriptDropdown] = useState(false);
@@ -62,16 +63,21 @@ export default function NewAnalysisPage() {
   async function submit() {
     if (!transcript.trim()) { setError("Le transcript est requis."); return; }
     setError("");
-    const res = await fetch("/api/call-analysis", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
-    });
-    if (res.status === 403) {
-      setError("Vous avez atteint la limite de 5 analyses par mois sur le plan gratuit.");
-      return;
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/call-analysis", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
+      });
+      if (res.status === 403) {
+        setError("Vous avez atteint la limite de 5 analyses par mois sur le plan gratuit.");
+        return;
+      }
+      setTimeout(() => router.push("/call-analysis"), 400);
+    } finally {
+      setSubmitting(false);
     }
-    setTimeout(() => router.push("/call-analysis"), 400);
   }
 
   return (
@@ -284,10 +290,10 @@ export default function NewAnalysisPage() {
         </button>
         <button
           onClick={submit}
-          disabled={!transcript.trim()}
+          disabled={!transcript.trim() || submitting}
           className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
         >
-          Lancer l'analyse
+          {submitting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Envoi en cours…</> : "Lancer l'analyse"}
         </button>
       </div>
     </div>
