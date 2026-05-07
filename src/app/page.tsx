@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown } from "lucide-react";
+import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 
@@ -689,6 +689,9 @@ export default function HomePage() {
             <span>rumios.ai</span>
           </div>
           <p>© 2026 · {c.footer}</p>
+          <p className="flex items-center gap-1 text-stone-400">
+            Made by Aurélien with <Heart className="w-3 h-3 fill-stone-800 text-stone-800" /> in Portugal
+          </p>
         </div>
       </footer>
     </div>
