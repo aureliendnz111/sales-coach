@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { checkScriptLimit } from "@/lib/limits";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,6 +14,9 @@ export async function POST(_req: Request, { params }: Params) {
   const { id } = await params;
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+
+  const limit = await checkScriptLimit(userId);
+  if (!limit.allowed) return NextResponse.json({ error: "limit_scripts", used: limit.used, max: limit.max }, { status: 403 });
 
   const { data: original, error: fetchError } = await supabase
     .from("scripts")

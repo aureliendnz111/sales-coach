@@ -20,6 +20,7 @@ export default function NewAnalysisPage() {
   const [callDate, setCallDate] = useState(new Date().toISOString().split("T")[0]);
   const [error, setError] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [usageAnalyses, setUsageAnalyses] = useState<{ used: number; max: number } | null>(null);
   const [scriptDropdown, setScriptDropdown] = useState(false);
   const scriptDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +30,14 @@ export default function NewAnalysisPage() {
       setScripts(list);
       const def = list.find(s => s.is_default);
       if (def) setScriptId(def.id);
+    });
+    fetch("/api/call-analysis").then(r => r.json()).then(d => {
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const thisMonth = (d.analyses ?? []).filter((a: { created_at: string; status: string }) =>
+        a.status !== "archived" && new Date(a.created_at) >= startOfMonth
+      ).length;
+      setUsageAnalyses({ used: thisMonth, max: 5 });
     });
   }, []);
 
@@ -53,11 +62,15 @@ export default function NewAnalysisPage() {
   async function submit() {
     if (!transcript.trim()) { setError("Le transcript est requis."); return; }
     setError("");
-    fetch("/api/call-analysis", {
+    const res = await fetch("/api/call-analysis", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
     });
+    if (res.status === 403) {
+      setError("Vous avez atteint la limite de 5 analyses par mois sur le plan gratuit.");
+      return;
+    }
     setTimeout(() => router.push("/call-analysis"), 400);
   }
 
@@ -67,6 +80,24 @@ export default function NewAnalysisPage() {
         <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvelle analyse</h1>
         <p className="text-sm text-stone-500 mt-0.5">Importez un transcript pour obtenir un score et des recommandations IA.</p>
       </div>
+
+      {usageAnalyses && (
+        <div className={cn(
+          "flex items-center justify-between px-4 py-3 rounded-xl border text-[13px]",
+          usageAnalyses.used >= usageAnalyses.max
+            ? "bg-rose-50 border-rose-200 text-rose-700"
+            : usageAnalyses.used >= usageAnalyses.max - 1
+            ? "bg-amber-50 border-amber-200 text-amber-700"
+            : "bg-stone-50 border-stone-200 text-stone-600"
+        )}>
+          <span>
+            {usageAnalyses.used >= usageAnalyses.max
+              ? "Vous avez atteint la limite de 5 analyses ce mois-ci."
+              : `${usageAnalyses.used} / ${usageAnalyses.max} analyses utilisées ce mois-ci.`}
+          </span>
+          <span className="font-semibold tabular-nums">{usageAnalyses.used}/{usageAnalyses.max}</span>
+        </div>
+      )}
 
       {/* Recorder tools */}
       <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">

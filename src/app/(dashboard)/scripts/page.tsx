@@ -28,6 +28,7 @@ export default function ScriptsPage() {
   const active = scripts.filter(s => !s.archived_at);
   const archived = scripts.filter(s => s.archived_at);
   const displayed = showArchived ? archived : active;
+  const atScriptLimit = active.length >= 2;
 
   return (
     <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
@@ -53,14 +54,37 @@ export default function ScriptsPage() {
           )}
           {!showArchived && (
             <button
-              onClick={() => router.push("/scripts/new")}
-              className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors"
+              onClick={() => !atScriptLimit && router.push("/scripts/new")}
+              disabled={atScriptLimit}
+              title={atScriptLimit ? "Limite de 2 scripts atteinte sur le plan gratuit" : undefined}
+              className={cn(
+                "flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg transition-colors",
+                atScriptLimit
+                  ? "bg-stone-200 text-stone-400 cursor-not-allowed"
+                  : "bg-stone-900 text-white hover:bg-stone-700"
+              )}
             >
               <Plus className="w-4 h-4" /> Nouveau script
             </button>
           )}
         </div>
       </div>
+
+      {!loading && !showArchived && (
+        <div className={cn(
+          "flex items-center justify-between px-4 py-3 rounded-xl border text-[13px]",
+          atScriptLimit
+            ? "bg-rose-50 border-rose-200 text-rose-700"
+            : "bg-stone-50 border-stone-200 text-stone-600"
+        )}>
+          <span>
+            {atScriptLimit
+              ? "Limite atteinte — 2 scripts maximum sur le plan gratuit."
+              : `${active.length} / 2 scripts utilisés sur le plan gratuit.`}
+          </span>
+          <span className="font-semibold tabular-nums">{active.length}/2</span>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-stone-400 gap-2">

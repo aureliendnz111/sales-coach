@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
+import { checkAnalysisLimit } from "@/lib/limits";
 
 export const maxDuration = 120;
 
@@ -37,6 +38,9 @@ export async function POST(req: Request) {
   const { transcript_text, transcript_filename, script_id, prospect_name, call_date, outcome } = await req.json();
 
   if (!transcript_text?.trim()) return NextResponse.json({ error: "Transcript manquant" }, { status: 400 });
+
+  const limit = await checkAnalysisLimit(userId);
+  if (!limit.allowed) return NextResponse.json({ error: "limit_analyses", used: limit.used, max: limit.max }, { status: 403 });
 
   // Insert record
   const { data: record, error: insertError } = await supabase
