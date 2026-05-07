@@ -54,6 +54,7 @@ const CONTENT = {
     floatingNav: [
       { label: "Fonctionnalités", href: "#features" },
       { label: "Comment ça marche", href: "#how" },
+      { label: "Tarifs", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
     badge: "Augmentez vos ventes de 20 à 50 %",
@@ -208,6 +209,7 @@ const CONTENT = {
     floatingNav: [
       { label: "Features", href: "#features" },
       { label: "How it works", href: "#how" },
+      { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
     badge: "Increase your sales by 20 to 50%",
