@@ -28,7 +28,7 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
       <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-8 flex flex-col items-center gap-3 text-center">
         <PhoneCall className="w-8 h-8 text-stone-200" />
         <p className="text-[13px] text-stone-500 font-medium">Aucune analyse pour l'instant</p>
-        <Link href="/call-analysis/new" className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors">
+        <Link href="/call-analysis/new" className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors">
           <Plus className="w-3.5 h-3.5" /> Analyser un call
         </Link>
       </div>

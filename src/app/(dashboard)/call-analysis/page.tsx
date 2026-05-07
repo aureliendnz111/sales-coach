@@ -97,7 +97,7 @@ export default function CallAnalysisPage() {
           {!showArchived && (
             <button
               onClick={() => router.push("/call-analysis/new")}
-              className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors"
+              className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors"
             >
               <Plus className="w-4 h-4" /> Nouvelle analyse
             </button>
@@ -118,7 +118,7 @@ export default function CallAnalysisPage() {
             <p className="text-[14px] font-medium text-stone-600">Aucune analyse pour l'instant</p>
             <p className="text-[13px] text-stone-500 mt-1">Importez un transcript pour commencer.</p>
           </div>
-          <button onClick={() => router.push("/call-analysis/new")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors">
+          <button onClick={() => router.push("/call-analysis/new")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors">
             <Plus className="w-4 h-4" /> Nouvelle analyse
           </button>
         </div>

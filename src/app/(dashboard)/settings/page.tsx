@@ -56,7 +56,7 @@ function SaveButton({ loading, saved, onClick }: { loading: boolean; saved: bool
     <button
       onClick={onClick}
       disabled={loading || saved}
-      className="flex items-center gap-1.5 text-[12.5px] font-medium px-3.5 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
+      className="flex items-center gap-1.5 text-[12.5px] font-medium px-3.5 py-1.5 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
     >
       {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : saved ? <Check className="w-3.5 h-3.5" /> : null}
       {saved ? "Enregistré" : "Enregistrer"}

@@ -254,7 +254,7 @@ export default function NewAnalysisPage() {
         <button
           onClick={submit}
           disabled={!transcript.trim()}
-          className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
         >
           Lancer l'analyse
         </button>
