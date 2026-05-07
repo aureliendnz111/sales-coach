@@ -336,8 +336,8 @@ export default function HomePage() {
           </div>
           <h1 className="text-[36px] md:text-[52px] font-bold tracking-tight leading-[1.1] mb-4 md:mb-5">
             <span className="text-stone-900">{c.hero.headline.split(". ")[0]}.</span>
-            {" "}
-            <span className="text-stone-400">{c.hero.headline.split(". ")[1]}</span>
+            <br className="md:hidden" />
+            {" "}<span className="text-stone-400">{c.hero.headline.split(". ")[1]}</span>
           </h1>
           <p className="text-[15px] md:text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-7 md:mb-9">
             {c.hero.sub}
