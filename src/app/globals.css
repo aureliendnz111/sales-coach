@@ -39,16 +39,27 @@ body {
   display: none !important;
 }
 
-/* Hide Clerk branding and development mode badge */
+/* Hide Clerk branding — "Secured by Clerk", dev mode badge, terms/privacy links */
 .cl-footerPages,
 .cl-footer__pages,
 .cl-devBrowserBanner,
-.cl-internal-b3fm6y,
+.cl-devBrowserBanner ~ *,
+[class*="footerPages"],
+[class*="devBrowser"],
 [data-localization-key="footerPageLink__termsOfService"],
-[data-localization-key="footerPageLink__privacyPolicy"] {
+[data-localization-key="footerPageLink__privacyPolicy"],
+[data-localization-key="footerPageLink__help"] {
   display: none !important;
 }
 
-.cl-footer {
-  justify-content: center !important;
+/* Hide any link pointing to clerk.com (Secured by Clerk) */
+a[href*="clerk.com"],
+a[href*="clerk.dev"] {
+  display: none !important;
+}
+
+/* If the parent only contains the branding link, hide it too */
+.cl-footer > *:last-child:has(a[href*="clerk.com"]),
+.cl-footer > *:last-child:has(a[href*="clerk.dev"]) {
+  display: none !important;
 }
