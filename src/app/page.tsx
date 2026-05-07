@@ -480,6 +480,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CTA strip — after Problem */}
+      <div className="px-5 md:px-6 pb-6 bg-stone-50">
+        <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-stone-200 rounded-2xl px-6 py-5 shadow-sm">
+          <p className="text-[15px] font-semibold text-stone-900 text-center sm:text-left">
+            {lang === "fr" ? "Rumios règle ces 3 problèmes." : "Rumios fixes all three."}
+          </p>
+          <Link href="/sign-up" className="shrink-0 flex items-center gap-2 bg-stone-900 text-white text-[13.5px] font-medium px-5 py-2.5 rounded-lg hover:bg-stone-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-stone-900/20 transition-all cursor-pointer">
+            {lang === "fr" ? "Commencer gratuitement" : "Get started for free"} <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </div>
+
       {/* Features */}
       <section id="features" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-5xl mx-auto">
@@ -502,6 +514,15 @@ export default function HomePage() {
                 </div>
               </div>
             ))}
+          </div>
+          {/* CTA — after Features */}
+          <div className="text-center mt-10 md:mt-12">
+            <Link href="/sign-up" className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-stone-900/20 transition-all cursor-pointer">
+              {lang === "fr" ? "Essayer gratuitement" : "Try for free"} <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <p className="text-[12px] text-stone-400 mt-2.5">
+              {lang === "fr" ? "Gratuit · Sans carte bancaire" : "Free · No credit card required"}
+            </p>
           </div>
         </div>
       </section>
@@ -589,6 +610,13 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+          {/* CTA — after How it works */}
+          <div className="mt-8 text-center">
+            <Link href="/sign-up" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-stone-600 hover:text-stone-900 transition-colors cursor-pointer group">
+              {lang === "fr" ? "Créer mon compte gratuitement" : "Create my free account"}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -610,6 +638,21 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* CTA strip — before FAQ */}
+      <div className="py-12 px-5 md:px-6 bg-stone-900">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="text-white text-[20px] md:text-[24px] font-bold tracking-tight mb-2">
+            {lang === "fr" ? "Prêt à analyser votre prochain call ?" : "Ready to analyze your next call?"}
+          </p>
+          <p className="text-stone-400 text-[14px] mb-6">
+            {lang === "fr" ? "Gratuit pour commencer. Sans carte bancaire." : "Free to start. No credit card."}
+          </p>
+          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-white text-stone-900 text-[14px] font-medium px-6 py-3 rounded-lg hover:bg-stone-100 hover:-translate-y-0.5 hover:shadow-xl transition-all cursor-pointer">
+            {lang === "fr" ? "Commencer gratuitement" : "Get started for free"} <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
 
       {/* FAQ */}
       <section id="faq" className="py-14 px-5 md:py-24 md:px-6">
