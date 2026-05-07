@@ -392,15 +392,12 @@ export default function HomePage() {
       {/* Hero */}
       <section className="pt-20 pb-14 px-5 md:pt-28 md:pb-20 md:px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-600 text-[12px] font-medium px-3.5 py-1.5 rounded-full mb-6 md:mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            {c.badge}
-          </div>
-          <h1 className="text-[36px] md:text-[52px] font-bold tracking-tight leading-[1.1] mb-4 md:mb-5">
+          <h1 className="text-[36px] md:text-[52px] font-bold tracking-tight leading-[1.1] mb-3 md:mb-4">
             <span className="text-stone-900">{c.hero.headline.split(". ")[0]}.</span>
             <br className="md:hidden" />
             {" "}<span className="text-stone-400">{c.hero.headline.split(". ")[1]}</span>
           </h1>
+          <p className="text-[18px] md:text-[22px] font-semibold text-emerald-600 mb-4 md:mb-5">{c.badge}</p>
           <p className="text-[15px] md:text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-7 md:mb-9">
             {c.hero.sub}
           </p>
