@@ -1,12 +1,29 @@
 "use client";
-import { SignInButton, SignUpButton, useAuth } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 
 type Lang = "fr" | "en";
+
+const FEATURE_STYLES = [
+  { iconBg: "bg-blue-50", iconColor: "text-blue-600" },
+  { iconBg: "bg-emerald-50", iconColor: "text-emerald-600" },
+  { iconBg: "bg-amber-50", iconColor: "text-amber-500" },
+  { iconBg: "bg-violet-50", iconColor: "text-violet-600" },
+] as const;
+
+const METRIC_COLORS = [
+  "text-orange-400",
+  "text-violet-400",
+  "text-sky-400",
+  "text-emerald-400",
+  "text-blue-400",
+  "text-emerald-400",
+] as const;
 
 const PREVIEW_TABS: Record<Lang, { label: string; src: string; caption: string }[]> = {
   fr: [
@@ -280,24 +297,20 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
         <div className="flex items-center gap-2 md:hidden">
           <button
             onClick={() => setMobileOpen(o => !o)}
-            className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+            className="p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Menu"
           >
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
-          <SignUpButton mode="modal">
-            <button className="text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors">
-              {lang === "fr" ? "Commencer" : "Get started"}
-            </button>
-          </SignUpButton>
+          <Link href="/sign-up" className="text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
+            {lang === "fr" ? "Commencer" : "Get started"}
+          </Link>
         </div>
 
         {/* Desktop CTA */}
-        <SignUpButton mode="modal">
-          <button className="hidden md:block ml-1 text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors">
-            {lang === "fr" ? "Commencer" : "Get started"}
-          </button>
-        </SignUpButton>
+        <Link href="/sign-up" className="hidden md:block ml-1 text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
+          {lang === "fr" ? "Commencer" : "Get started"}
+        </Link>
       </div>
 
       {/* Mobile dropdown */}
@@ -334,7 +347,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   return (
     <button
       onClick={() => setOpen(o => !o)}
-      className="w-full text-left border border-stone-200 rounded-xl overflow-hidden hover:border-stone-300 transition-colors"
+      className="w-full text-left border border-stone-200 rounded-xl overflow-hidden hover:border-stone-300 hover:shadow-sm transition-all cursor-pointer"
     >
       <div className="flex items-center justify-between px-5 py-4 gap-4">
         <span className="text-[14px] font-medium text-stone-800">{q}</span>
@@ -384,16 +397,12 @@ export default function HomePage() {
             {c.hero.sub}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <SignUpButton mode="modal">
-              <button className="w-full sm:w-auto flex items-center justify-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 transition-colors">
-                {c.hero.cta} <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </SignUpButton>
-            <SignInButton mode="modal">
-              <button className="w-full sm:w-auto text-[14px] text-stone-500 hover:text-stone-900 px-5 py-2.5 rounded-lg border border-stone-200 hover:border-stone-300 transition-colors">
-                {c.hero.ctaSecondary}
-              </button>
-            </SignInButton>
+            <Link href="/sign-up" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 hover:shadow-lg hover:shadow-stone-900/20 hover:-translate-y-0.5 transition-all cursor-pointer">
+              {c.hero.cta} <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+            <Link href="/sign-in" className="w-full sm:w-auto text-[14px] text-stone-500 hover:text-stone-900 px-5 py-2.5 rounded-lg border border-stone-200 hover:border-stone-400 hover:shadow-sm transition-all cursor-pointer">
+              {c.hero.ctaSecondary}
+            </Link>
           </div>
         </div>
 
@@ -445,7 +454,7 @@ export default function HomePage() {
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-8 md:mb-10">{c.problem.sub}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
             {c.problem.pains.map((item, i) => (
-              <div key={i} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm">
+              <div key={i} className="bg-white border border-stone-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <p className="text-[13.5px] font-semibold text-stone-800 mb-1.5">{item.title}</p>
                 <p className="text-[12.5px] text-stone-500 leading-relaxed">{item.desc}</p>
               </div>
@@ -462,16 +471,16 @@ export default function HomePage() {
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.features.headline}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-            {c.features.items.map((f) => (
-              <div key={f.title} className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-stone-300 hover:shadow-sm transition-all">
+            {c.features.items.map((f, i) => (
+              <div key={f.title} className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-stone-300 hover:shadow-lg hover:shadow-stone-100 hover:-translate-y-1 transition-all duration-200">
                 <div className="flex items-start justify-between">
-                  <div className="w-9 h-9 bg-stone-100 rounded-lg flex items-center justify-center">
-                    <f.icon className="w-[18px] h-[18px] text-stone-600" />
+                  <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", FEATURE_STYLES[i].iconBg)}>
+                    <f.icon className={cn("w-5 h-5", FEATURE_STYLES[i].iconColor)} />
                   </div>
                   <span className={cn("text-[11px] font-medium px-2.5 py-1 rounded-full", f.tagColor)}>{f.tag}</span>
                 </div>
                 <div>
-                  <h3 className="text-[14.5px] font-semibold text-stone-900 mb-2 leading-snug">{f.title}</h3>
+                  <h3 className="text-[15px] font-semibold text-stone-900 mb-2 leading-snug">{f.title}</h3>
                   <p className="text-[13px] text-stone-500 leading-relaxed">{f.description}</p>
                 </div>
               </div>
@@ -530,10 +539,10 @@ export default function HomePage() {
             <p className="text-[14px] md:text-[15px] text-stone-400 max-w-lg mx-auto">{c.metrics.sub}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {c.metrics.items.map((m) => (
-              <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3">
+            {c.metrics.items.map((m, i) => (
+              <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3 hover:bg-white/10 transition-colors duration-200">
                 <div className="w-8 h-8 bg-white/8 rounded-lg flex items-center justify-center shrink-0">
-                  <m.icon className="w-4 h-4 text-stone-400" />
+                  <m.icon className={cn("w-4 h-4", METRIC_COLORS[i])} />
                 </div>
                 <div>
                   <p className="text-[13px] font-semibold text-white">{m.label}</p>
@@ -575,7 +584,7 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {c.profiles.items.map((p) => (
-              <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-6">
+              <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="text-2xl mb-3">{p.emoji}</div>
                 <h3 className="text-[14.5px] font-semibold text-stone-900 mb-2">{p.title}</h3>
                 <p className="text-[13px] text-stone-500 leading-relaxed">{p.desc}</p>
@@ -605,11 +614,9 @@ export default function HomePage() {
         <div className="max-w-xl mx-auto text-center">
           <h2 className="text-[30px] md:text-[40px] font-bold tracking-tight leading-tight mb-4">{c.cta.headline}</h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed mb-7">{c.cta.sub}</p>
-          <SignUpButton mode="modal">
-            <button className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-7 py-3 rounded-lg hover:bg-stone-700 transition-colors">
-              {c.cta.button} <ArrowRight className="w-4 h-4" />
-            </button>
-          </SignUpButton>
+          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-7 py-3 rounded-lg hover:bg-stone-700 hover:shadow-lg hover:shadow-stone-900/20 hover:-translate-y-0.5 transition-all cursor-pointer">
+            {c.cta.button} <ArrowRight className="w-4 h-4" />
+          </Link>
           <p className="text-[12px] text-stone-400 mt-4">{c.cta.note}</p>
         </div>
       </section>
