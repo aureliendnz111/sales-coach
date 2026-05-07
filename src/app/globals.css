@@ -38,3 +38,17 @@ body {
 #clerk-components > div:not([aria-modal="true"]) {
   display: none !important;
 }
+
+/* Hide Clerk branding and development mode badge */
+.cl-footerPages,
+.cl-footer__pages,
+.cl-devBrowserBanner,
+.cl-internal-b3fm6y,
+[data-localization-key="footerPageLink__termsOfService"],
+[data-localization-key="footerPageLink__privacyPolicy"] {
+  display: none !important;
+}
+
+.cl-footer {
+  justify-content: center !important;
+}
