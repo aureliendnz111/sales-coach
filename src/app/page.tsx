@@ -12,7 +12,7 @@ const CONTENT = {
     nav: { signin: "Se connecter", signup: "Essayer gratuitement" },
     badge: "Script Builder et Analyse de calls disponibles",
     hero: {
-      headline: "Le feedback que votre prospect ne vous donnera jamais.",
+      headline: "Closez plus. Perdez moins.",
       sub: "Rumios analyse vos appels de vente, score votre performance sur 6 dimensions et vous dit précisément quoi corriger avant le prochain appel.",
       cta: "Commencer gratuitement",
       ctaSecondary: "Se connecter",
@@ -145,7 +145,7 @@ const CONTENT = {
     nav: { signin: "Sign in", signup: "Try for free" },
     badge: "Script Builder and Call Analysis available now",
     hero: {
-      headline: "The feedback your prospect will never give you.",
+      headline: "Close more. Lose less.",
       sub: "Rumios analyzes your sales calls, scores your performance across 6 dimensions, and tells you exactly what to fix before your next call.",
       cta: "Get started for free",
       ctaSecondary: "Sign in",
@@ -332,8 +332,10 @@ export default function HomePage() {
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
             {c.badge}
           </div>
-          <h1 className="text-[52px] font-bold tracking-tight leading-[1.1] text-stone-900 mb-5">
-            {c.hero.headline}
+          <h1 className="text-[52px] font-bold tracking-tight leading-[1.1] mb-5">
+            <span className="text-stone-900">{c.hero.headline.split(". ")[0]}.</span>
+            {" "}
+            <span className="text-stone-400">{c.hero.headline.split(". ")[1]}</span>
           </h1>
           <p className="text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-9">
             {c.hero.sub}
