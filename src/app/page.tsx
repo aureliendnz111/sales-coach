@@ -529,7 +529,11 @@ export default function HomePage() {
       <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-4">{c.problem.label}</p>
-          <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight leading-tight mb-4">{c.problem.headline}</h2>
+          <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight leading-tight mb-4">
+            {lang === "en" ? (
+              <>You leave every call with a feeling.<br />Rarely with an analysis.</>
+            ) : c.problem.headline}
+          </h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-8 md:mb-10">{c.problem.sub}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
             {c.problem.pains.map((item, i) => {
