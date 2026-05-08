@@ -6,66 +6,70 @@ import { cn } from "@/lib/utils";
 import { GuidedWizard } from "@/components/scripts/wizard/GuidedWizard";
 import { ScratchBuilder } from "@/components/scripts/wizard/ScratchBuilder";
 import { TemplateSelector } from "@/components/scripts/wizard/TemplateSelector";
+import { useLang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 type Mode = null | "guided" | "scratch" | "template";
 
-const MODES = [
-  {
-    id: "guided" as const,
-    icon: Sparkles,
-    iconBg: "bg-violet-100",
-    iconColor: "text-violet-600",
-    title: "Guidé par l'IA",
-    description: "Réponds à 7 questions sur ton offre et ta cible. Claude génère les étapes, questions et réponses aux objections automatiquement.",
-    tag: "Bientôt disponible",
-    tagStyle: "bg-stone-100 text-stone-400",
-    soon: true,
-  },
-  {
-    id: "template" as const,
-    icon: LayoutTemplate,
-    iconBg: "bg-emerald-100",
-    iconColor: "text-emerald-600",
-    title: "Partir d'un template",
-    description: "Utilise un script éprouvé comme base et adapte-le à ton offre, ta cible et ton style.",
-    tag: "1 template disponible",
-    tagStyle: "bg-emerald-50 text-emerald-700",
-    soon: false,
-  },
-  {
-    id: "scratch" as const,
-    icon: PenLine,
-    iconBg: "bg-stone-100",
-    iconColor: "text-stone-500",
-    title: "From scratch",
-    description: "Construis ton script manuellement, étape par étape. Tu contrôles tout : les questions, les tips, les phrases clés.",
-    tag: "Pour les perfectionnistes",
-    tagStyle: "bg-stone-100 text-stone-400",
-    soon: false,
-  },
-];
-
-function BackButton({ onClick }: { onClick: () => void }) {
+function BackButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
     <button
       onClick={onClick}
       className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors"
     >
-      <ChevronLeft className="w-4 h-4" /> Retour
+      <ChevronLeft className="w-4 h-4" /> {label}
     </button>
   );
 }
 
 export default function NewScriptPage() {
   const [mode, setMode] = useState<Mode>(null);
+  const { lang } = useLang();
+  const t = i18n.newScriptPage;
+
+  const MODES = [
+    {
+      id: "guided" as const,
+      icon: Sparkles,
+      iconBg: "bg-violet-100",
+      iconColor: "text-violet-600",
+      title: t.guidedTitle[lang],
+      description: t.guidedDesc[lang],
+      tag: t.guidedTag[lang],
+      tagStyle: "bg-stone-100 text-stone-400",
+      soon: true,
+    },
+    {
+      id: "template" as const,
+      icon: LayoutTemplate,
+      iconBg: "bg-emerald-100",
+      iconColor: "text-emerald-600",
+      title: t.templateTitle[lang],
+      description: t.templateDesc[lang],
+      tag: t.templateTag[lang],
+      tagStyle: "bg-emerald-50 text-emerald-700",
+      soon: false,
+    },
+    {
+      id: "scratch" as const,
+      icon: PenLine,
+      iconBg: "bg-stone-100",
+      iconColor: "text-stone-500",
+      title: t.scratchTitle[lang],
+      description: t.scratchDesc[lang],
+      tag: t.scratchTag[lang],
+      tagStyle: "bg-stone-100 text-stone-400",
+      soon: false,
+    },
+  ];
 
   if (mode === "guided") {
     return (
       <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
-        <BackButton onClick={() => setMode(null)} />
+        <BackButton onClick={() => setMode(null)} label={t.back[lang]} />
         <div>
-          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Créer avec l'IA</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Réponds à quelques questions et Claude génère ton script complet.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.guidedPageTitle[lang]}</h1>
+          <p className="text-sm text-stone-500 mt-0.5">{t.guidedPageSub[lang]}</p>
         </div>
         <GuidedWizard />
       </div>
@@ -75,10 +79,10 @@ export default function NewScriptPage() {
   if (mode === "template") {
     return (
       <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
-        <BackButton onClick={() => setMode(null)} />
+        <BackButton onClick={() => setMode(null)} label={t.back[lang]} />
         <div>
-          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Partir d'un template</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Choisis un script éprouvé et adapte-le à ton offre.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.templatePageTitle[lang]}</h1>
+          <p className="text-sm text-stone-500 mt-0.5">{t.templatePageSub[lang]}</p>
         </div>
         <TemplateSelector />
       </div>
@@ -88,10 +92,10 @@ export default function NewScriptPage() {
   if (mode === "scratch") {
     return (
       <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
-        <BackButton onClick={() => setMode(null)} />
+        <BackButton onClick={() => setMode(null)} label={t.back[lang]} />
         <div>
-          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Créer from scratch</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Construis ton script étape par étape, à ta façon.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.scratchPageTitle[lang]}</h1>
+          <p className="text-sm text-stone-500 mt-0.5">{t.scratchPageSub[lang]}</p>
         </div>
         <ScratchBuilder />
       </div>
@@ -105,10 +109,10 @@ export default function NewScriptPage() {
           href="/scripts"
           className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors mb-6"
         >
-          <ChevronLeft className="w-4 h-4" /> Scripts
+          <ChevronLeft className="w-4 h-4" /> {i18n.scripts.title[lang]}
         </Link>
-        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouveau script</h1>
-        <p className="text-sm text-stone-500 mt-0.5">Comment veux-tu créer ton script de vente ?</p>
+        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.title[lang]}</h1>
+        <p className="text-sm text-stone-500 mt-0.5">{t.subtitle[lang]}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">

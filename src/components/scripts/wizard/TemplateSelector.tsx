@@ -7,6 +7,8 @@ import { StepCard } from "@/components/scripts/StepCard";
 import { ObjectionCard } from "@/components/scripts/ObjectionCard";
 import { ChevronLeft, Eye, Copy, Loader2, FileText, Clock, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 const CATEGORY_STYLES: Record<string, { bg: string; text: string }> = {
   Business:  { bg: "bg-violet-100", text: "text-violet-700" },
@@ -25,6 +27,8 @@ function CategoryBadge({ category }: { category: string }) {
 
 export function TemplateSelector() {
   const router = useRouter();
+  const { lang } = useLang();
+  const t = i18n.templateSelector;
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState<string | null>(null);
@@ -43,7 +47,7 @@ export function TemplateSelector() {
       const data = await res.json();
       if (data.error) throw new Error(data.error);
       router.push(`/scripts/${data.scriptId}`);
-    } catch (e) { setError(e instanceof Error ? e.message : "Erreur lors de la copie"); setLoading(null); }
+    } catch (e) { setError(e instanceof Error ? e.message : t.copyError[lang]); setLoading(null); }
   }
 
   if (previewedTemplate) {
@@ -52,11 +56,11 @@ export function TemplateSelector() {
       <div className="space-y-6 pb-8">
         <div className="flex items-center justify-between">
           <button onClick={() => setPreview(null)} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors">
-            <ChevronLeft className="w-4 h-4" /> Templates
+            <ChevronLeft className="w-4 h-4" /> {t.back[lang]}
           </button>
           <Button onClick={() => useTemplate(previewedTemplate.id)} disabled={!!loading} className="gap-2 h-8 text-xs">
             {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Copy className="w-3.5 h-3.5" />}
-            Utiliser ce template
+            {t.use[lang]}
           </Button>
         </div>
 
@@ -76,18 +80,18 @@ export function TemplateSelector() {
 
         {s.reminders?.length > 0 && (
           <div className="border border-amber-200 bg-amber-50 rounded-xl p-4 space-y-1.5">
-            <p className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">Rappels</p>
+            <p className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider">{t.reminders[lang]}</p>
             {s.reminders.map((r, i) => <p key={i} className="text-sm text-amber-800">· {r}</p>)}
           </div>
         )}
 
         <div className="space-y-2">
-          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">Étapes · {s.steps.length}</p>
+          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">{t.steps[lang]} · {s.steps.length}</p>
           {s.steps.map(step => <StepCard key={step.order} step={{ ...step, id: String(step.order) }} />)}
         </div>
 
         <div className="space-y-2">
-          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">Objections · {s.objections.length}</p>
+          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">{t.objections[lang]} · {s.objections.length}</p>
           {s.objections.map(obj => <ObjectionCard key={obj.order} objection={{ ...obj, id: String(obj.order) }} />)}
         </div>
 
@@ -98,13 +102,12 @@ export function TemplateSelector() {
 
   return (
     <div className="space-y-4 pb-8">
-      {/* Filtre par catégorie */}
       <div className="flex flex-wrap gap-1.5">
         <button
           onClick={() => setActiveCategory(null)}
           className={cn("text-xs px-3 py-1.5 rounded-full border transition-colors", activeCategory === null ? "bg-stone-900 text-white border-stone-900" : "border-stone-200 text-stone-500 hover:border-stone-400")}
         >
-          Tous
+          {t.all[lang]}
         </button>
         {categories.map(cat => {
           const style = CATEGORY_STYLES[cat] ?? { bg: "bg-stone-100", text: "text-stone-500" };
@@ -120,7 +123,6 @@ export function TemplateSelector() {
         })}
       </div>
 
-      {/* Liste des templates */}
       {filtered.map(template => (
         <div key={template.id} className="border border-stone-200 rounded-xl p-5 bg-white hover:border-stone-300 transition-colors">
           <div className="flex items-start justify-between gap-4 mb-3">
@@ -140,17 +142,17 @@ export function TemplateSelector() {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs text-stone-400">
-              <span className="flex items-center gap-1"><FileText className="w-3 h-3" />{template.script.steps.length} étapes</span>
-              <span className="flex items-center gap-1"><ShieldAlert className="w-3 h-3" />{template.script.objections.length} objections</span>
+              <span className="flex items-center gap-1"><FileText className="w-3 h-3" />{template.script.steps.length} {t.stepsCount[lang]}</span>
+              <span className="flex items-center gap-1"><ShieldAlert className="w-3 h-3" />{template.script.objections.length} {t.objectCount[lang]}</span>
               <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{template.script.duration_minutes} min</span>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setPreview(template.id)} className="h-7 text-xs gap-1 border-stone-200">
-                <Eye className="w-3.5 h-3.5" /> Aperçu
+                <Eye className="w-3.5 h-3.5" /> {t.preview[lang]}
               </Button>
               <Button size="sm" onClick={() => useTemplate(template.id)} disabled={loading === template.id} className="h-7 text-xs gap-1">
                 {loading === template.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Copy className="w-3.5 h-3.5" />}
-                Utiliser
+                {t.useShort[lang]}
               </Button>
             </div>
           </div>
