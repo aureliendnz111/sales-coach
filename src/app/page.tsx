@@ -463,8 +463,11 @@ export default function HomePage() {
       <section className="pt-28 pb-14 px-5 md:pt-36 md:pb-20 md:px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-[38px] md:text-[56px] font-bold tracking-tight leading-[1.1] mb-3 md:mb-4">
-            {c.badge.split(" ventes")[0]} ventes<br />
-            {c.badge.split(" ventes")[1]}
+            {lang === "fr" ? (
+              <>{c.badge.split(" ventes")[0]} ventes<br />{c.badge.split(" ventes")[1]}</>
+            ) : (
+              <>{c.badge.split(" by")[0]} by<br />{c.badge.split(" by")[1]}</>
+            )}
           </h1>
           <p className="text-[20px] md:text-[24px] font-medium text-stone-400 tracking-tight mt-3 md:mt-4 mb-5 md:mb-7">
             {c.hero.headline}
