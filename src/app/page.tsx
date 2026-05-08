@@ -2,12 +2,12 @@
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 
-type Lang = "fr" | "en";
+type Lang = "fr" | "en" | "pt";
 
 const PROBLEM_STYLES = [
   { icon: AlertTriangle, iconBg: "bg-rose-50", iconColor: "text-rose-500", accent: "border-rose-100" },
@@ -45,6 +45,12 @@ const PREVIEW_TABS: Record<Lang, { label: string; src: string; caption: string }
     { label: "Script", src: "/screenshot-5.png", caption: "Your steps and objections structured, ready to guide every call." },
     { label: "Templates", src: "/screenshot-4.png", caption: "Start from a proven template and tailor it to your offer in minutes." },
     { label: "Analyses", src: "/screenshot-analyses.png", caption: "Detailed score, AI synthesis, strengths and improvement areas after every call." },
+  ],
+  pt: [
+    { label: "Dashboard", src: "/screenshot-2.png", caption: "Vista geral da sua atividade — guiões, chamadas e pontuação média." },
+    { label: "Guião", src: "/screenshot-5.png", caption: "As suas etapas e objeções estruturadas, prontas para guiar cada chamada." },
+    { label: "Modelos", src: "/screenshot-4.png", caption: "Parta de um modelo comprovado e adapte-o à sua oferta em minutos." },
+    { label: "Análises", src: "/screenshot-analyses.png", caption: "Pontuação detalhada, síntese IA, pontos fortes e eixos de melhoria após cada chamada." },
   ],
 };
 
@@ -341,11 +347,162 @@ const CONTENT = {
     },
     footer: "All rights reserved",
   },
+  pt: {
+    nav: { signin: "Entrar", signup: "Começar grátis" },
+    floatingNav: [
+      { label: "Funcionalidades", href: "#features" },
+      { label: "Como funciona", href: "#how" },
+      { label: "Preços", href: "#pricing" },
+      { label: "FAQ", href: "#faq" },
+    ],
+    badge: "Aumente as suas vendas em 20 a 50%",
+    hero: {
+      headline: "Feche mais. Perca menos.",
+      sub: "O Rumios analisa as suas chamadas de venda, avalia o seu desempenho em 6 dimensões e diz-lhe exatamente o que corrigir antes da próxima chamada.",
+      cta: "Começar gratuitamente",
+      ctaSecondary: "Entrar",
+    },
+    mockCard: {
+      label: "Análise — Chamada com Marie D.",
+      subtitle: "Descoberta + Fecho, 47 min",
+      scoreLabel: "Pontuação global",
+      items: [
+        { label: "Processo", score: 82, color: "bg-emerald-500" },
+        { label: "Descoberta", score: 75, color: "bg-emerald-500" },
+        { label: "Objeções", score: 68, color: "bg-amber-400" },
+        { label: "Postura", score: 85, color: "bg-emerald-500" },
+        { label: "Fecho", score: 70, color: "bg-amber-400" },
+        { label: "Talk ratio", score: 42, color: "bg-sky-500", suffix: "%" },
+      ],
+      insights: [
+        { type: "good", text: "Boa fase de descoberta, as dores foram bem identificadas" },
+        { type: "warn", text: "Objeção de preço não recadrada — a corrigir na próxima chamada" },
+      ],
+    },
+    problem: {
+      label: "O problema",
+      headline: "Sai de cada chamada com uma impressão. Raramente com uma análise.",
+      sub: "Sem dados, repete os mesmos erros. Não sabe o que fez fechar o negócio, nem o que o fez perder.",
+      pains: [
+        { title: "Não sabe por que perdeu", desc: "Cada negócio perdido fica em aberto. Improvisa na próxima vez." },
+        { title: "O seu guião muda a cada chamada", desc: "Nada está formalizado. O que funciona desaparece com a chamada." },
+        { title: "Impossível medir o progresso", desc: "Avança às cegas, sem saber se está realmente a melhorar." },
+      ],
+    },
+    features: {
+      label: "A solução",
+      headline: "Tudo o que precisa para vender melhor ao telefone.",
+      items: [
+        { icon: FileText, title: "Builder", description: "Comece do zero ou de um modelo. Estruture as suas etapas, perguntas-chave e respostas às objeções. O seu processo, formalizado.", tag: "Disponível", tagColor: "bg-emerald-50 text-emerald-700" },
+        { icon: PhoneCall, title: "Análise", description: "Cole o transcript. Receba uma pontuação em 100, os seus pontos fortes, o que bloqueou e três ações concretas para a próxima chamada.", tag: "Disponível", tagColor: "bg-emerald-50 text-emerald-700" },
+        { icon: Zap, title: "Copilot", description: "Sugestões em tempo real baseadas no seu guião. Saiba sempre onde está e o que dizer perante cada objeção.", tag: "Em breve", tagColor: "bg-stone-100 text-stone-500" },
+        { icon: Swords, title: "Playground", description: "Simule uma chamada completa com uma IA que interpreta o prospect. Treine o seu pitch, teste as suas respostas, sem nenhum risco.", tag: "Em breve", tagColor: "bg-stone-100 text-stone-500" },
+      ],
+    },
+    metrics: {
+      label: "O que o Rumios mede",
+      headline: "Uma pontuação precisa em seis dimensões.",
+      sub: "Não uma nota global vaga. Seis eixos distintos para saber exatamente onde concentrar os seus esforços.",
+      items: [
+        { icon: Target, label: "Processo", desc: "Cada etapa do seu guião foi respeitada?" },
+        { icon: Brain, label: "Descoberta", desc: "Qualificou bem as dores do prospect?" },
+        { icon: Mic, label: "Postura", desc: "O seu tom, ritmo e nível de confiança." },
+        { icon: TrendingUp, label: "Fecho", desc: "O pedido de fecho foi bem colocado?" },
+        { icon: BarChart2, label: "Gestão de objeções", desc: "Cada objeção é detetada e avaliada." },
+        { icon: CheckCircle2, label: "Pontuação global", desc: "Uma nota clara, comparável de chamada em chamada." },
+      ],
+    },
+    steps: {
+      label: "Como funciona",
+      headline: "Três passos. Dez minutos.",
+      items: [
+        { number: "01", title: "Crie o seu guião", description: "Descreva a sua oferta ou parta de um modelo. O Rumios estrutura as suas etapas, perguntas-chave e respostas às objeções. É a sua referência para cada chamada." },
+        { number: "02", title: "Cole o transcript da sua chamada", description: "Grave com tl;dv, Fathom ou Otter.ai, depois cole o transcript no Rumios. A IA compara a sua chamada com o seu guião e calcula uma pontuação em 100 em segundos." },
+        { number: "03", title: "Leia o feedback, corrija, progrida", description: "Pontuação detalhada em 6 dimensões, desvios em relação ao seu guião, erros identificados e três ações concretas para a próxima chamada. Acompanhe o seu progresso ao longo do tempo." },
+      ],
+    },
+    profiles: {
+      label: "Para quem",
+      headline: "Para todos os que vendem a sua expertise.",
+      items: [
+        { emoji: "🎯", title: "Closers independentes", desc: "Cada negócio conta. Analise cada chamada para não deixar vendas na mesa por falta de feedback." },
+        { emoji: "🧑‍💼", title: "Coaches", desc: "Vende o seu acompanhamento ao telefone. Estruture o seu fecho, meça o que bloqueia, progrida em cada conversa." },
+        { emoji: "🚀", title: "Empreendedores e freelancers", desc: "A venda não é o seu trabalho principal, mas condiciona o seu crescimento. O Rumios dá-lhe as ferramentas para a dominar." },
+      ],
+    },
+    pricing: {
+      label: "Preços",
+      headline: "Simples. Transparente.",
+      free: {
+        name: "Grátis",
+        desc: "Para começar e testar o Rumios.",
+        price: "0 €",
+        period: "para sempre",
+        cta: "Começar gratuitamente",
+        features: [
+          "2 guiões ativos",
+          "5 análises de chamadas / mês",
+          "Acesso aos modelos",
+          "Pontuação em 6 dimensões",
+          "Síntese IA após cada chamada",
+        ],
+      },
+      pro: {
+        name: "Pro",
+        desc: "Para coaches e closers que escalam.",
+        price: "Em breve",
+        period: "",
+        cta: "Ser notificado",
+        badge: "Em breve",
+        features: [
+          "Guiões ilimitados",
+          "Análises ilimitadas",
+          "Analytics & acompanhamento de progresso",
+          "Playground — simulação de chamadas",
+          "Live Copilot em tempo real",
+          "Suporte prioritário",
+        ],
+      },
+    },
+    faq: {
+      label: "Perguntas frequentes",
+      headline: "Tudo o que precisa de saber.",
+      items: [
+        { q: "Preciso de gravar as minhas chamadas?", a: "Não. Precisa apenas do transcript em texto da sua chamada. Ferramentas como tl;dv, Fathom ou Otter.ai geram esses transcripts automaticamente. Também pode colar um manualmente." },
+        { q: "Que tipos de chamadas podem ser analisadas?", a: "Qualquer chamada de venda com transcript: fecho, descoberta, acompanhamento, reativação. O formato não importa. Google Meet, Zoom, Teams — desde que tenha o texto, o Rumios pode analisar." },
+        { q: "Como funciona a pontuação?", a: "A IA analisa o transcript em 6 dimensões (processo, descoberta, objeções, postura, fecho, pontuação global) e devolve uma nota em 100 com recomendações concretas para cada área." },
+        { q: "O que é o Playground?", a: "Uma simulação de chamada com uma IA que interpreta o prospect. Pode praticar quantas vezes quiser antes de uma chamada real, sem nenhum risco. Esta funcionalidade está em desenvolvimento." },
+        { q: "Quanto custa o Rumios?", a: "O Rumios é gratuito para começar: 2 guiões e 5 análises de chamadas por mês. Planos com mais capacidade chegam em breve." },
+        { q: "Posso usar o Rumios sem guião?", a: "Sim. A análise funciona mesmo sem guião de referência. Mas os resultados são muito mais precisos quando a IA pode comparar a chamada com as suas etapas e objeções preparadas." },
+      ],
+    },
+    cta: {
+      headline: "A sua próxima chamada será diferente.",
+      sub: "Junte-se aos coaches e closers que deixaram de perder negócios sem perceber porquê.",
+      button: "Começar gratuitamente",
+      note: "Grátis para começar. Sem cartão de crédito.",
+    },
+    footer: "Todos os direitos reservados",
+  },
 } as const;
+
+const LANG_LABELS: Record<Lang, string> = { fr: "Français", en: "English", pt: "Português" };
 
 function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const c = CONTENT[lang];
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const ctaLabel = lang === "fr" ? "Commencer" : lang === "en" ? "Get started" : "Começar";
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] md:w-auto">
@@ -366,9 +523,32 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
             </a>
           ))}
           <div className="w-px h-4 bg-white/10" />
-          <button onClick={() => setLang(lang === "fr" ? "en" : "fr")} className="text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors">
-            {lang === "fr" ? "EN" : "FR"}
-          </button>
+          {/* Language dropdown */}
+          <div ref={langRef} className="relative">
+            <button
+              onClick={() => setLangOpen(o => !o)}
+              className="flex items-center gap-1 text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors"
+            >
+              {lang.toUpperCase()} <ChevronDown className="w-2.5 h-2.5" />
+            </button>
+            {langOpen && (
+              <div className="absolute right-0 top-full mt-2 bg-stone-800 border border-white/10 rounded-xl overflow-hidden shadow-xl min-w-[120px]">
+                {(["fr", "en", "pt"] as Lang[]).map(l => (
+                  <button
+                    key={l}
+                    onClick={() => { setLang(l); setLangOpen(false); }}
+                    className={cn(
+                      "flex items-center justify-between gap-3 w-full px-4 py-2.5 text-[12px] transition-colors",
+                      l === lang ? "text-white bg-white/10" : "text-stone-400 hover:text-white hover:bg-white/5"
+                    )}
+                  >
+                    <span>{LANG_LABELS[l]}</span>
+                    {l === lang && <Check className="w-3 h-3 shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mobile right side: burger + CTA */}
@@ -381,13 +561,13 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
           <Link href="/sign-up" className="text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
-            {lang === "fr" ? "Commencer" : "Get started"}
+            {ctaLabel}
           </Link>
         </div>
 
         {/* Desktop CTA */}
         <Link href="/sign-up" className="hidden md:block ml-1 text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
-          {lang === "fr" ? "Commencer" : "Get started"}
+          {ctaLabel}
         </Link>
       </div>
 
@@ -406,13 +586,20 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
               </a>
             ))}
           </div>
-          <div className="border-t border-white/10 px-2 py-2">
-            <button
-              onClick={() => { setLang(lang === "fr" ? "en" : "fr"); setMobileOpen(false); }}
-              className="flex items-center w-full px-4 py-3 text-[13px] text-stone-400 hover:text-white hover:bg-white/8 rounded-xl transition-colors"
-            >
-              {lang === "fr" ? "Switch to English" : "Passer en français"}
-            </button>
+          <div className="border-t border-white/10 px-2 py-2 space-y-0.5">
+            {(["fr", "en", "pt"] as Lang[]).map(l => (
+              <button
+                key={l}
+                onClick={() => { setLang(l); setMobileOpen(false); }}
+                className={cn(
+                  "flex items-center justify-between w-full px-4 py-3 text-[13px] rounded-xl transition-colors",
+                  l === lang ? "text-white bg-white/10" : "text-stone-400 hover:text-white hover:bg-white/8"
+                )}
+              >
+                <span>{LANG_LABELS[l]}</span>
+                {l === lang && <Check className="w-3.5 h-3.5" />}
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -465,8 +652,10 @@ export default function HomePage() {
           <h1 className="text-[38px] md:text-[56px] font-bold tracking-tight leading-[1.1] mb-3 md:mb-4">
             {lang === "fr" ? (
               <>{c.badge.split(" ventes")[0]} ventes<br />{c.badge.split(" ventes")[1]}</>
-            ) : (
+            ) : lang === "en" ? (
               <>{c.badge.split(" by")[0]}<br />by{c.badge.split(" by")[1]}</>
+            ) : (
+              <>{c.badge.split(" em ")[0]}<br />em {c.badge.split(" em ")[1]}</>
             )}
           </h1>
           <p className="text-[20px] md:text-[24px] font-medium text-stone-400 tracking-tight mt-3 md:mt-4 mb-5 md:mb-7">
@@ -532,6 +721,8 @@ export default function HomePage() {
           <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight leading-tight mb-4">
             {lang === "en" ? (
               <>You leave every call with a feeling.<br />Rarely with an analysis.</>
+            ) : lang === "pt" ? (
+              <>Sai de cada chamada com uma impressão.<br />Raramente com uma análise.</>
             ) : c.problem.headline}
           </h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-8 md:mb-10">{c.problem.sub}</p>
