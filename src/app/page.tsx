@@ -521,7 +521,7 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
         <Link href="/" onClick={handleLogoClick} className="flex items-center gap-1.5 px-2 md:mr-1 hover:opacity-80 transition-opacity">
           <RumiosLogo size={18} inverted />
           <span className="text-[12px] font-semibold tracking-tight">RUMIOS</span>
-          <span className="inline-flex items-center text-[9px] font-semibold bg-violet-600/30 text-violet-300 border border-violet-500/30 px-1.5 py-[3px] rounded-full tracking-wider">BETA</span>
+          <span className="inline-flex items-center justify-center h-[18px] px-2 text-[9px] font-semibold leading-none bg-violet-600/30 text-violet-300 border border-violet-500/30 rounded-full tracking-wider">BETA</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
