@@ -148,7 +148,12 @@ export function Sidebar() {
       {/* Logo */}
       <Link href="/" className={cn("px-3 py-2 mb-3 flex items-center hover:opacity-80 transition-opacity", collapsed ? "justify-center" : "gap-2.5")}>
         <RumiosLogo size={22} />
-        {!collapsed && <span className="font-semibold text-[13px] text-stone-800 leading-none tracking-tight">RUMIOS</span>}
+        {!collapsed && (
+          <div className="flex items-center gap-1.5">
+            <span className="font-semibold text-[13px] text-stone-800 leading-none tracking-tight">RUMIOS</span>
+            <span className="text-[9px] font-semibold bg-violet-100 text-violet-600 px-1.5 py-0.5 rounded-full leading-none tracking-wider">BETA</span>
+          </div>
+        )}
       </Link>
 
       {/* Nav */}
