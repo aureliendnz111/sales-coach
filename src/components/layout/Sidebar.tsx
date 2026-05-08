@@ -151,7 +151,7 @@ export function Sidebar() {
         {!collapsed && (
           <div className="flex items-center gap-1.5">
             <span className="font-semibold text-[13px] text-stone-800 leading-none tracking-tight">RUMIOS</span>
-            <span className="text-[9px] font-semibold bg-violet-100 text-violet-600 px-1.5 py-0.5 rounded-full leading-none tracking-wider">BETA</span>
+            <span className="inline-flex items-center text-[9px] font-semibold bg-violet-100 text-violet-600 px-1.5 py-[3px] rounded-full tracking-wider">BETA</span>
           </div>
         )}
       </Link>
