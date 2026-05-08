@@ -2,21 +2,36 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
-import { LayoutDashboard, FileText, Headphones, PhoneCall, BarChart2, Swords, LogOut, Settings, ChevronUp, ChevronLeft } from "lucide-react";
+import { LayoutDashboard, FileText, Headphones, PhoneCall, BarChart2, Swords, LogOut, Settings, ChevronUp, ChevronLeft, ChevronDown, Check } from "lucide-react";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
+import { useLang, type Lang } from "@/lib/lang-context";
+
+const NAV_LABELS: Record<string, Record<Lang, string>> = {
+  "/dashboard":    { fr: "Dashboard",         en: "Dashboard",      pt: "Dashboard" },
+  "/scripts":      { fr: "Scripts",            en: "Scripts",        pt: "Guiões" },
+  "/call-analysis":{ fr: "Analyse de calls",   en: "Call Analysis",  pt: "Análise de chamadas" },
+  "/playground":   { fr: "Playground",         en: "Playground",     pt: "Playground" },
+  "/sessions":     { fr: "Live Copilot",       en: "Live Copilot",   pt: "Live Copilot" },
+  "/analytics":    { fr: "Analytics",          en: "Analytics",      pt: "Análises" },
+};
+
+const SOON_LABEL: Record<Lang, string> = { fr: "Bientôt", en: "Soon", pt: "Em breve" };
+const SETTINGS_LABEL: Record<Lang, string> = { fr: "Paramètres", en: "Settings", pt: "Definições" };
+const SIGNOUT_LABEL: Record<Lang, string> = { fr: "Se déconnecter", en: "Sign out", pt: "Terminar sessão" };
+const LANG_LABELS: Record<Lang, string> = { fr: "Français", en: "English", pt: "Português" };
 
 const NAV = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/scripts", icon: FileText, label: "Scripts" },
-  { href: "/call-analysis", icon: PhoneCall, label: "Analyse de calls" },
-  { href: "/playground", icon: Swords, label: "Playground", soon: true },
-  { href: "/sessions", icon: Headphones, label: "Live Copilot", soon: true },
-  { href: "/analytics", icon: BarChart2, label: "Analytics", soon: true },
+  { href: "/dashboard", icon: LayoutDashboard },
+  { href: "/scripts", icon: FileText },
+  { href: "/call-analysis", icon: PhoneCall },
+  { href: "/playground", icon: Swords, soon: true },
+  { href: "/sessions", icon: Headphones, soon: true },
+  { href: "/analytics", icon: BarChart2, soon: true },
 ] as const;
 
-function UserMenu({ collapsed }: { collapsed: boolean }) {
+function UserMenu({ collapsed, lang }: { collapsed: boolean; lang: Lang }) {
   const { user } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
@@ -63,7 +78,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
             className="flex items-center gap-2.5 w-full px-3 py-2.5 text-[13px] text-stone-700 hover:bg-stone-50 transition-colors"
           >
             <Settings className="w-3.5 h-3.5 text-stone-400" />
-            {!collapsed && "Paramètres"}
+            {!collapsed && SETTINGS_LABEL[lang]}
           </button>
           <div className="border-t border-stone-100" />
           <button
@@ -71,7 +86,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
             className="flex items-center gap-2.5 w-full px-3 py-2.5 text-[13px] text-rose-600 hover:bg-rose-50 transition-colors"
           >
             <LogOut className="w-3.5 h-3.5" />
-            {!collapsed && "Se déconnecter"}
+            {!collapsed && SIGNOUT_LABEL[lang]}
           </button>
         </div>
       )}
@@ -101,10 +116,21 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { lang, setLang } = useLang();
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("sidebar-collapsed");
     if (saved === "true") setCollapsed(true);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   function toggle() {
@@ -127,9 +153,10 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className="flex-1 space-y-px">
-        {NAV.map(({ href, icon: Icon, label, ...rest }) => {
+        {NAV.map(({ href, icon: Icon, ...rest }) => {
           const soon = "soon" in rest ? rest.soon : false;
           const active = pathname === href || pathname.startsWith(href + "/");
+          const label = NAV_LABELS[href]?.[lang] ?? href;
           return (
             <Link
               key={href}
@@ -139,17 +166,17 @@ export function Sidebar() {
                 "flex items-center rounded-md text-[13.5px] transition-colors",
                 collapsed ? "justify-center px-2 py-[7px]" : "gap-2 px-3 py-[6px]",
                 active
-                  ? "bg-stone-100 text-stone-900 font-medium"
+                  ? "bg-violet-50 text-violet-900 font-medium"
                   : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
               )}
             >
-              <Icon className={cn("w-4 h-4 shrink-0", active ? "text-stone-700" : "text-stone-400")} />
+              <Icon className={cn("w-4 h-4 shrink-0", active ? "text-violet-700" : "text-stone-400")} />
               {!collapsed && (
                 <>
                   <span className="flex-1">{label}</span>
                   {soon && (
                     <span className="text-[10px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-full font-medium leading-none">
-                      Bientôt
+                      {SOON_LABEL[lang]}
                     </span>
                   )}
                 </>
@@ -159,9 +186,36 @@ export function Sidebar() {
         })}
       </nav>
 
+      {/* Language selector */}
+      {!collapsed && (
+        <div ref={langRef} className="relative px-1 mb-2">
+          <button
+            onClick={() => setLangOpen(o => !o)}
+            className="flex items-center gap-1.5 w-full px-2 py-1.5 rounded-lg text-[12px] text-stone-500 hover:bg-stone-100 hover:text-stone-700 transition-colors"
+          >
+            <span className="flex-1 text-left">{LANG_LABELS[lang]}</span>
+            <ChevronDown className={cn("w-3 h-3 shrink-0 transition-transform", langOpen && "rotate-180")} />
+          </button>
+          {langOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden z-50">
+              {(["fr", "en", "pt"] as Lang[]).map(l => (
+                <button
+                  key={l}
+                  onClick={() => { setLang(l); setLangOpen(false); }}
+                  className="flex items-center gap-2 w-full px-3 py-2 text-[12.5px] text-stone-700 hover:bg-stone-50 transition-colors"
+                >
+                  <span className="flex-1 text-left">{LANG_LABELS[l]}</span>
+                  {lang === l && <Check className="w-3 h-3 text-stone-500" />}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* User */}
       <div className="border-t border-stone-200 pt-2">
-        <UserMenu collapsed={collapsed} />
+        <UserMenu collapsed={collapsed} lang={lang} />
       </div>
 
       {/* Toggle button */}

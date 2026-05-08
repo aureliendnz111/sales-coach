@@ -2,9 +2,12 @@
 import { useState, useRef, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Pencil, Check, X } from "lucide-react";
+import { useLang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 export function DashboardGreeting({ initialFirstName }: { initialFirstName: string }) {
   const { user } = useUser();
+  const { lang } = useLang();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(initialFirstName);
   const [saving, setSaving] = useState(false);
@@ -35,7 +38,7 @@ export function DashboardGreeting({ initialFirstName }: { initialFirstName: stri
       <div className="flex items-center gap-2 group">
         {editing ? (
           <div className="flex items-center gap-2">
-            <span className="text-[28px] font-semibold text-stone-900 tracking-tight">Bonjour</span>
+            <span className="text-[28px] font-semibold text-stone-900 tracking-tight">{i18n.greeting.hello[lang]}</span>
             <input
               ref={inputRef}
               value={value}
@@ -53,7 +56,7 @@ export function DashboardGreeting({ initialFirstName }: { initialFirstName: stri
         ) : (
           <>
             <h1 className="text-[28px] font-semibold text-stone-900 tracking-tight">
-              Bonjour {user?.firstName ?? value} 👋
+              {i18n.greeting.hello[lang]} {user?.firstName ?? value} 👋
             </h1>
             <button
               onClick={() => { setValue(user?.firstName ?? value); setEditing(true); }}
@@ -64,7 +67,7 @@ export function DashboardGreeting({ initialFirstName }: { initialFirstName: stri
           </>
         )}
       </div>
-      <p className="mt-1.5 text-stone-500 text-sm">Votre copilote IA pour les calls de closing.</p>
+      <p className="mt-1.5 text-stone-500 text-sm">{i18n.greeting.subtitle[lang]}</p>
     </div>
   );
 }

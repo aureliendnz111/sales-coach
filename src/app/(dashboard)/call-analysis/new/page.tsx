@@ -3,12 +3,15 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, FileText, X, ChevronDown, Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { OUTCOME_CONFIG } from "@/components/call-analysis/OutcomeBadge";
+import { OUTCOME_STYLE } from "@/components/call-analysis/OutcomeBadge";
+import { useLang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 type Script = { id: string; name: string; is_default: boolean };
 
 export default function NewAnalysisPage() {
   const router = useRouter();
+  const { lang } = useLang();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [transcript, setTranscript] = useState("");
@@ -52,7 +55,7 @@ export default function NewAnalysisPage() {
 
   function handleFile(file: File) {
     if (!file.name.match(/\.(txt|md)$/i)) {
-      setError("Format non supporté. Utilisez un fichier .txt ou collez le texte directement.");
+      setError(i18n.newAnalysis.fileError[lang]);
       return;
     }
     const reader = new FileReader();
@@ -61,7 +64,7 @@ export default function NewAnalysisPage() {
   }
 
   async function submit() {
-    if (!transcript.trim()) { setError("Le transcript est requis."); return; }
+    if (!transcript.trim()) { setError(i18n.newAnalysis.transcriptRequired[lang]); return; }
     setError("");
     setSubmitting(true);
     try {
@@ -71,7 +74,7 @@ export default function NewAnalysisPage() {
         body: JSON.stringify({ transcript_text: transcript, transcript_filename: filename || null, script_id: scriptId || null, prospect_name: prospectName || null, call_date: callDate || null, outcome: outcome || null }),
       });
       if (res.status === 403) {
-        setError("Vous avez atteint la limite de 5 analyses par mois sur le plan gratuit.");
+        setError(i18n.newAnalysis.limitError[lang]);
         return;
       }
       setTimeout(() => router.push("/call-analysis"), 400);
@@ -80,11 +83,13 @@ export default function NewAnalysisPage() {
     }
   }
 
+  const outcomeKeys = ["closed", "next_call", "no_decision", "lost"] as const;
+
   return (
     <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div>
-        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvelle analyse</h1>
-        <p className="text-sm text-stone-500 mt-0.5">Importez un transcript pour obtenir un score et des recommandations IA.</p>
+        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{i18n.newAnalysis.title[lang]}</h1>
+        <p className="text-sm text-stone-500 mt-0.5">{i18n.newAnalysis.subtitle[lang]}</p>
       </div>
 
       {usageAnalyses && (
@@ -98,8 +103,8 @@ export default function NewAnalysisPage() {
         )}>
           <span>
             {usageAnalyses.used >= usageAnalyses.max
-              ? "Vous avez atteint la limite de 5 analyses ce mois-ci."
-              : `${usageAnalyses.used} / ${usageAnalyses.max} analyses utilisées ce mois-ci.`}
+              ? i18n.newAnalysis.limitReached[lang]
+              : `${usageAnalyses.used} / ${usageAnalyses.max} ${lang === "fr" ? "analyses utilisées ce mois-ci." : lang === "en" ? "analyses used this month." : "análises utilizadas este mês."}`}
           </span>
           <span className="font-semibold tabular-nums">{usageAnalyses.used}/{usageAnalyses.max}</span>
         </div>
@@ -108,8 +113,8 @@ export default function NewAnalysisPage() {
       {/* Recorder tools */}
       <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
-          <h2 className="text-[13px] font-semibold text-stone-700">Obtenir un transcript</h2>
-          <p className="text-[12px] text-stone-500 mt-0.5">Ces outils enregistrent et transcrivent automatiquement vos calls Meet, Zoom ou Teams.</p>
+          <h2 className="text-[13px] font-semibold text-stone-700">{i18n.newAnalysis.getTranscriptTitle[lang]}</h2>
+          <p className="text-[12px] text-stone-500 mt-0.5">{i18n.newAnalysis.getTranscriptSub[lang]}</p>
         </div>
         <div className="grid grid-cols-2 gap-px bg-stone-100 sm:grid-cols-4">
           {[
@@ -138,10 +143,9 @@ export default function NewAnalysisPage() {
       {/* Transcript */}
       <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
-          <h2 className="text-[13px] font-semibold text-stone-700">Transcript de l'appel</h2>
+          <h2 className="text-[13px] font-semibold text-stone-700">{i18n.newAnalysis.transcriptTitle[lang]}</h2>
         </div>
         <div className="p-4 space-y-3">
-          {/* Drop zone */}
           {!transcript && (
             <div
               onDragOver={e => { e.preventDefault(); setDragOver(true); }}
@@ -154,8 +158,8 @@ export default function NewAnalysisPage() {
               )}
             >
               <Upload className="w-7 h-7 text-stone-300" />
-              <p className="text-[13px] font-medium text-stone-500">Glisser un fichier .txt ici</p>
-              <p className="text-[11px] text-stone-500">ou cliquer pour parcourir</p>
+              <p className="text-[13px] font-medium text-stone-500">{i18n.newAnalysis.dropHere[lang]}</p>
+              <p className="text-[11px] text-stone-500">{i18n.newAnalysis.orClick[lang]}</p>
               <input ref={fileInputRef} type="file" accept=".txt,.md" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
             </div>
           )}
@@ -174,13 +178,13 @@ export default function NewAnalysisPage() {
             <textarea
               value={transcript}
               onChange={e => { setTranscript(e.target.value); if (e.target.value) setFilename(""); }}
-              placeholder={transcript ? "" : "Ou collez votre transcript ici…\n\nExemple :\nAurélien : Bonjour, comment ça va ?\nMarc : Bien merci…"}
+              placeholder={transcript ? "" : i18n.newAnalysis.pastePlaceholder[lang]}
               rows={transcript ? 10 : 6}
               className="w-full text-[13px] border border-stone-200 rounded-xl px-3 py-2.5 bg-white text-stone-800 placeholder:text-stone-400 focus:outline-none focus:border-stone-400 resize-none transition-colors"
             />
             {transcript && (
               <div className="absolute top-2 right-2 text-[10px] text-stone-400">
-                {transcript.split(/\s+/).length} mots
+                {transcript.split(/\s+/).length} {i18n.newAnalysis.words[lang]}
               </div>
             )}
           </div>
@@ -190,22 +194,24 @@ export default function NewAnalysisPage() {
       {/* Metadata */}
       <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
         <div className="px-5 py-3.5 border-b border-stone-100">
-          <h2 className="text-[13px] font-semibold text-stone-700">Informations</h2>
+          <h2 className="text-[13px] font-semibold text-stone-700">{i18n.newAnalysis.infoTitle[lang]}</h2>
         </div>
         <div className="px-5 py-4 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="text-[12px] text-stone-600 font-medium">Nom du prospect</label>
-              <input value={prospectName} onChange={e => setProspectName(e.target.value)} placeholder="Ex : Marie Dupont" className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-stone-400 transition-colors" />
+              <label className="text-[12px] text-stone-600 font-medium">{i18n.newAnalysis.prospectName[lang]}</label>
+              <input value={prospectName} onChange={e => setProspectName(e.target.value)} placeholder={i18n.newAnalysis.prospectPlaceholder[lang]} className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-stone-400 transition-colors" />
             </div>
             <div className="space-y-1.5">
-              <label className="text-[12px] text-stone-600 font-medium">Date de l'appel</label>
+              <label className="text-[12px] text-stone-600 font-medium">{i18n.newAnalysis.callDate[lang]}</label>
               <input type="date" value={callDate} onChange={e => setCallDate(e.target.value)} className="w-full text-[13px] border border-stone-200 rounded-lg px-3 py-2 focus:outline-none focus:border-stone-400 transition-colors" />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[12px] text-stone-600 font-medium">Script de référence <span className="text-stone-300">(optionnel)</span></label>
+            <label className="text-[12px] text-stone-600 font-medium">
+              {i18n.newAnalysis.referenceScript[lang]} <span className="text-stone-300">({i18n.common.optional[lang]})</span>
+            </label>
             <div ref={scriptDropdownRef} className="relative">
               <button
                 type="button"
@@ -217,11 +223,11 @@ export default function NewAnalysisPage() {
                     <>
                       <span className="truncate">{scripts.find(s => s.id === scriptId)?.name}</span>
                       {scripts.find(s => s.id === scriptId)?.is_default && (
-                        <span className="shrink-0 text-[10px] bg-stone-900 text-white px-1.5 py-0.5 rounded-full font-medium leading-none">Par défaut</span>
+                        <span className="shrink-0 text-[10px] bg-stone-900 text-white px-1.5 py-0.5 rounded-full font-medium leading-none">{i18n.common.default_[lang]}</span>
                       )}
                     </>
                   ) : (
-                    <span className="text-stone-400">Sans script — analyse générale</span>
+                    <span className="text-stone-400">{i18n.newAnalysis.noScript[lang]}</span>
                   )}
                 </span>
                 <ChevronDown className={cn("w-3.5 h-3.5 text-stone-400 shrink-0 ml-2 transition-transform", scriptDropdown && "rotate-180")} />
@@ -233,7 +239,7 @@ export default function NewAnalysisPage() {
                     onClick={() => { setScriptId(""); setScriptDropdown(false); }}
                     className="flex items-center justify-between w-full px-3 py-2 text-[13px] text-stone-500 hover:bg-stone-50 transition-colors"
                   >
-                    Sans script — analyse générale
+                    {i18n.newAnalysis.noScript[lang]}
                     {!scriptId && <Check className="w-3.5 h-3.5 text-stone-500" />}
                   </button>
                   {scripts.length > 0 && <div className="border-t border-stone-100" />}
@@ -247,7 +253,7 @@ export default function NewAnalysisPage() {
                       <span className="flex items-center gap-2 min-w-0">
                         <span className="truncate">{s.name}</span>
                         {s.is_default && (
-                          <span className="shrink-0 text-[10px] bg-stone-900 text-white px-1.5 py-0.5 rounded-full font-medium leading-none">Par défaut</span>
+                          <span className="shrink-0 text-[10px] bg-stone-900 text-white px-1.5 py-0.5 rounded-full font-medium leading-none">{i18n.common.default_[lang]}</span>
                         )}
                       </span>
                       {scriptId === s.id && <Check className="w-3.5 h-3.5 text-stone-500 shrink-0 ml-2" />}
@@ -259,21 +265,24 @@ export default function NewAnalysisPage() {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[12px] text-stone-600 font-medium">Résultat de l'appel <span className="text-stone-300">(optionnel)</span></label>
+            <label className="text-[12px] text-stone-600 font-medium">
+              {i18n.newAnalysis.callResult[lang]} <span className="text-stone-300">({i18n.common.optional[lang]})</span>
+            </label>
             <div className="grid grid-cols-2 gap-2">
-              {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
-                const c = OUTCOME_CONFIG[key];
+              {outcomeKeys.map(key => {
+                const style = OUTCOME_STYLE[key];
+                const label = (i18n.outcomes as Record<string, Record<string, string>>)[key]?.[lang] ?? key;
                 return (
                   <button
                     key={key}
                     onClick={() => setOutcome(outcome === key ? "" : key)}
                     className={cn(
                       "flex items-center gap-2 px-3 py-2 rounded-lg border text-[13px] transition-colors",
-                      outcome === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-600 hover:bg-stone-50"
+                      outcome === key ? `${style.bg} ${style.text} border-transparent font-medium` : "border-stone-200 text-stone-600 hover:bg-stone-50"
                     )}
                   >
-                    {c.icon}
-                    {c.label}
+                    {style.icon}
+                    {label}
                   </button>
                 );
               })}
@@ -286,14 +295,14 @@ export default function NewAnalysisPage() {
 
       <div className="flex items-center justify-between">
         <button onClick={() => router.back()} className="text-[13px] text-stone-500 hover:text-stone-700 transition-colors">
-          Annuler
+          {i18n.common.cancel[lang]}
         </button>
         <button
           onClick={submit}
           disabled={!transcript.trim() || submitting}
-          className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50 transition-colors"
+          className="flex items-center gap-2 text-[13px] font-medium px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 disabled:opacity-50 transition-colors"
         >
-          {submitting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Envoi en cours…</> : "Lancer l'analyse"}
+          {submitting ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> {i18n.newAnalysis.submitting[lang]}</> : i18n.newAnalysis.submit[lang]}
         </button>
       </div>
     </div>

@@ -4,8 +4,10 @@ import { useParams, useRouter } from "next/navigation";
 import { Loader2, ArrowLeft, BookOpen, MessageSquare, Zap, Mic, CheckCircle2, TrendingUp, TrendingDown, Clock, Pencil } from "lucide-react";
 import { ScoreGauge } from "@/components/call-analysis/ScoreGauge";
 import { TalkRatioBar } from "@/components/call-analysis/TalkRatioBar";
-import { OutcomeBadge, OUTCOME_CONFIG, Outcome } from "@/components/call-analysis/OutcomeBadge";
+import { OutcomeBadge, OUTCOME_STYLE, Outcome } from "@/components/call-analysis/OutcomeBadge";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 type KeyMoment = { time: string; label: string; category: string };
 
@@ -21,14 +23,6 @@ type Analysis = {
   scripts: { name: string } | null;
 };
 
-const SCORE_CATEGORIES = [
-  { key: "process",    label: "Respect du process",       icon: <BookOpen className="w-3.5 h-3.5" /> },
-  { key: "discovery",  label: "Qualité de la découverte", icon: <MessageSquare className="w-3.5 h-3.5" /> },
-  { key: "objections", label: "Gestion des objections",   icon: <Zap className="w-3.5 h-3.5" /> },
-  { key: "posture",    label: "Posture & énergie",         icon: <Mic className="w-3.5 h-3.5" /> },
-  { key: "conclusion", label: "Conclusion",                icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
-];
-
 const CATEGORY_COLORS: Record<string, string> = {
   process: "bg-violet-100 text-violet-700",
   discovery: "bg-sky-100 text-sky-700",
@@ -37,9 +31,12 @@ const CATEGORY_COLORS: Record<string, string> = {
   conclusion: "bg-rose-100 text-rose-700",
 };
 
+const DATE_LOCALE: Record<string, string> = { fr: "fr-FR", en: "en-GB", pt: "pt-PT" };
+
 export default function AnalysisDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+  const { lang } = useLang();
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [outcome, setOutcome] = useState<Outcome>(null);
@@ -50,6 +47,14 @@ export default function AnalysisDetailPage() {
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const nameInputRef = useRef<HTMLInputElement>(null);
+
+  const scoreCategories = [
+    { key: "process",    label: i18n.analysisDetail.process[lang],    icon: <BookOpen className="w-3.5 h-3.5" /> },
+    { key: "discovery",  label: i18n.analysisDetail.discovery[lang],  icon: <MessageSquare className="w-3.5 h-3.5" /> },
+    { key: "objections", label: i18n.analysisDetail.objections[lang], icon: <Zap className="w-3.5 h-3.5" /> },
+    { key: "posture",    label: i18n.analysisDetail.posture[lang],    icon: <Mic className="w-3.5 h-3.5" /> },
+    { key: "conclusion", label: i18n.analysisDetail.conclusion[lang], icon: <CheckCircle2 className="w-3.5 h-3.5" /> },
+  ];
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -105,27 +110,27 @@ export default function AnalysisDetailPage() {
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh] gap-3 text-stone-400">
       <Loader2 className="w-5 h-5 animate-spin" />
-      <span className="text-[13px]">Chargement…</span>
+      <span className="text-[13px]">{i18n.common.loading[lang]}</span>
     </div>
   );
 
-  if (!analysis) return <div className="p-8 text-stone-400 text-sm">Analyse introuvable.</div>;
+  if (!analysis) return <div className="p-8 text-stone-400 text-sm">{i18n.analysisDetail.notFound[lang]}</div>;
 
   if (analysis.status === "analyzing") return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-8">
       <Loader2 className="w-8 h-8 animate-spin text-stone-400" />
       <div>
-        <p className="text-[15px] font-medium text-stone-700">Analyse en cours…</p>
-        <p className="text-[13px] text-stone-500 mt-1">L'IA analyse le transcript. Cela prend 15 à 30 secondes.</p>
+        <p className="text-[15px] font-medium text-stone-700">{i18n.analysisDetail.analyzingTitle[lang]}</p>
+        <p className="text-[13px] text-stone-500 mt-1">{i18n.analysisDetail.analyzingSub[lang]}</p>
       </div>
     </div>
   );
 
   if (analysis.status === "error") return (
     <div className="max-w-lg mx-auto py-16 text-center space-y-3">
-      <p className="text-[15px] font-medium text-rose-600">L'analyse a échoué.</p>
-      <p className="text-[13px] text-stone-500">Veuillez réessayer avec un nouveau transcript.</p>
-      <button onClick={() => router.push("/call-analysis/new")} className="text-[13px] text-stone-600 underline">Nouvelle analyse</button>
+      <p className="text-[15px] font-medium text-rose-600">{i18n.analysisDetail.failed[lang]}</p>
+      <p className="text-[13px] text-stone-500">{i18n.analysisDetail.failedSub[lang]}</p>
+      <button onClick={() => router.push("/call-analysis/new")} className="text-[13px] text-stone-600 underline">{i18n.common.newAnalysis[lang]}</button>
     </div>
   );
 
@@ -135,6 +140,8 @@ export default function AnalysisDetailPage() {
   const strengths = analysis.recommendations?.strengths as string[] | undefined;
   const improvements = analysis.recommendations?.improvements as string[] | undefined;
   const keyMoments = analysis.key_moments ?? [];
+
+  const outcomeKeys = ["closed", "next_call", "no_decision", "lost"] as const;
 
   return (
     <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
@@ -157,89 +164,93 @@ export default function AnalysisDetailPage() {
             ) : (
               <button onClick={startEditName} className="flex items-center gap-2 group/hname text-left">
                 <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">
-                  {analysis.prospect_name ?? <span className="text-stone-400">Appel sans nom</span>}
+                  {analysis.prospect_name ?? <span className="text-stone-400">{i18n.analysisDetail.noName[lang]}</span>}
                 </h1>
                 <Pencil className="w-3.5 h-3.5 text-stone-300 group-hover/hname:text-stone-500 transition-colors mt-0.5" />
               </button>
             )}
             <div className="flex items-center gap-3 mt-1.5 text-[12px] text-stone-500">
-              {analysis.call_date && <span>{new Date(analysis.call_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>}
+              {analysis.call_date && <span>{new Date(analysis.call_date).toLocaleDateString(DATE_LOCALE[lang] ?? "fr-FR", { day: "numeric", month: "long", year: "numeric" })}</span>}
               {analysis.scripts?.name && <span>· {analysis.scripts.name}</span>}
             </div>
           </div>
         </div>
         <div className="text-right shrink-0">
           <div className={cn("text-4xl font-bold tabular-nums", overallColor)}>{overall}</div>
-          <div className="text-[11px] text-stone-500 mt-0.5">Score global</div>
+          <div className="text-[11px] text-stone-500 mt-0.5">{i18n.analysisDetail.overallScore[lang]}</div>
         </div>
       </div>
 
-      {/* Résultat de l'appel + Statut du lead */}
+      {/* Résultat + Lead status */}
       <div className="grid grid-cols-2 gap-4">
-        {/* Résultat de l'appel — figé après le call */}
         <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">Résultat de l'appel</p>
-            {savingOutcome && <span className="text-[11px] text-stone-400">Sauvegarde…</span>}
+            <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">{i18n.analysisDetail.callResult[lang]}</p>
+            {savingOutcome && <span className="text-[11px] text-stone-400">{i18n.common.saving[lang]}</span>}
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
-              const c = OUTCOME_CONFIG[key];
+            {outcomeKeys.map(key => {
+              const style = OUTCOME_STYLE[key];
+              const label = (i18n.outcomes as Record<string, Record<string, string>>)[key]?.[lang] ?? key;
               return (
                 <button key={key} onClick={() => updateOutcome(key)}
                   className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border text-[12.5px] transition-colors",
-                    outcome === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-500 hover:bg-stone-50"
+                    outcome === key ? `${style.bg} ${style.text} border-transparent font-medium` : "border-stone-200 text-stone-500 hover:bg-stone-50"
                   )}>
-                  {c.icon}{c.label}
+                  {style.icon}{label}
                 </button>
               );
             })}
           </div>
-          <p className="text-[11px] text-stone-400 mt-2.5">Résultat immédiat à l'issue du call.</p>
+          <p className="text-[11px] text-stone-400 mt-2.5">{i18n.analysisDetail.callResultSub[lang]}</p>
         </div>
 
-        {/* Statut du lead — mis à jour dans le temps */}
         <div className="border border-stone-200 rounded-xl bg-white shadow-sm p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">Statut du lead</p>
-            {savingLeadStatus && <span className="text-[11px] text-stone-400">Sauvegarde…</span>}
+            <p className="text-[12px] font-semibold text-stone-700 uppercase tracking-wide">{i18n.analysisDetail.leadStatus[lang]}</p>
+            {savingLeadStatus && <span className="text-[11px] text-stone-400">{i18n.common.saving[lang]}</span>}
           </div>
           <div className="grid grid-cols-2 gap-2">
-            {(["closed", "next_call", "no_decision", "lost"] as const).map(key => {
-              const c = OUTCOME_CONFIG[key];
+            {outcomeKeys.map(key => {
+              const style = OUTCOME_STYLE[key];
+              const label = (i18n.outcomes as Record<string, Record<string, string>>)[key]?.[lang] ?? key;
               return (
                 <button key={key} onClick={() => updateLeadStatus(key)}
                   className={cn("flex items-center gap-2 px-3 py-2 rounded-lg border text-[12.5px] transition-colors",
-                    leadStatus === key ? `${c.bg} ${c.text} border-transparent font-medium` : "border-stone-200 text-stone-500 hover:bg-stone-50"
+                    leadStatus === key ? `${style.bg} ${style.text} border-transparent font-medium` : "border-stone-200 text-stone-500 hover:bg-stone-50"
                   )}>
-                  {c.icon}{c.label}
+                  {style.icon}{label}
                 </button>
               );
             })}
           </div>
           <p className="text-[11px] text-stone-400 mt-2.5">
             {leadStatusUpdatedAt
-              ? <>Mis à jour le {new Date(leadStatusUpdatedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} à {new Date(leadStatusUpdatedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</>
-              : "Évolution du lead dans le temps."}
+              ? lang === "fr"
+                ? `Mis à jour le ${new Date(leadStatusUpdatedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long" })} à ${new Date(leadStatusUpdatedAt).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+                : lang === "en"
+                ? `Updated on ${new Date(leadStatusUpdatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long" })} at ${new Date(leadStatusUpdatedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`
+                : `Atualizado em ${new Date(leadStatusUpdatedAt).toLocaleDateString("pt-PT", { day: "numeric", month: "long" })} às ${new Date(leadStatusUpdatedAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" })}`
+              : i18n.analysisDetail.leadStatusSub[lang]}
           </p>
         </div>
       </div>
 
-      {/* Synthèse globale */}
+      {/* AI Summary */}
       {analysis.recommendations?.overall && (
         <div className="bg-stone-900 rounded-xl px-5 py-4">
-          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2">Synthèse IA</p>
+          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2">{i18n.analysisDetail.aiSummary[lang]}</p>
           <p className="text-[13.5px] text-white leading-relaxed">{analysis.recommendations.overall as string}</p>
         </div>
       )}
 
-      {/* Points forts / Axes d'amélioration */}
+      {/* Strengths / Improvements */}
       {(strengths?.length || improvements?.length) ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {strengths?.length ? (
             <div className="border border-emerald-100 bg-emerald-50/50 rounded-xl p-4 space-y-3">
               <p className="text-[11px] font-semibold text-emerald-700 uppercase tracking-wider flex items-center gap-1.5">
-                <TrendingUp className="w-3.5 h-3.5" /> Points forts
+                <TrendingUp className="w-3.5 h-3.5" /> {i18n.analysisDetail.strengths[lang]}
               </p>
               <ul className="space-y-2">
                 {strengths.map((s, i) => (
@@ -254,7 +265,7 @@ export default function AnalysisDetailPage() {
           {improvements?.length ? (
             <div className="border border-amber-100 bg-amber-50/50 rounded-xl p-4 space-y-3">
               <p className="text-[11px] font-semibold text-amber-700 uppercase tracking-wider flex items-center gap-1.5">
-                <TrendingDown className="w-3.5 h-3.5" /> Axes d'amélioration
+                <TrendingDown className="w-3.5 h-3.5" /> {i18n.analysisDetail.improvements[lang]}
               </p>
               <ul className="space-y-2">
                 {improvements.map((s, i) => (
@@ -269,12 +280,12 @@ export default function AnalysisDetailPage() {
         </div>
       ) : null}
 
-      {/* Moments clés */}
+      {/* Key moments */}
       {keyMoments.length > 0 && (
         <div className="border border-stone-200 rounded-xl bg-white shadow-sm overflow-hidden">
           <div className="px-5 py-3.5 border-b border-stone-100 flex items-center gap-2">
             <Clock className="w-3.5 h-3.5 text-stone-400" />
-            <h2 className="text-[13px] font-semibold text-stone-700">Moments clés</h2>
+            <h2 className="text-[13px] font-semibold text-stone-700">{i18n.analysisDetail.keyMoments[lang]}</h2>
           </div>
           <div className="divide-y divide-stone-100">
             {keyMoments.map((m, i) => (
@@ -293,12 +304,12 @@ export default function AnalysisDetailPage() {
       {/* Talk ratio */}
       {analysis.talk_ratio && <TalkRatioBar ratio={analysis.talk_ratio} />}
 
-      {/* Scores détaillés */}
+      {/* Detailed scores */}
       {analysis.scores && (
         <div className="space-y-3">
-          <h2 className="text-[12px] font-semibold text-stone-400 uppercase tracking-wider">Scores détaillés</h2>
+          <h2 className="text-[12px] font-semibold text-stone-400 uppercase tracking-wider">{i18n.analysisDetail.detailedScores[lang]}</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {SCORE_CATEGORIES.map(({ key, label, icon }) => (
+            {scoreCategories.map(({ key, label, icon }) => (
               <ScoreGauge
                 key={key}
                 label={label}

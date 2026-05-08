@@ -6,8 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
-
-type Lang = "fr" | "en" | "pt";
+import { useLang, type Lang } from "@/lib/lang-context";
 
 const PROBLEM_STYLES = [
   { icon: AlertTriangle, iconBg: "bg-rose-50", iconColor: "text-rose-500", accent: "border-rose-100" },
@@ -16,21 +15,21 @@ const PROBLEM_STYLES = [
 ] as const;
 
 const FEATURE_STYLES = [
-  { iconBg: "bg-blue-50", iconColor: "text-blue-600" },
+  { iconBg: "bg-violet-50", iconColor: "text-violet-600" },
   { iconBg: "bg-emerald-50", iconColor: "text-emerald-600" },
   { iconBg: "bg-amber-50", iconColor: "text-amber-500" },
-  { iconBg: "bg-violet-50", iconColor: "text-violet-600" },
+  { iconBg: "bg-sky-50", iconColor: "text-sky-600" },
 ] as const;
 
-const STEP_COLORS = ["text-blue-300", "text-violet-300", "text-emerald-300"] as const;
+const STEP_COLORS = ["text-violet-400", "text-blue-400", "text-emerald-400"] as const;
 
 const METRIC_COLORS = [
-  "text-orange-400",
   "text-violet-400",
   "text-sky-400",
   "text-emerald-400",
+  "text-amber-400",
   "text-blue-400",
-  "text-emerald-400",
+  "text-violet-300",
 ] as const;
 
 const PREVIEW_TABS: Record<Lang, { label: string; src: string; caption: string }[]> = {
@@ -63,10 +62,11 @@ const CONTENT = {
       { label: "Tarifs", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
-    badge: "Augmentez vos ventes de 20 à 50 %",
+    badge: "Coach IA pour augmenter ses ventes",
     hero: {
-      headline: "Closez plus. Perdez moins.",
-      sub: "Rumios analyse vos appels de vente, score votre performance sur 6 dimensions et vous dit précisément quoi corriger avant le prochain appel.",
+      headline: "Augmentez vos ventes de 20 à 50 %",
+      tagline: "Closez plus. Perdez moins.",
+      sub: "Rumios analyse vos appels de vente, score votre performance sur 6 dimensions\net vous dit précisément quoi corriger avant le prochain appel.",
       cta: "Commencer gratuitement",
       ctaSecondary: "Se connecter",
     },
@@ -176,30 +176,12 @@ const CONTENT = {
       label: "Questions fréquentes",
       headline: "Tout ce que vous voulez savoir.",
       items: [
-        {
-          q: "Ai-je besoin d'enregistrer mes calls ?",
-          a: "Non. Vous avez juste besoin du transcript texte de votre call. Des outils comme tl;dv, Fathom ou Otter.ai génèrent ces transcripts automatiquement. Vous pouvez aussi en coller un manuellement.",
-        },
-        {
-          q: "Quels types de calls peuvent être analysés ?",
-          a: "Tout appel de vente avec un transcript : closing, découverte, suivi, relance. Peu importe le format ou la plateforme. Google Meet, Zoom, Teams — du moment que vous avez le texte, Rumios peut l'analyser.",
-        },
-        {
-          q: "Comment fonctionne le scoring ?",
-          a: "L'IA analyse le transcript sur 6 dimensions (process, découverte, objections, posture, conclusion, score global) et retourne une note sur 100 avec des recommandations concrètes pour chaque axe.",
-        },
-        {
-          q: "C'est quoi le Playground ?",
-          a: "Une simulation d'appel face à une IA qui joue le rôle du prospect. Vous pouvez vous entraîner autant de fois que vous voulez avant un vrai call, sans aucun enjeu. Cette fonctionnalité est en cours de développement.",
-        },
-        {
-          q: "Combien coûte Rumios ?",
-          a: "Rumios est gratuit pour commencer : 2 scripts et 5 analyses de calls par mois. Des plans avec plus de capacités arriveront prochainement.",
-        },
-        {
-          q: "Puis-je utiliser Rumios sans script préexistant ?",
-          a: "Oui. L'analyse fonctionne même sans script de référence. Mais les résultats sont bien plus précis quand l'IA peut comparer le call à vos étapes et vos objections préparées.",
-        },
+        { q: "Ai-je besoin d'enregistrer mes calls ?", a: "Non. Vous avez juste besoin du transcript texte de votre call. Des outils comme tl;dv, Fathom ou Otter.ai génèrent ces transcripts automatiquement. Vous pouvez aussi en coller un manuellement." },
+        { q: "Quels types de calls peuvent être analysés ?", a: "Tout appel de vente avec un transcript : closing, découverte, suivi, relance. Peu importe le format ou la plateforme. Google Meet, Zoom, Teams — du moment que vous avez le texte, Rumios peut l'analyser." },
+        { q: "Comment fonctionne le scoring ?", a: "L'IA analyse le transcript sur 6 dimensions (process, découverte, objections, posture, conclusion, score global) et retourne une note sur 100 avec des recommandations concrètes pour chaque axe." },
+        { q: "C'est quoi le Playground ?", a: "Une simulation d'appel face à une IA qui joue le rôle du prospect. Vous pouvez vous entraîner autant de fois que vous voulez avant un vrai call, sans aucun enjeu. Cette fonctionnalité est en cours de développement." },
+        { q: "Combien coûte Rumios ?", a: "Rumios est gratuit pour commencer : 2 scripts et 5 analyses de calls par mois. Des plans avec plus de capacités arriveront prochainement." },
+        { q: "Puis-je utiliser Rumios sans script préexistant ?", a: "Oui. L'analyse fonctionne même sans script de référence. Mais les résultats sont bien plus précis quand l'IA peut comparer le call à vos étapes et vos objections préparées." },
       ],
     },
     cta: {
@@ -218,10 +200,11 @@ const CONTENT = {
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
-    badge: "Increase your sales by 20 to 50%",
+    badge: "AI coach to boost your sales",
     hero: {
-      headline: "Close more. Lose less.",
-      sub: "Rumios analyzes your sales calls, scores your performance across 6 dimensions, and tells you exactly what to fix before your next call.",
+      headline: "Increase your sales by 20 to 50%",
+      tagline: "Close more. Lose less.",
+      sub: "Rumios analyzes your sales calls, scores your performance across 6 dimensions,\nand tells you exactly what to fix before your next call.",
       cta: "Get started for free",
       ctaSecondary: "Sign in",
     },
@@ -355,10 +338,11 @@ const CONTENT = {
       { label: "Preços", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
-    badge: "Aumente as suas vendas em 20 a 50%",
+    badge: "Coach IA para aumentar as suas vendas",
     hero: {
-      headline: "Feche mais. Perca menos.",
-      sub: "O Rumios analisa as suas chamadas de venda, avalia o seu desempenho em 6 dimensões e diz-lhe exatamente o que corrigir antes da próxima chamada.",
+      headline: "Aumente as suas vendas em 20 a 50%",
+      tagline: "Feche mais. Perca menos.",
+      sub: "O Rumios analisa as suas chamadas de venda, avalia o seu desempenho\nem 6 dimensões e diz-lhe exatamente o que corrigir antes da próxima chamada.",
       cta: "Começar gratuitamente",
       ctaSecondary: "Entrar",
     },
@@ -506,33 +490,29 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] md:w-auto">
-      {/* Main bar */}
-      <div className="flex items-center justify-between md:justify-start gap-1 bg-stone-900 text-white rounded-full px-3 py-2 shadow-2xl shadow-stone-900/30 border border-white/10">
-        {/* Logo */}
+      <div className="flex items-center justify-between md:justify-start gap-1 bg-[#09090B] text-white rounded-full px-3 py-2 shadow-2xl shadow-black/40 border border-white/8">
         <div className="flex items-center gap-1.5 px-2 md:mr-1">
           <RumiosLogo size={18} inverted />
           <span className="text-[12px] font-semibold tracking-tight">RUMIOS</span>
         </div>
 
-        {/* Desktop nav links */}
         <div className="hidden md:flex items-center gap-1">
           <div className="w-px h-4 bg-white/10" />
           {c.floatingNav.map((item) => (
-            <a key={item.href} href={item.href} className="text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/10 transition-colors">
+            <a key={item.href} href={item.href} className="text-[12.5px] text-stone-400 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
               {item.label}
             </a>
           ))}
           <div className="w-px h-4 bg-white/10" />
-          {/* Language dropdown */}
           <div ref={langRef} className="relative">
             <button
               onClick={() => setLangOpen(o => !o)}
-              className="flex items-center gap-1 text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/10 transition-colors"
+              className="flex items-center gap-1 text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/8 transition-colors"
             >
               {lang.toUpperCase()} <ChevronDown className="w-2.5 h-2.5" />
             </button>
             {langOpen && (
-              <div className="absolute right-0 top-full mt-2 bg-stone-800 border border-white/10 rounded-xl overflow-hidden shadow-xl min-w-[120px]">
+              <div className="absolute right-0 top-full mt-2 bg-[#111111] border border-white/10 rounded-xl overflow-hidden shadow-xl min-w-[120px]">
                 {(["fr", "en", "pt"] as Lang[]).map(l => (
                   <button
                     key={l}
@@ -551,51 +531,35 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
           </div>
         </div>
 
-        {/* Mobile right side: burger + CTA */}
         <div className="flex items-center gap-2 md:hidden">
-          <button
-            onClick={() => setMobileOpen(o => !o)}
-            className="p-1.5 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
-            aria-label="Menu"
-          >
+          <button onClick={() => setMobileOpen(o => !o)} className="p-1.5 rounded-full hover:bg-white/8 transition-colors">
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
-          <Link href="/sign-up" className="text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
+          <Link href="/sign-up" className="text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
             {ctaLabel}
           </Link>
         </div>
 
-        {/* Desktop CTA */}
-        <Link href="/sign-up" className="hidden md:block ml-1 text-[12.5px] font-medium bg-white text-stone-900 px-3.5 py-1.5 rounded-full hover:bg-stone-100 transition-colors cursor-pointer">
+        <Link href="/sign-up" className="hidden md:block ml-1 text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
           {ctaLabel}
         </Link>
       </div>
 
-      {/* Mobile dropdown */}
       {mobileOpen && (
-        <div className="md:hidden mt-2 bg-stone-900 border border-white/10 rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/30">
+        <div className="md:hidden mt-2 bg-[#09090B] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
           <div className="px-2 py-2 space-y-0.5">
             {c.floatingNav.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center px-4 py-3 text-[14px] text-stone-300 hover:text-white hover:bg-white/8 rounded-xl transition-colors"
-              >
+              <a key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
+                className="flex items-center px-4 py-3 text-[14px] text-stone-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
                 {item.label}
               </a>
             ))}
           </div>
           <div className="border-t border-white/10 px-2 py-2 space-y-0.5">
             {(["fr", "en", "pt"] as Lang[]).map(l => (
-              <button
-                key={l}
-                onClick={() => { setLang(l); setMobileOpen(false); }}
-                className={cn(
-                  "flex items-center justify-between w-full px-4 py-3 text-[13px] rounded-xl transition-colors",
-                  l === lang ? "text-white bg-white/10" : "text-stone-400 hover:text-white hover:bg-white/8"
-                )}
-              >
+              <button key={l} onClick={() => { setLang(l); setMobileOpen(false); }}
+                className={cn("flex items-center justify-between w-full px-4 py-3 text-[13px] rounded-xl transition-colors",
+                  l === lang ? "text-white bg-white/10" : "text-stone-400 hover:text-white hover:bg-white/5")}>
                 <span>{LANG_LABELS[l]}</span>
                 {l === lang && <Check className="w-3.5 h-3.5" />}
               </button>
@@ -610,10 +574,8 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
 function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <button
-      onClick={() => setOpen(o => !o)}
-      className="w-full text-left border border-stone-200 rounded-xl overflow-hidden hover:border-stone-300 hover:shadow-sm transition-all cursor-pointer"
-    >
+    <button onClick={() => setOpen(o => !o)}
+      className="w-full text-left border border-stone-200 rounded-xl overflow-hidden hover:border-stone-300 hover:shadow-sm transition-all">
       <div className="flex items-center justify-between px-5 py-4 gap-4">
         <span className="text-[14px] font-medium text-stone-800">{q}</span>
         <span className="shrink-0 w-5 h-5 rounded-full bg-stone-100 flex items-center justify-center">
@@ -629,11 +591,10 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
-
 export default function HomePage() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
-  const [lang, setLang] = useState<Lang>("fr");
+  const { lang, setLang } = useLang();
   const [activePreview, setActivePreview] = useState(0);
 
   useEffect(() => {
@@ -646,44 +607,56 @@ export default function HomePage() {
     <div className="bg-white text-stone-900 min-h-screen">
       <FloatingNav lang={lang} setLang={setLang} />
 
-      {/* Hero */}
-      <section className="pt-28 pb-14 px-5 md:pt-36 md:pb-20 md:px-6">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-[38px] md:text-[56px] font-bold tracking-tight leading-[1.1] mb-3 md:mb-4">
-            {lang === "fr" ? (
-              <>{c.badge.split(" ventes")[0]} ventes<br />{c.badge.split(" ventes")[1]}</>
-            ) : lang === "en" ? (
-              <>{c.badge.split(" by")[0]}<br />by{c.badge.split(" by")[1]}</>
-            ) : (
-              <>{c.badge.split(" em ")[0]}<br />em {c.badge.split(" em ")[1]}</>
-            )}
-          </h1>
-          <p className="text-[20px] md:text-[24px] font-medium text-stone-400 tracking-tight mt-3 md:mt-4 mb-5 md:mb-7">
+      {/* ── HERO ── */}
+      <section className="relative pt-24 pb-20 px-5 md:pt-32 md:pb-24 md:px-6 bg-[#09090B] overflow-hidden">
+        {/* Subtle violet radial glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(124,58,237,0.18),transparent)] pointer-events-none" />
+
+        <div className="max-w-3xl mx-auto text-center relative z-10">
+          {/* Badge pill */}
+          <div className="inline-flex items-center gap-2 bg-violet-950/80 text-violet-300 border border-violet-700/40 text-[10.5px] font-semibold px-4 py-1.5 rounded-full mb-8 tracking-widest uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse shrink-0" />
+            {c.badge}
+          </div>
+
+          {/* Main headline */}
+          <h1 className="text-[46px] md:text-[72px] font-bold tracking-tight leading-[1.0] text-white mb-4">
             {c.hero.headline}
+          </h1>
+
+          {/* Tagline */}
+          <p className="text-[22px] md:text-[28px] font-semibold text-violet-300 mb-6">
+            {(c.hero as typeof c.hero & { tagline: string }).tagline}
           </p>
-          <p className="text-[15px] md:text-[17px] text-stone-500 max-w-xl mx-auto leading-relaxed mb-7 md:mb-9">
-            {c.hero.sub}
+
+          {/* Sub */}
+          <p className="text-[16px] md:text-[18px] text-stone-400 max-w-2xl mx-auto leading-relaxed mb-10">
+            {c.hero.sub.split("\n").flatMap((line, i) =>
+              i === 0 ? [line] : [<br key={i} className="hidden md:block" />, line]
+            )}
           </p>
+
+          {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/sign-up" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 hover:shadow-lg hover:shadow-stone-900/20 hover:-translate-y-0.5 transition-all cursor-pointer">
+            <Link href="/sign-up" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-7 py-3 rounded-lg hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-900/40 hover:-translate-y-0.5 transition-all">
               {c.hero.cta} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-            <Link href="/sign-in" className="w-full sm:w-auto text-[14px] text-stone-500 hover:text-stone-900 px-5 py-2.5 rounded-lg border border-stone-200 hover:border-stone-400 hover:shadow-sm transition-all cursor-pointer">
+            <Link href="/sign-in" className="w-full sm:w-auto text-[14px] text-stone-400 hover:text-white px-5 py-3 rounded-lg border border-stone-700 hover:border-stone-500 transition-all">
               {c.hero.ctaSecondary}
             </Link>
           </div>
         </div>
 
-        {/* Score card */}
-        <div className="max-w-xl mx-auto mt-10 md:mt-14">
-          <div className="bg-white rounded-2xl border border-stone-200 shadow-xl overflow-hidden">
-            <div className="bg-stone-900 px-5 py-4 flex items-start justify-between">
+        {/* Score card mock */}
+        <div className="max-w-xl mx-auto mt-16 relative z-10">
+          <div className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/10">
+            <div className="bg-[#0E0E16] px-5 py-4 flex items-start justify-between">
               <div>
                 <p className="text-[11px] font-medium text-stone-500 uppercase tracking-widest">{c.mockCard.label}</p>
                 <p className="text-[14px] font-medium text-white mt-1">{c.mockCard.subtitle}</p>
               </div>
               <div className="text-right shrink-0">
-                <div className="text-[44px] font-bold text-emerald-400 leading-none">78</div>
+                <div className="text-[44px] font-bold text-violet-400 leading-none">78</div>
                 <p className="text-[11px] text-stone-500 mt-0.5">{c.mockCard.scoreLabel}</p>
               </div>
             </div>
@@ -714,16 +687,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Problem */}
+      {/* ── PROBLEM ── */}
       <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-3xl mx-auto text-center">
-          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-4">{c.problem.label}</p>
+          <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-4">{c.problem.label}</p>
           <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight leading-tight mb-4">
-            {lang === "en" ? (
-              <>You leave every call with a feeling.<br />Rarely with an analysis.</>
-            ) : lang === "pt" ? (
-              <>Sai de cada chamada com uma impressão.<br />Raramente com uma análise.</>
-            ) : c.problem.headline}
+            {lang === "en" ? <>You leave every call with a feeling.<br />Rarely with an analysis.</>
+            : lang === "pt" ? <>Sai de cada chamada com uma impressão.<br />Raramente com uma análise.</>
+            : c.problem.headline}
           </h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed max-w-xl mx-auto mb-8 md:mb-10">{c.problem.sub}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
@@ -746,28 +717,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA strip — after Problem */}
+      {/* CTA strip — Problem */}
       <div className="px-5 md:px-6 pb-6 bg-stone-50">
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-stone-200 rounded-2xl px-6 py-5 shadow-sm">
           <p className="text-[15px] font-semibold text-stone-900 text-center sm:text-left">
             {lang === "fr" ? "Rumios règle ces 3 problèmes." : lang === "en" ? "Rumios fixes all three." : "O Rumios resolve estes 3 problemas."}
           </p>
-          <Link href="/sign-up" className="shrink-0 flex items-center gap-2 bg-stone-900 text-white text-[13.5px] font-medium px-5 py-2.5 rounded-lg hover:bg-stone-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-stone-900/20 transition-all cursor-pointer">
+          <Link href="/sign-up" className="shrink-0 flex items-center gap-2 bg-violet-600 text-white text-[13.5px] font-semibold px-5 py-2.5 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-900/30 transition-all">
             {lang === "fr" ? "Commencer gratuitement" : lang === "en" ? "Get started for free" : "Começar gratuitamente"} <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
 
-      {/* Features */}
+      {/* ── FEATURES ── */}
       <section id="features" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.features.label}</p>
+            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.features.label}</p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.features.headline}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             {c.features.items.map((f, i) => (
-              <div key={f.title} className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-stone-300 hover:shadow-lg hover:shadow-stone-100 hover:-translate-y-1 transition-all duration-200">
+              <div key={f.title} className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 hover:-translate-y-1 transition-all duration-200">
                 <div className="flex items-start justify-between">
                   <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", FEATURE_STYLES[i].iconBg)}>
                     <f.icon className={cn("w-5 h-5", FEATURE_STYLES[i].iconColor)} />
@@ -781,9 +752,8 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          {/* CTA — after Features */}
           <div className="text-center mt-10 md:mt-12">
-            <Link href="/sign-up" className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg hover:bg-stone-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-stone-900/20 transition-all cursor-pointer">
+            <Link href="/sign-up" className="inline-flex items-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-6 py-2.5 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-900/30 transition-all">
               {lang === "fr" ? "Essayer gratuitement" : lang === "en" ? "Try for free" : "Experimentar gratuitamente"} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
             <p className="text-[12px] text-stone-400 mt-2.5">
@@ -793,11 +763,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Preview */}
+      {/* ── PRODUCT PREVIEW ── */}
       <section className="py-14 px-5 md:py-24 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 md:mb-10">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">
+            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">
               {lang === "fr" ? "Aperçu" : lang === "en" ? "Preview" : "Pré-visualização"}
             </p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">
@@ -806,45 +776,32 @@ export default function HomePage() {
           </div>
           <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
             {PREVIEW_TABS[lang].map((tab, i) => (
-              <button
-                key={i}
-                onClick={() => setActivePreview(i)}
-                className={cn(
-                  "text-[13px] font-medium px-4 py-2 rounded-full transition-colors",
-                  activePreview === i
-                    ? "bg-stone-900 text-white"
-                    : "bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700"
-                )}
-              >
+              <button key={i} onClick={() => setActivePreview(i)}
+                className={cn("text-[13px] font-medium px-4 py-2 rounded-full transition-colors",
+                  activePreview === i ? "bg-violet-600 text-white shadow-md shadow-violet-900/20" : "bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700")}>
                 {tab.label}
               </button>
             ))}
           </div>
           <div className="rounded-2xl border border-stone-200 overflow-hidden shadow-xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={PREVIEW_TABS[lang][activePreview].src}
-              alt={PREVIEW_TABS[lang][activePreview].label}
-              className="w-full h-auto"
-            />
+            <img src={PREVIEW_TABS[lang][activePreview].src} alt={PREVIEW_TABS[lang][activePreview].label} className="w-full h-auto" />
           </div>
-          <p className="text-center text-[13px] text-stone-400 mt-4">
-            {PREVIEW_TABS[lang][activePreview].caption}
-          </p>
+          <p className="text-center text-[13px] text-stone-400 mt-4">{PREVIEW_TABS[lang][activePreview].caption}</p>
         </div>
       </section>
 
-      {/* Metrics */}
-      <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-900 text-white">
+      {/* ── METRICS ── */}
+      <section className="py-14 px-5 md:py-20 md:px-6 bg-[#09090B] text-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 md:mb-10">
-            <p className="text-[11px] font-semibold text-stone-500 uppercase tracking-widest mb-3">{c.metrics.label}</p>
+            <p className="text-[11px] font-semibold text-violet-400 uppercase tracking-widest mb-3">{c.metrics.label}</p>
             <h2 className="text-[26px] md:text-[32px] font-bold tracking-tight mb-3">{c.metrics.headline}</h2>
             <p className="text-[14px] md:text-[15px] text-stone-400 max-w-lg mx-auto">{c.metrics.sub}</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {c.metrics.items.map((m, i) => (
-              <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3 hover:bg-white/10 transition-colors duration-200">
+              <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3 hover:bg-white/8 hover:border-violet-700/30 transition-colors duration-200">
                 <div className="w-8 h-8 bg-white/8 rounded-lg flex items-center justify-center shrink-0">
                   <m.icon className={cn("w-4 h-4", METRIC_COLORS[i])} />
                 </div>
@@ -858,16 +815,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* ── HOW IT WORKS ── */}
       <section id="how" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.steps.label}</p>
+            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.steps.label}</p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
           </div>
           <div className="space-y-3">
             {c.steps.items.map((step, i) => (
-              <div key={step.number} className="flex items-start gap-4 md:gap-6 px-5 py-5 md:px-7 md:py-6 bg-white border border-stone-200 rounded-2xl hover:border-stone-300 hover:shadow-sm transition-all duration-200">
+              <div key={step.number} className="flex items-start gap-4 md:gap-6 px-5 py-5 md:px-7 md:py-6 bg-white border border-stone-200 rounded-2xl hover:border-violet-200 hover:shadow-md hover:shadow-violet-100/40 transition-all duration-200">
                 <span className={cn("text-[32px] md:text-[36px] font-bold leading-none tabular-nums shrink-0 mt-0.5", STEP_COLORS[i])}>{step.number}</span>
                 <div>
                   <h3 className="text-[14px] md:text-[15px] font-semibold text-stone-900 mb-1.5">{step.title}</h3>
@@ -876,9 +833,8 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          {/* CTA — after How it works */}
           <div className="mt-8 text-center">
-            <Link href="/sign-up" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-stone-600 hover:text-stone-900 transition-colors cursor-pointer group">
+            <Link href="/sign-up" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-violet-600 hover:text-violet-700 transition-colors group">
               {lang === "fr" ? "Créer mon compte gratuitement" : lang === "en" ? "Create my free account" : "Criar a minha conta grátis"}
               <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
@@ -886,16 +842,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* For who */}
+      {/* ── FOR WHO ── */}
       <section className="py-14 px-5 md:py-20 md:px-6 bg-stone-50 border-y border-stone-100">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 md:mb-10">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.profiles.label}</p>
+            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.profiles.label}</p>
             <h2 className="text-[26px] md:text-[32px] font-bold tracking-tight">{c.profiles.headline}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {c.profiles.items.map((p) => (
-              <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+              <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-6 hover:border-violet-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
                 <div className="text-2xl mb-3">{p.emoji}</div>
                 <h3 className="text-[14.5px] font-semibold text-stone-900 mb-2">{p.title}</h3>
                 <p className="text-[13px] text-stone-500 leading-relaxed">{p.desc}</p>
@@ -905,16 +861,16 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing */}
+      {/* ── PRICING ── */}
       <section id="pricing" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.pricing.label}</p>
+            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.pricing.label}</p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.pricing.headline}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Free plan */}
-            <div className="bg-white border border-stone-200 rounded-2xl p-7 flex flex-col hover:shadow-md transition-shadow duration-200">
+            {/* Free */}
+            <div className="bg-white border-2 border-violet-600 rounded-2xl p-7 flex flex-col shadow-lg shadow-violet-100">
               <div className="mb-6">
                 <h3 className="text-[17px] font-bold text-stone-900 mb-1">{c.pricing.free.name}</h3>
                 <p className="text-[13px] text-stone-500">{c.pricing.free.desc}</p>
@@ -926,23 +882,23 @@ export default function HomePage() {
               <ul className="space-y-3 mb-8 flex-1">
                 {c.pricing.free.features.map((feat, i) => (
                   <li key={i} className="flex items-center gap-2.5 text-[13.5px] text-stone-700">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <CheckCircle2 className="w-4 h-4 text-violet-500 shrink-0" />
                     {feat}
                   </li>
                 ))}
               </ul>
-              <Link href="/sign-up" className="flex items-center justify-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-6 py-3 rounded-lg hover:bg-stone-700 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-stone-900/20 transition-all cursor-pointer">
+              <Link href="/sign-up" className="flex items-center justify-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-6 py-3 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-900/30 transition-all">
                 {c.pricing.free.cta} <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
 
-            {/* Pro plan */}
+            {/* Pro */}
             <div className="bg-stone-50 border border-stone-200 rounded-2xl p-7 flex flex-col relative overflow-hidden">
               <div className="absolute top-5 right-5">
-                <span className="text-[11px] font-medium bg-stone-900 text-white px-2.5 py-1 rounded-full">{c.pricing.pro.badge}</span>
+                <span className="text-[11px] font-medium bg-stone-800 text-stone-300 px-2.5 py-1 rounded-full">{c.pricing.pro.badge}</span>
               </div>
               <div className="mb-6">
-                <h3 className="text-[17px] font-bold text-stone-500 mb-1">{c.pricing.pro.name}</h3>
+                <h3 className="text-[17px] font-bold text-stone-400 mb-1">{c.pricing.pro.name}</h3>
                 <p className="text-[13px] text-stone-400">{c.pricing.pro.desc}</p>
               </div>
               <div className="mb-7">
@@ -962,59 +918,60 @@ export default function HomePage() {
       </section>
 
       {/* CTA strip — before FAQ */}
-      <div className="py-12 px-5 md:px-6 bg-stone-900">
+      <div className="py-14 px-5 md:px-6 bg-[#09090B]">
         <div className="max-w-2xl mx-auto text-center">
           <p className="text-white text-[20px] md:text-[24px] font-bold tracking-tight mb-2">
             {lang === "fr" ? "Prêt à analyser votre prochain call ?" : lang === "en" ? "Ready to analyze your next call?" : "Pronto para analisar a sua próxima chamada?"}
           </p>
-          <p className="text-stone-400 text-[14px] mb-6">
+          <p className="text-stone-500 text-[14px] mb-6">
             {lang === "fr" ? "Gratuit pour commencer. Sans carte bancaire." : lang === "en" ? "Free to start. No credit card." : "Grátis para começar. Sem cartão de crédito."}
           </p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-white text-stone-900 text-[14px] font-medium px-6 py-3 rounded-lg hover:bg-stone-100 hover:-translate-y-0.5 hover:shadow-xl transition-all cursor-pointer">
+          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-7 py-3 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-900/40 transition-all">
             {lang === "fr" ? "Commencer gratuitement" : lang === "en" ? "Get started for free" : "Começar gratuitamente"} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
 
-      {/* FAQ */}
+      {/* ── FAQ ── */}
       <section id="faq" className="py-14 px-5 md:py-24 md:px-6">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-widest mb-3">{c.faq.label}</p>
+            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.faq.label}</p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.faq.headline}</h2>
           </div>
           <div className="space-y-2">
-            {c.faq.items.map((item, i) => (
-              <FaqItem key={i} q={item.q} a={item.a} />
-            ))}
+            {c.faq.items.map((item, i) => <FaqItem key={i} q={item.q} a={item.a} />)}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16 px-5 md:py-28 md:px-6 bg-stone-50 border-t border-stone-100">
-        <div className="max-w-xl md:max-w-3xl mx-auto text-center">
-          <h2 className="text-[30px] md:text-[40px] font-bold tracking-tight leading-tight mb-4 md:whitespace-nowrap">{c.cta.headline}</h2>
-          <p className="text-[14px] md:text-[15px] text-stone-500 leading-relaxed mb-7">{c.cta.sub}</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-stone-900 text-white text-[14px] font-medium px-7 py-3 rounded-lg hover:bg-stone-700 hover:shadow-lg hover:shadow-stone-900/20 hover:-translate-y-0.5 transition-all cursor-pointer">
+      {/* ── FINAL CTA ── */}
+      <section className="relative py-20 px-5 md:py-32 md:px-6 bg-[#09090B] overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_100%,rgba(124,58,237,0.15),transparent)] pointer-events-none" />
+        <div className="max-w-xl md:max-w-3xl mx-auto text-center relative z-10">
+          <h2 className="text-[30px] md:text-[48px] font-bold tracking-tight leading-tight mb-4 text-white">
+            {c.cta.headline}
+          </h2>
+          <p className="text-[14px] md:text-[16px] text-stone-400 leading-relaxed mb-8">{c.cta.sub}</p>
+          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-8 py-3.5 rounded-lg hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-900/50 hover:-translate-y-0.5 transition-all">
             {c.cta.button} <ArrowRight className="w-4 h-4" />
           </Link>
-          <p className="text-[12px] text-stone-400 mt-4">{c.cta.note}</p>
+          <p className="text-[12px] text-stone-600 mt-4">{c.cta.note}</p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-stone-100 py-6 px-5 md:py-7 md:px-6">
-        <div className="max-w-5xl mx-auto flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between text-[12px] text-stone-400">
+      {/* ── FOOTER ── */}
+      <footer className="border-t border-white/5 bg-[#09090B] py-6 px-5 md:py-7 md:px-6">
+        <div className="max-w-5xl mx-auto flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between text-[12px] text-stone-600">
           <div className="flex items-center gap-2">
-            <RumiosLogo size={18} />
-            <span className="font-medium text-stone-500">RUMIOS</span>
-            <span className="text-stone-300">·</span>
+            <RumiosLogo size={18} inverted />
+            <span className="font-medium text-stone-400">RUMIOS</span>
+            <span className="text-stone-700">·</span>
             <span>rumios.ai</span>
           </div>
           <p>© 2026 · {c.footer}</p>
-          <p className="flex items-center gap-1 text-stone-400">
-            Made by Aurélien with <Heart className="w-3 h-3 fill-stone-800 text-stone-800" /> in Portugal
+          <p className="flex items-center gap-1 text-stone-600">
+            Made by Aurélien with <Heart className="w-3 h-3 fill-stone-500 text-stone-500" /> in Portugal
           </p>
         </div>
       </footer>

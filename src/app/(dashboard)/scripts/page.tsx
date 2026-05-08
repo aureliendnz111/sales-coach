@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { ScriptCard } from "@/components/scripts/ScriptCard";
 import { Plus, FileText, Archive, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 type Script = {
   id: string; name: string; goal?: string | null;
@@ -14,6 +16,7 @@ type Script = {
 
 export default function ScriptsPage() {
   const router = useRouter();
+  const { lang } = useLang();
   const [scripts, setScripts] = useState<Script[]>([]);
   const [loading, setLoading] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
@@ -34,8 +37,8 @@ export default function ScriptsPage() {
     <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Scripts</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Vos process de vente et réponses aux objections</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{i18n.scripts.title[lang]}</h1>
+          <p className="text-sm text-stone-500 mt-0.5">{i18n.scripts.subtitle[lang]}</p>
         </div>
         <div className="flex items-center gap-2">
           {archived.length > 0 && (
@@ -49,22 +52,22 @@ export default function ScriptsPage() {
               )}
             >
               <Archive className="w-3.5 h-3.5" />
-              {showArchived ? "Masquer les archives" : "Archives"}
+              {showArchived ? i18n.common.hideArchives[lang] : i18n.common.archives[lang]}
             </button>
           )}
           {!showArchived && (
             <button
               onClick={() => !atScriptLimit && router.push("/scripts/new")}
               disabled={atScriptLimit}
-              title={atScriptLimit ? "Limite de 2 scripts atteinte sur le plan gratuit" : undefined}
+              title={atScriptLimit ? i18n.scripts.limitTooltip[lang] : undefined}
               className={cn(
                 "flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg transition-colors",
                 atScriptLimit
                   ? "bg-stone-200 text-stone-400 cursor-not-allowed"
-                  : "bg-stone-900 text-white hover:bg-stone-700"
+                  : "bg-violet-600 text-white hover:bg-violet-700"
               )}
             >
-              <Plus className="w-4 h-4" /> Nouveau script
+              <Plus className="w-4 h-4" /> {i18n.scripts.newScript[lang]}
             </button>
           )}
         </div>
@@ -79,8 +82,10 @@ export default function ScriptsPage() {
         )}>
           <span>
             {atScriptLimit
-              ? "Limite atteinte — 2 scripts maximum sur le plan gratuit."
-              : `${active.length} / 2 scripts utilisés sur le plan gratuit.`}
+              ? i18n.scripts.limitReached[lang]
+              : lang === "fr" ? `${active.length} / 2 scripts utilisés sur le plan gratuit.`
+              : lang === "en" ? `${active.length} / 2 scripts used on the free plan.`
+              : `${active.length} / 2 guiões utilizados no plano gratuito.`}
           </span>
           <span className="font-semibold tabular-nums">{active.length}/2</span>
         </div>
@@ -88,7 +93,7 @@ export default function ScriptsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-stone-400 gap-2">
-          <Loader2 className="w-4 h-4 animate-spin" /> Chargement…
+          <Loader2 className="w-4 h-4 animate-spin" /> {i18n.common.loading[lang]}
         </div>
       ) : displayed.length === 0 && !showArchived ? (
         <div className="border-2 border-dashed border-stone-200 rounded-xl flex flex-col items-center justify-center py-16 text-center gap-3">
@@ -96,19 +101,19 @@ export default function ScriptsPage() {
             <FileText className="w-6 h-6 text-stone-400" />
           </div>
           <div>
-            <p className="font-medium text-stone-800 text-sm">Aucun script pour l'instant</p>
-            <p className="text-stone-400 text-xs mt-1">Créez votre premier script ou importez un template.</p>
+            <p className="font-medium text-stone-800 text-sm">{i18n.scripts.noScripts[lang]}</p>
+            <p className="text-stone-400 text-xs mt-1">{i18n.scripts.noScriptsSub[lang]}</p>
           </div>
           <button
             onClick={() => router.push("/scripts/new")}
-            className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-stone-900 text-white hover:bg-stone-700 transition-colors mt-1"
+            className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors mt-1"
           >
-            <Plus className="w-4 h-4" /> Créer un script
+            <Plus className="w-4 h-4" /> {i18n.scripts.createScript[lang]}
           </button>
         </div>
       ) : displayed.length === 0 && showArchived ? (
         <div className="flex flex-col items-center justify-center py-20 text-center gap-2">
-          <p className="text-[14px] font-medium text-stone-600">Aucun script archivé</p>
+          <p className="text-[14px] font-medium text-stone-600">{i18n.scripts.noArchived[lang]}</p>
         </div>
       ) : (
         <div className="border border-stone-200 rounded-xl overflow-hidden divide-y divide-stone-100">
