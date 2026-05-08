@@ -34,19 +34,22 @@ const METRIC_COLORS = [
 
 const PREVIEW_TABS: Record<Lang, { label: string; src: string; url: string; caption: string }[]> = {
   fr: [
+    { label: "Dashboard", src: "/screenshot-dashboard.png", url: "app.rumios.io/dashboard", caption: "Vue d'ensemble de votre activité — scripts actifs, calls du mois et score moyen." },
     { label: "Script Builder", src: "/screenshot-script-builder.png", url: "app.rumios.io/scripts/mon-script", caption: "Structurez vos étapes, questions et objections dans un script guidé — prêt à utiliser en appel." },
-    { label: "Dashboard", src: "/screenshot-2.png", url: "app.rumios.io/dashboard", caption: "Vue d'ensemble de votre activité — scripts actifs, calls du mois et score moyen." },
-    { label: "Analyse de call", src: "/screenshot-analyses.png", url: "app.rumios.io/call-analysis", caption: "Score détaillé sur 6 dimensions, synthèse IA, points forts et axes d'amélioration après chaque call." },
+    { label: "Templates", src: "/screenshot-script-template.png", url: "app.rumios.io/scripts/new", caption: "Partez d'un template éprouvé par secteur et adaptez-le à votre offre en quelques minutes." },
+    { label: "Analyse de call", src: "/screenshot-analysis.png", url: "app.rumios.io/call-analysis/aurélie", caption: "Score IA sur 6 dimensions, synthèse, points forts et axes d'amélioration après chaque appel." },
   ],
   en: [
+    { label: "Dashboard", src: "/screenshot-dashboard.png", url: "app.rumios.io/dashboard", caption: "Overview of your activity — active scripts, calls this month, and average score." },
     { label: "Script Builder", src: "/screenshot-script-builder.png", url: "app.rumios.io/scripts/my-script", caption: "Structure your steps, questions and objections in a guided script — ready to use on every call." },
-    { label: "Dashboard", src: "/screenshot-2.png", url: "app.rumios.io/dashboard", caption: "Overview of your activity — active scripts, calls this month, and average score." },
-    { label: "Call Analysis", src: "/screenshot-analyses.png", url: "app.rumios.io/call-analysis", caption: "Detailed score across 6 dimensions, AI synthesis, strengths and improvement areas after every call." },
+    { label: "Templates", src: "/screenshot-script-template.png", url: "app.rumios.io/scripts/new", caption: "Start from a proven template by industry and tailor it to your offer in minutes." },
+    { label: "Call Analysis", src: "/screenshot-analysis.png", url: "app.rumios.io/call-analysis/aurelie", caption: "AI score across 6 dimensions, synthesis, strengths and improvement areas after every call." },
   ],
   pt: [
+    { label: "Dashboard", src: "/screenshot-dashboard.png", url: "app.rumios.io/dashboard", caption: "Vista geral da sua atividade — guiões ativos, chamadas do mês e pontuação média." },
     { label: "Script Builder", src: "/screenshot-script-builder.png", url: "app.rumios.io/scripts/meu-guiao", caption: "Estruture as suas etapas, perguntas e objeções num guião guiado — pronto para usar em cada chamada." },
-    { label: "Dashboard", src: "/screenshot-2.png", url: "app.rumios.io/dashboard", caption: "Vista geral da sua atividade — guiões ativos, chamadas do mês e pontuação média." },
-    { label: "Análise de chamada", src: "/screenshot-analyses.png", url: "app.rumios.io/call-analysis", caption: "Pontuação detalhada em 6 dimensões, síntese IA, pontos fortes e eixos de melhoria após cada chamada." },
+    { label: "Modelos", src: "/screenshot-script-template.png", url: "app.rumios.io/scripts/new", caption: "Parta de um modelo comprovado por setor e adapte-o à sua oferta em minutos." },
+    { label: "Análise de chamada", src: "/screenshot-analysis.png", url: "app.rumios.io/call-analysis/aurelie", caption: "Pontuação IA em 6 dimensões, síntese, pontos fortes e eixos de melhoria após cada chamada." },
   ],
 };
 
