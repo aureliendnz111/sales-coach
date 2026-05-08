@@ -466,7 +466,7 @@ export default function HomePage() {
             {lang === "fr" ? (
               <>{c.badge.split(" ventes")[0]} ventes<br />{c.badge.split(" ventes")[1]}</>
             ) : (
-              <>{c.badge.split(" by")[0]} by<br />{c.badge.split(" by")[1]}</>
+              <>{c.badge.split(" by")[0]}<br />by{c.badge.split(" by")[1]}</>
             )}
           </h1>
           <p className="text-[20px] md:text-[24px] font-medium text-stone-400 tracking-tight mt-3 md:mt-4 mb-5 md:mb-7">
