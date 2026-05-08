@@ -32,24 +32,21 @@ const METRIC_COLORS = [
   "text-violet-300",
 ] as const;
 
-const PREVIEW_TABS: Record<Lang, { label: string; src: string; caption: string }[]> = {
+const PREVIEW_TABS: Record<Lang, { label: string; src: string; url: string; caption: string }[]> = {
   fr: [
-    { label: "Dashboard", src: "/screenshot-2.png", caption: "Vue d'ensemble de votre activité — scripts, calls et score moyen." },
-    { label: "Script", src: "/screenshot-5.png", caption: "Vos étapes et objections structurées, prêtes à guider chaque appel." },
-    { label: "Templates", src: "/screenshot-4.png", caption: "Partez d'un template éprouvé et adaptez-le à votre offre en quelques minutes." },
-    { label: "Analyses", src: "/screenshot-analyses.png", caption: "Score détaillé, synthèse IA, points forts et axes d'amélioration après chaque call." },
+    { label: "Script Builder", src: "/screenshot-script-builder.png", url: "app.rumios.io/scripts/mon-script", caption: "Structurez vos étapes, questions et objections dans un script guidé — prêt à utiliser en appel." },
+    { label: "Dashboard", src: "/screenshot-2.png", url: "app.rumios.io/dashboard", caption: "Vue d'ensemble de votre activité — scripts actifs, calls du mois et score moyen." },
+    { label: "Analyse de call", src: "/screenshot-analyses.png", url: "app.rumios.io/call-analysis", caption: "Score détaillé sur 6 dimensions, synthèse IA, points forts et axes d'amélioration après chaque call." },
   ],
   en: [
-    { label: "Dashboard", src: "/screenshot-2.png", caption: "Overview of your activity — scripts, calls, and average score." },
-    { label: "Script", src: "/screenshot-5.png", caption: "Your steps and objections structured, ready to guide every call." },
-    { label: "Templates", src: "/screenshot-4.png", caption: "Start from a proven template and tailor it to your offer in minutes." },
-    { label: "Analyses", src: "/screenshot-analyses.png", caption: "Detailed score, AI synthesis, strengths and improvement areas after every call." },
+    { label: "Script Builder", src: "/screenshot-script-builder.png", url: "app.rumios.io/scripts/my-script", caption: "Structure your steps, questions and objections in a guided script — ready to use on every call." },
+    { label: "Dashboard", src: "/screenshot-2.png", url: "app.rumios.io/dashboard", caption: "Overview of your activity — active scripts, calls this month, and average score." },
+    { label: "Call Analysis", src: "/screenshot-analyses.png", url: "app.rumios.io/call-analysis", caption: "Detailed score across 6 dimensions, AI synthesis, strengths and improvement areas after every call." },
   ],
   pt: [
-    { label: "Dashboard", src: "/screenshot-2.png", caption: "Vista geral da sua atividade — guiões, chamadas e pontuação média." },
-    { label: "Guião", src: "/screenshot-5.png", caption: "As suas etapas e objeções estruturadas, prontas para guiar cada chamada." },
-    { label: "Modelos", src: "/screenshot-4.png", caption: "Parta de um modelo comprovado e adapte-o à sua oferta em minutos." },
-    { label: "Análises", src: "/screenshot-analyses.png", caption: "Pontuação detalhada, síntese IA, pontos fortes e eixos de melhoria após cada chamada." },
+    { label: "Script Builder", src: "/screenshot-script-builder.png", url: "app.rumios.io/scripts/meu-guiao", caption: "Estruture as suas etapas, perguntas e objeções num guião guiado — pronto para usar em cada chamada." },
+    { label: "Dashboard", src: "/screenshot-2.png", url: "app.rumios.io/dashboard", caption: "Vista geral da sua atividade — guiões ativos, chamadas do mês e pontuação média." },
+    { label: "Análise de chamada", src: "/screenshot-analyses.png", url: "app.rumios.io/call-analysis", caption: "Pontuação detalhada em 6 dimensões, síntese IA, pontos fortes e eixos de melhoria após cada chamada." },
   ],
 };
 
@@ -837,9 +834,25 @@ export default function HomePage() {
               </button>
             ))}
           </div>
-          <div className="rounded-2xl border border-stone-200 overflow-hidden shadow-xl">
+          {/* Browser frame */}
+          <div className="rounded-2xl overflow-hidden shadow-2xl border border-stone-200">
+            {/* Chrome bar */}
+            <div className="bg-[#E8E8E8] px-4 py-2.5 flex items-center gap-3 border-b border-stone-300">
+              {/* Traffic lights */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
+                <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
+                <span className="w-3 h-3 rounded-full bg-[#28C840]" />
+              </div>
+              {/* URL bar */}
+              <div className="flex-1 bg-white/70 rounded-md px-3 py-1 flex items-center gap-2 min-w-0">
+                <svg className="w-3 h-3 text-stone-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                <span className="text-[11px] text-stone-500 truncate">{PREVIEW_TABS[lang][activePreview].url}</span>
+              </div>
+            </div>
+            {/* Screenshot */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PREVIEW_TABS[lang][activePreview].src} alt={PREVIEW_TABS[lang][activePreview].label} className="w-full h-auto" />
+            <img src={PREVIEW_TABS[lang][activePreview].src} alt={PREVIEW_TABS[lang][activePreview].label} className="w-full h-auto block" />
           </div>
           <p className="text-center text-[13px] text-stone-400 mt-4">{PREVIEW_TABS[lang][activePreview].caption}</p>
         </div>
