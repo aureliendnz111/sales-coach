@@ -118,7 +118,7 @@ export default function AnalysisDetailPage() {
 
   if (analysis.status === "analyzing") return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-8">
-      <Loader2 className="w-8 h-8 animate-spin text-stone-400" />
+      <Loader2 className="w-8 h-8 animate-spin text-violet-500" />
       <div>
         <p className="text-[15px] font-medium text-stone-700">{i18n.analysisDetail.analyzingTitle[lang]}</p>
         <p className="text-[13px] text-stone-500 mt-1">{i18n.analysisDetail.analyzingSub[lang]}</p>
@@ -175,9 +175,9 @@ export default function AnalysisDetailPage() {
             </div>
           </div>
         </div>
-        <div className="text-right shrink-0">
-          <div className={cn("text-4xl font-bold tabular-nums", overallColor)}>{overall}</div>
-          <div className="text-[11px] text-stone-500 mt-0.5">{i18n.analysisDetail.overallScore[lang]}</div>
+        <div className={cn("shrink-0 flex flex-col items-center justify-center w-16 h-16 rounded-2xl", overall >= 75 ? "bg-emerald-50" : overall >= 50 ? "bg-amber-50" : "bg-rose-50")}>
+          <div className={cn("text-[28px] font-bold tabular-nums leading-none", overallColor)}>{overall}</div>
+          <div className="text-[9px] font-semibold text-stone-400 uppercase tracking-wider mt-0.5">{i18n.analysisDetail.overallScore[lang]}</div>
         </div>
       </div>
 
@@ -238,9 +238,9 @@ export default function AnalysisDetailPage() {
 
       {/* AI Summary */}
       {analysis.recommendations?.overall && (
-        <div className="bg-stone-900 rounded-xl px-5 py-4">
-          <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider mb-2">{i18n.analysisDetail.aiSummary[lang]}</p>
-          <p className="text-[13.5px] text-white leading-relaxed">{analysis.recommendations.overall as string}</p>
+        <div className="bg-[#0E0E16] rounded-xl px-5 py-4 border-l-4 border-violet-500">
+          <p className="text-[11px] font-semibold text-violet-400 uppercase tracking-wider mb-2">{i18n.analysisDetail.aiSummary[lang]}</p>
+          <p className="text-[13.5px] text-stone-300 leading-relaxed">{analysis.recommendations.overall as string}</p>
         </div>
       )}
 

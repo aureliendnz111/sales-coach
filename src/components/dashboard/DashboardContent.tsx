@@ -65,7 +65,7 @@ export function DashboardContent({ firstName, scripts, calls, avgScore, overallS
 
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
-          <div className="flex items-center gap-2 text-stone-400 text-[11px] font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-violet-500 text-[11px] font-semibold uppercase tracking-wider">
             <FileText className="w-3.5 h-3.5" /> {i18n.dashboard.activeScripts[lang]}
           </div>
           <p className="text-[32px] font-bold text-stone-900 tabular-nums leading-none pt-1">{scripts}</p>
@@ -73,7 +73,7 @@ export function DashboardContent({ firstName, scripts, calls, avgScore, overallS
         </div>
 
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
-          <div className="flex items-center gap-2 text-stone-400 text-[11px] font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-violet-500 text-[11px] font-semibold uppercase tracking-wider">
             <PhoneCall className="w-3.5 h-3.5" /> {i18n.dashboard.callsThisMonth[lang]}
           </div>
           <p className="text-[32px] font-bold text-stone-900 tabular-nums leading-none pt-1">{calls}</p>
@@ -81,7 +81,7 @@ export function DashboardContent({ firstName, scripts, calls, avgScore, overallS
         </div>
 
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
-          <div className="flex items-center gap-2 text-stone-400 text-[11px] font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-violet-500 text-[11px] font-semibold uppercase tracking-wider">
             <TrendingUp className="w-3.5 h-3.5" /> {i18n.dashboard.avgScore[lang]}
           </div>
           <p className={cn("text-[32px] font-bold tabular-nums leading-none pt-1", scoreColor)}>

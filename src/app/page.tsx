@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check } from "lucide-react";
@@ -474,9 +474,36 @@ const LANG_LABELS: Record<Lang, string> = { fr: "Français", en: "English", pt: 
 
 function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
   const c = CONTENT[lang];
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const langRef = useRef<HTMLDivElement>(null);
+
+  function smoothScroll(targetY: number) {
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    const duration = 900;
+    const start = performance.now();
+    const ease = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    const tick = (now: number) => {
+      const p = Math.min((now - start) / duration, 1);
+      window.scrollTo(0, startY + distance * ease(p));
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+
+  function scrollToSection(href: string) {
+    const el = document.querySelector(href);
+    if (el) smoothScroll(el.getBoundingClientRect().top + window.scrollY - 80);
+  }
+
+  function handleLogoClick(e: React.MouseEvent) {
+    if (pathname === "/") {
+      e.preventDefault();
+      smoothScroll(0);
+    }
+  }
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -491,17 +518,17 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] md:w-auto">
       <div className="flex items-center justify-between md:justify-start gap-1 bg-[#09090B] text-white rounded-full px-3 py-2 shadow-2xl shadow-black/40 border border-white/8">
-        <div className="flex items-center gap-1.5 px-2 md:mr-1">
+        <Link href="/" onClick={handleLogoClick} className="flex items-center gap-1.5 px-2 md:mr-1 hover:opacity-80 transition-opacity">
           <RumiosLogo size={18} inverted />
           <span className="text-[12px] font-semibold tracking-tight">RUMIOS</span>
-        </div>
+        </Link>
 
         <div className="hidden md:flex items-center gap-1">
           <div className="w-px h-4 bg-white/10" />
           {c.floatingNav.map((item) => (
-            <a key={item.href} href={item.href} className="text-[12.5px] text-stone-400 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
+            <button key={item.href} onClick={() => scrollToSection(item.href)} className="text-[12.5px] text-stone-400 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
               {item.label}
-            </a>
+            </button>
           ))}
           <div className="w-px h-4 bg-white/10" />
           <div ref={langRef} className="relative">
@@ -549,10 +576,10 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
         <div className="md:hidden mt-2 bg-[#09090B] border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
           <div className="px-2 py-2 space-y-0.5">
             {c.floatingNav.map((item) => (
-              <a key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
-                className="flex items-center px-4 py-3 text-[14px] text-stone-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+              <button key={item.href} onClick={() => { scrollToSection(item.href); setMobileOpen(false); }}
+                className="flex items-center w-full px-4 py-3 text-[14px] text-stone-400 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
                 {item.label}
-              </a>
+              </button>
             ))}
           </div>
           <div className="border-t border-white/10 px-2 py-2 space-y-0.5">
@@ -596,10 +623,29 @@ export default function HomePage() {
   const router = useRouter();
   const { lang, setLang } = useLang();
   const [activePreview, setActivePreview] = useState(0);
+  const [heroScore, setHeroScore] = useState(0);
+  const [barsReady, setBarsReady] = useState(false);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) router.push("/dashboard");
   }, [isLoaded, isSignedIn, router]);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setBarsReady(true);
+      const duration = 1200;
+      const target = 78;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setHeroScore(Math.round(eased * target));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }, 400);
+    return () => clearTimeout(t);
+  }, []);
 
   const c = CONTENT[lang];
 
@@ -620,7 +666,7 @@ export default function HomePage() {
           </div>
 
           {/* Main headline */}
-          <h1 className="text-[46px] md:text-[72px] font-bold tracking-tight leading-[1.0] text-white mb-4">
+          <h1 className="text-[30px] sm:text-[40px] md:text-[72px] font-bold tracking-tight leading-[1.1] md:leading-[1.0] text-white mb-4 text-balance">
             {c.hero.headline}
           </h1>
 
@@ -656,7 +702,7 @@ export default function HomePage() {
                 <p className="text-[14px] font-medium text-white mt-1">{c.mockCard.subtitle}</p>
               </div>
               <div className="text-right shrink-0">
-                <div className="text-[44px] font-bold text-violet-400 leading-none">78</div>
+                <div className="text-[44px] font-bold text-violet-400 leading-none tabular-nums">{heroScore}</div>
                 <p className="text-[11px] text-stone-500 mt-0.5">{c.mockCard.scoreLabel}</p>
               </div>
             </div>
@@ -668,7 +714,14 @@ export default function HomePage() {
                     <span className="text-[11px] font-semibold text-stone-700">{item.score}{"suffix" in item ? item.suffix : ""}</span>
                   </div>
                   <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
-                    <div className={cn("h-full rounded-full", item.color)} style={{ width: `${item.score}%` }} />
+                    <div
+                      className={cn("h-full rounded-full transition-all ease-out", item.color)}
+                      style={{
+                        width: barsReady ? `${item.score}%` : "0%",
+                        transitionDuration: "900ms",
+                        transitionDelay: barsReady ? `${i * 80}ms` : "0ms",
+                      }}
+                    />
                   </div>
                 </div>
               ))}

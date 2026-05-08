@@ -164,8 +164,8 @@ export default function CallAnalysisPage() {
         </div>
       ) : analyses.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center gap-4">
-          <div className="w-14 h-14 bg-stone-100 rounded-2xl flex items-center justify-center">
-            <PhoneCall className="w-7 h-7 text-stone-300" />
+          <div className="w-14 h-14 bg-violet-50 rounded-2xl flex items-center justify-center">
+            <PhoneCall className="w-7 h-7 text-violet-400" />
           </div>
           <div>
             <p className="text-[14px] font-medium text-stone-600">{i18n.callAnalysis.noAnalysis[lang]}</p>

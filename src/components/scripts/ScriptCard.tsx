@@ -43,16 +43,16 @@ export function ScriptCard({ script }: { script: Script }) {
     >
       <div className={cn(
         "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors",
-        script.is_default ? "bg-stone-900" : "bg-stone-100 group-hover:bg-stone-200"
+        script.is_default ? "bg-violet-600" : "bg-stone-100 group-hover:bg-violet-50"
       )}>
-        <FileText className={cn("w-4 h-4", script.is_default ? "text-white" : "text-stone-500")} />
+        <FileText className={cn("w-4 h-4", script.is_default ? "text-white" : "text-stone-500 group-hover:text-violet-500")} />
       </div>
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <span className="font-medium text-[13.5px] text-stone-900">{script.name}</span>
           {script.is_default && (
-            <span className="text-[10px] bg-stone-900 text-white px-1.5 py-0.5 rounded-full font-medium leading-none">
+            <span className="text-[10px] bg-violet-600 text-white px-1.5 py-0.5 rounded-full font-medium leading-none">
               {i18n.common.default_[lang]}
             </span>
           )}
