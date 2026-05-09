@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Mic, MicOff, PhoneOff, ChevronLeft, ChevronDown, Loader2, Plus, Swords, Clock } from "lucide-react";
+import { Mic, MicOff, PhoneOff, ChevronLeft, ChevronDown, Loader2, Plus, Swords, Clock, FileText, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -278,79 +278,122 @@ export default function PlaygroundPage() {
   // ── SETUP ─────────────────────────────────────────────────────────────────
   if (phase === "setup") {
     return (
-      <div className="h-full flex flex-col items-center justify-center px-8 py-10">
-        <div className="w-full max-w-[500px] space-y-6">
+      <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
+        <div>
           <button
             onClick={() => setPhase("home")}
-            className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors"
+            className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors mb-6"
           >
             <ChevronLeft className="w-4 h-4" /> Playground
           </button>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvel appel d'entraînement</h1>
+          <p className="text-sm text-stone-500 mt-0.5">Sélectionne un script, puis lance l'appel avec Sophie.</p>
+        </div>
 
-          <div>
-            <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvel appel</h1>
-            <p className="text-sm text-stone-500 mt-0.5">Choisis le script à utiliser pour cet entraînement.</p>
-          </div>
-
-          <div className="space-y-2">
+        <div className="grid grid-cols-5 gap-6 items-start">
+          {/* Left: script list */}
+          <div className="col-span-3 space-y-3">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">Script à utiliser</p>
+
             {loadingList ? (
-              <div className="flex items-center gap-2 text-sm text-stone-400 py-2">
-                <Loader2 className="w-4 h-4 animate-spin" /> Chargement des scripts...
+              <div className="flex items-center gap-2 text-sm text-stone-400 py-4">
+                <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
               </div>
             ) : scripts.length === 0 ? (
-              <p className="text-sm text-stone-400">
-                Aucun script.{" "}
-                <Link href="/scripts/new" className="text-violet-600 hover:underline">Crée-en un</Link> d'abord.
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {scripts.map(s => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSelectedId(s.id)}
-                    className={cn(
-                      "w-full text-left px-4 py-3 rounded-xl border transition-all",
-                      selectedId === s.id
-                        ? "border-violet-300 bg-violet-50 ring-1 ring-violet-200"
-                        : "border-stone-200 bg-white hover:border-stone-300"
-                    )}
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-stone-900">{s.name}</p>
-                      {s.is_default && (
-                        <span className="text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium">Par défaut</span>
-                      )}
-                    </div>
-                    <p className="text-xs text-stone-400 mt-0.5">
-                      {s.steps[0]?.count ?? 0} étapes · {s.objections[0]?.count ?? 0} objections · {s.duration_minutes} min
-                    </p>
-                  </button>
-                ))}
+              <div className="border border-dashed border-stone-200 rounded-xl px-5 py-8 text-center">
+                <p className="text-sm text-stone-500 mb-2">Aucun script disponible.</p>
+                <Link href="/scripts/new" className="text-sm text-violet-600 hover:text-violet-700 font-medium transition-colors">
+                  Créer un script →
+                </Link>
               </div>
+            ) : (
+              scripts.map(s => (
+                <button
+                  key={s.id}
+                  onClick={() => setSelectedId(s.id)}
+                  className={cn(
+                    "w-full text-left p-4 rounded-xl border transition-all",
+                    selectedId === s.id
+                      ? "border-violet-300 bg-violet-50 ring-1 ring-violet-200"
+                      : "border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm"
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2.5">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-[13px] font-semibold text-stone-900 truncate">{s.name}</p>
+                        {s.is_default && (
+                          <span className="text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium shrink-0">Par défaut</span>
+                        )}
+                      </div>
+                      {s.goal && <p className="text-xs text-stone-400 mt-0.5 line-clamp-1">{s.goal}</p>}
+                    </div>
+                    {selectedId === s.id && (
+                      <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="text-[9px] text-white font-bold">✓</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                      <FileText className="w-3 h-3" />{s.steps[0]?.count ?? 0} étapes
+                    </span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                      <ShieldAlert className="w-3 h-3" />{s.objections[0]?.count ?? 0} objections
+                    </span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400">
+                      <Clock className="w-3 h-3" />{s.duration_minutes} min
+                    </span>
+                  </div>
+                </button>
+              ))
             )}
           </div>
 
-          {selected && (
-            <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center shrink-0 text-lg">
-                🧑‍💼
+          {/* Right: AI persona + CTA */}
+          <div className="col-span-2">
+            <div className="border border-stone-200 rounded-xl bg-white p-5 space-y-5 sticky top-6">
+              {/* Avatar */}
+              <div className="flex flex-col items-center text-center pt-1 pb-1">
+                <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-3xl mb-3">
+                  🧑‍💼
+                </div>
+                <p className="text-[15px] font-semibold text-stone-900">Sophie</p>
+                <p className="text-xs text-stone-400 mt-0.5">Prospect IA</p>
               </div>
-              <div>
-                <p className="text-sm font-medium text-stone-800">Sophie — Prospect IA</p>
-                <p className="text-xs text-stone-400">Briefée sur ton script · répondra aux objections</p>
-              </div>
-            </div>
-          )}
 
-          <Button
-            className="w-full gap-2 h-10"
-            disabled={!selectedId || loadingScript || loadingList}
-            onClick={startCall}
-          >
-            {loadingScript && <Loader2 className="w-4 h-4 animate-spin" />}
-            Démarrer l'appel
-          </Button>
+              {/* Briefed on */}
+              <div className={cn("rounded-lg px-3 py-2.5 transition-colors", selected ? "bg-violet-50 border border-violet-100" : "bg-stone-50 border border-stone-100")}>
+                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-1">Briefée sur</p>
+                <p className={cn("text-[13px] font-medium", selected ? "text-violet-900" : "text-stone-400 italic")}>
+                  {selected ? selected.name : "Aucun script sélectionné"}
+                </p>
+              </div>
+
+              {/* Feature list */}
+              <ul className="space-y-2.5">
+                {[
+                  "Joue un prospect réaliste selon ton secteur",
+                  "Soulève les objections de ton script",
+                  "L'appel sera scoré sur 6 dimensions",
+                ].map(item => (
+                  <li key={item} className="flex items-start gap-2.5 text-xs text-stone-500">
+                    <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 text-[9px] font-bold">✓</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+
+              <Button
+                className="w-full gap-2 h-9"
+                disabled={!selectedId || loadingScript || loadingList}
+                onClick={startCall}
+              >
+                {loadingScript && <Loader2 className="w-4 h-4 animate-spin" />}
+                Démarrer l'appel
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     );
