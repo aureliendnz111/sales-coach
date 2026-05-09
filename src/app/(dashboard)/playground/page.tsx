@@ -1,9 +1,8 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, MicOff, PhoneOff, ChevronLeft, Loader2, Plus, Swords, Clock, FileText, ShieldAlert, Archive, ArchiveX, Trash2 } from "lucide-react";
+import { Mic, MicOff, PhoneOff, ChevronLeft, Loader2, Plus, Swords, Clock, FileText, ShieldAlert, Archive, ArchiveX, Trash2, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { StepCard } from "@/components/scripts/StepCard";
 import { ObjectionCard } from "@/components/scripts/ObjectionCard";
 import Link from "next/link";
@@ -138,9 +137,80 @@ const PERSONA_EMOJI: Record<string, string> = {
   sophie: "👩‍💼", marc: "👨‍💻", lucie: "👩‍🦱", thomas: "👨‍💼",
 };
 
+const ACCESS_CODE = "MADONNA";
+const STORAGE_KEY = "playground_unlocked";
+
+function AccessGate({ onUnlock }: { onUnlock: () => void }) {
+  const [value, setValue] = useState("");
+  const [error, setError] = useState(false);
+  const [shaking, setShaking] = useState(false);
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    if (value.trim().toUpperCase() === ACCESS_CODE) {
+      localStorage.setItem(STORAGE_KEY, "1");
+      onUnlock();
+    } else {
+      setError(true);
+      setShaking(true);
+      setValue("");
+      setTimeout(() => setShaking(false), 500);
+    }
+  }
+
+  return (
+    <>
+      <style>{`@keyframes shake { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }`}</style>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-8">
+        <div className="w-full max-w-sm space-y-6">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-violet-50 flex items-center justify-center">
+              <Lock className="w-5 h-5 text-violet-500" />
+            </div>
+            <div>
+              <h1 className="text-[18px] font-semibold text-stone-900 tracking-tight">Accès restreint</h1>
+              <p className="text-sm text-stone-500 mt-1">Playground est en accès anticipé. Entre le code pour continuer.</p>
+            </div>
+          </div>
+
+          <form onSubmit={submit} className="space-y-3">
+            <input
+              type="text"
+              value={value}
+              onChange={e => { setValue(e.target.value); setError(false); }}
+              placeholder="Code d'accès"
+              autoFocus
+              className={cn(
+                "w-full px-4 py-2.5 rounded-lg border text-[14px] text-center tracking-widest font-medium uppercase focus:outline-none focus:ring-2 transition-all",
+                error
+                  ? "border-rose-300 focus:ring-rose-200 text-rose-600 bg-rose-50"
+                  : "border-stone-200 focus:ring-violet-200 focus:border-violet-300 text-stone-800",
+                shaking ? "[animation:shake_0.4s_ease]" : ""
+              )}
+            />
+            {error && <p className="text-[12px] text-rose-500 text-center">Code incorrect. Réessaie.</p>}
+            <button
+              type="submit"
+              disabled={!value.trim()}
+              className="w-full flex items-center justify-center gap-1.5 text-[13px] font-medium px-3.5 py-2.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors disabled:opacity-40 disabled:pointer-events-none"
+            >
+              Accéder au Playground
+            </button>
+          </form>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function PlaygroundPage() {
   const router = useRouter();
+  const [unlocked, setUnlocked] = useState(false);
   const [phase, setPhase] = useState<Phase>("home");
+
+  useEffect(() => {
+    if (localStorage.getItem(STORAGE_KEY) === "1") setUnlocked(true);
+  }, []);
 
   // home state
   const [sessions, setSessions] = useState<TrainingSession[]>([]);
@@ -262,6 +332,8 @@ export default function PlaygroundPage() {
   const steps: Step[] = fullScript?.steps ?? [];
   const objections: Objection[] = fullScript?.objections ?? [];
 
+  if (!unlocked) return <AccessGate onUnlock={() => setUnlocked(true)} />;
+
   // ── HOME ──────────────────────────────────────────────────────────────────
   if (phase === "home") {
     async function archiveSession(id: string, archive: boolean) {
@@ -285,27 +357,25 @@ export default function PlaygroundPage() {
             <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Playground</h1>
             <p className="text-sm text-stone-500 mt-0.5">Entraîne-toi face à un prospect IA et obtiens un score après chaque appel.</p>
           </div>
-          <Button onClick={() => setPhase("setup")} className="gap-2 h-9 text-sm">
-            <Plus className="w-4 h-4" /> Nouvel appel
-          </Button>
-        </div>
-
-        {/* Archived toggle */}
-        <div className="flex items-center gap-2">
-          {[false, true].map(archived => (
+          <div className="flex items-center gap-2">
             <button
-              key={String(archived)}
-              onClick={() => setShowArchived(archived)}
+              onClick={() => setShowArchived(a => !a)}
               className={cn(
-                "text-xs px-3 py-1.5 rounded-full border transition-colors",
-                showArchived === archived
-                  ? "bg-stone-900 text-white border-stone-900"
-                  : "border-stone-200 text-stone-500 hover:border-stone-400"
+                "flex items-center gap-1.5 text-[13px] px-3.5 py-2 rounded-lg border transition-colors",
+                showArchived
+                  ? "bg-stone-100 border-stone-300 text-stone-700 font-medium"
+                  : "border-stone-200 text-stone-500 hover:bg-stone-50"
               )}
             >
-              {archived ? "Archivés" : "Actifs"}
+              <Archive className="w-3.5 h-3.5" />
+              {showArchived ? "Masquer les archives" : "Archives"}
             </button>
-          ))}
+            {!showArchived && (
+              <button onClick={() => setPhase("setup")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors">
+                <Plus className="w-4 h-4" /> Nouvel appel
+              </button>
+            )}
+          </div>
         </div>
 
         {loadingSessions ? (
@@ -326,15 +396,15 @@ export default function PlaygroundPage() {
               </p>
             </div>
             {!showArchived && (
-              <Button onClick={() => setPhase("setup")} className="gap-2 mt-1">
+              <button onClick={() => setPhase("setup")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors mt-1">
                 <Plus className="w-4 h-4" /> Démarrer un appel
-              </Button>
+              </button>
             )}
           </div>
         ) : (
           <div className="space-y-2">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
-              {showArchived ? "Archivés" : "Derniers appels"} · {sessions.length}
+              {showArchived ? "Archives" : "Derniers appels"} · {sessions.length}
             </p>
             {sessions.map(s => {
               const emoji = s.persona_id ? (PERSONA_EMOJI[s.persona_id] ?? "🧑‍💼") : "🧑‍💼";
@@ -545,14 +615,14 @@ export default function PlaygroundPage() {
                 <p className="text-stone-400">Sélectionne un script et un prospect pour continuer.</p>
               )}
             </div>
-            <Button
-              className="shrink-0 gap-2 h-9 px-5"
-              disabled={!canStart}
+            <button
               onClick={startCall}
+              disabled={!canStart}
+              className="shrink-0 flex items-center gap-1.5 text-[13px] font-medium px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >
               {loadingScript && <Loader2 className="w-4 h-4 animate-spin" />}
               Démarrer l'appel
-            </Button>
+            </button>
           </div>
         </div>
       </div>

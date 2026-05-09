@@ -26,7 +26,7 @@ export async function GET(_req: Request, { params }: Params) {
 
   const { data, error } = await supabase
     .from("training_sessions")
-    .select("id, script_id, script_name, persona_id, persona_name, duration_seconds, created_at, archived_at")
+    .select("id, script_id, script_name, persona_id, persona_name, duration_seconds, created_at, archived_at, status, scores, recommendations, talk_ratio, key_moments")
     .eq("id", id)
     .eq("user_id", userId)
     .single();
