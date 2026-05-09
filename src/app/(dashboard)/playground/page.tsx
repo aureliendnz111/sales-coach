@@ -8,7 +8,7 @@ import { StepCard } from "@/components/scripts/StepCard";
 import { ObjectionCard } from "@/components/scripts/ObjectionCard";
 import Link from "next/link";
 
-type Phase = "home" | "setup" | "call";
+type Phase = "home" | "setup" | "countdown" | "call";
 
 type ScriptItem = {
   id: string; name: string; goal: string; is_default: boolean;
@@ -160,6 +160,7 @@ export default function PlaygroundPage() {
   const [aiSpeaking, setAiSpeaking] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [cameraError, setCameraError] = useState(false);
+  const [countdownNum, setCountdownNum] = useState(3);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -196,6 +197,15 @@ export default function PlaygroundPage() {
   }, [selectedId]);
 
   useEffect(() => {
+    if (phase !== "countdown") return;
+    const t = setTimeout(() => {
+      if (countdownNum > 1) setCountdownNum(n => n - 1);
+      else setPhase("call");
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [phase, countdownNum]);
+
+  useEffect(() => {
     if (phase !== "call") return;
     navigator.mediaDevices.getUserMedia({ video: true, audio: false })
       .then(stream => {
@@ -222,7 +232,8 @@ export default function PlaygroundPage() {
   function startCall() {
     if (!selectedId || !selectedPersonaId) return;
     setCallDuration(0); setIsMuted(false); setCameraError(false);
-    setPhase("call");
+    setCountdownNum(3);
+    setPhase("countdown");
   }
 
   function endCall() {
@@ -378,6 +389,30 @@ export default function PlaygroundPage() {
             })}
           </div>
         )}
+      </div>
+    );
+  }
+
+  // ── COUNTDOWN ─────────────────────────────────────────────────────────────
+  if (phase === "countdown") {
+    return (
+      <div className="h-full flex flex-col items-center justify-center bg-[#0F0F12] gap-5 select-none">
+        <style>{`
+          @keyframes countpop {
+            0%   { transform: scale(1.6); opacity: 0; }
+            18%  { transform: scale(1);   opacity: 1; }
+            75%  { transform: scale(1);   opacity: 1; }
+            100% { transform: scale(0.7); opacity: 0; }
+          }
+          .count-digit { animation: countpop 0.95s ease forwards; }
+        `}</style>
+        <p className="text-white/30 text-sm tracking-wide">
+          {activePersona.emoji} {activePersona.name} · {fullScript?.name}
+        </p>
+        <div key={countdownNum} className="count-digit text-[160px] font-bold text-white leading-none tabular-nums">
+          {countdownNum}
+        </div>
+        <p className="text-white/20 text-xs uppercase tracking-widest">Prépare-toi</p>
       </div>
     );
   }
