@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Mic, MicOff, PhoneOff, ChevronLeft, ChevronDown, Loader2, Plus, Swords, Clock, FileText, ShieldAlert, Archive, ArchiveX, Trash2 } from "lucide-react";
+import { Mic, MicOff, PhoneOff, ChevronLeft, Loader2, Plus, Swords, Clock, FileText, ShieldAlert, Archive, ArchiveX, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { StepCard } from "@/components/scripts/StepCard";
+import { ObjectionCard } from "@/components/scripts/ObjectionCard";
 import Link from "next/link";
 
 type Phase = "home" | "setup" | "call";
@@ -22,8 +24,9 @@ type Step = {
 };
 
 type Objection = {
-  id: string; order: number; label: string; key_reframe: string | null;
-  responses: string[] | null; trigger_phrases: string[] | null;
+  id: string; order: number; label: string; category: string;
+  key_reframe: string | null; responses: string[] | null;
+  trigger_phrases: string[] | null; applicable_step_orders: number[] | null;
 };
 
 type FullScript = {
@@ -128,22 +131,6 @@ function VoiceWave({ active }: { active: boolean }) {
   );
 }
 
-function DetailList({ label, items }: { label: string; items: string[] }) {
-  if (!items.length) return null;
-  return (
-    <div className="mt-2">
-      <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-wider mb-1">{label}</p>
-      <ul className="space-y-0.5">
-        {items.map((item, i) => (
-          <li key={i} className="text-[11px] text-stone-500 leading-relaxed flex gap-1.5">
-            <span className="shrink-0 text-stone-300 mt-0.5">·</span>
-            <span>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
 
 // ── main component ────────────────────────────────────────────────────────────
 
@@ -171,13 +158,8 @@ export default function PlaygroundPage() {
   // call state
   const [isMuted, setIsMuted] = useState(false);
   const [aiSpeaking, setAiSpeaking] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
   const [callDuration, setCallDuration] = useState(0);
   const [cameraError, setCameraError] = useState(false);
-  const [stepsOpen, setStepsOpen] = useState(true);
-  const [objectionsOpen, setObjectionsOpen] = useState(true);
-  const [expandedStepId, setExpandedStepId] = useState<string | null>(null);
-  const [expandedObjId, setExpandedObjId] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -239,8 +221,7 @@ export default function PlaygroundPage() {
 
   function startCall() {
     if (!selectedId || !selectedPersonaId) return;
-    setCallDuration(0); setCurrentStep(0); setIsMuted(false);
-    setCameraError(false); setExpandedStepId(null); setExpandedObjId(null);
+    setCallDuration(0); setIsMuted(false); setCameraError(false);
     setPhase("call");
   }
 
@@ -613,120 +594,43 @@ export default function PlaygroundPage() {
       </div>
 
       {/* Right: script panel */}
-      <div className="flex-1 flex flex-col bg-white border-l border-stone-200 min-w-0">
-        <div className="px-5 py-4 border-b border-stone-100 shrink-0">
+      <div className="flex-1 flex flex-col bg-stone-50 border-l border-stone-200 min-w-0">
+        <div className="px-5 py-4 border-b border-stone-200 bg-white shrink-0">
           <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">Process</p>
           <p className="text-[14px] font-semibold text-stone-800 mt-0.5 truncate">{fullScript?.name}</p>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
-          {/* Étapes section */}
-          {steps.length > 0 && (
-            <div>
-              <button
-                onClick={() => setStepsOpen(o => !o)}
-                className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-stone-50 transition-colors group"
-              >
-                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">Étapes · {steps.length}</p>
-                <ChevronDown className={cn("w-3.5 h-3.5 text-stone-300 group-hover:text-stone-400 transition-transform duration-200", !stepsOpen && "-rotate-90")} />
-              </button>
-
-              {stepsOpen && (
-                <div className="space-y-0.5 mt-0.5">
-                  {steps.map((step, i) => {
-                    const active = i === currentStep;
-                    const done = i < currentStep;
-                    const expanded = expandedStepId === step.id;
-                    const hasDetails = [step.script_lines, step.questions, step.tips, step.key_phrases].some(a => (a?.length ?? 0) > 0);
-                    return (
-                      <div key={step.id} className={cn("rounded-xl border transition-all", active ? "border-violet-200 bg-violet-50" : done ? "border-transparent opacity-45 hover:opacity-70" : "border-transparent hover:bg-stone-50")}>
-                        <button
-                          className="w-full flex items-start gap-2.5 px-3 py-2.5 text-left"
-                          onClick={() => { setCurrentStep(i); if (hasDetails || step.goal) setExpandedStepId(expanded ? null : step.id); }}
-                        >
-                          <div className={cn("shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5", active ? "bg-violet-600 text-white" : done ? "bg-emerald-500 text-white" : "bg-stone-100 text-stone-400")}>
-                            {done ? "✓" : i + 1}
-                          </div>
-                          <p className={cn("flex-1 text-[13px] font-medium leading-snug", active ? "text-violet-900" : "text-stone-700")}>{step.name}</p>
-                          <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
-                            {step.duration_estimate_minutes != null && <span className="text-[10px] text-stone-300">{step.duration_estimate_minutes}min</span>}
-                            {(hasDetails || step.goal) && <ChevronDown className={cn("w-3 h-3 text-stone-300 transition-transform duration-200", expanded && "rotate-180")} />}
-                          </div>
-                        </button>
-                        {expanded && (
-                          <div className="px-3 pb-3 border-t border-stone-100 pt-2 space-y-0.5">
-                            {step.goal && <p className="text-[11px] text-stone-500 leading-relaxed">{step.goal}</p>}
-                            <DetailList label="Phrases clés" items={step.key_phrases ?? []} />
-                            <DetailList label="Script" items={step.script_lines ?? []} />
-                            <DetailList label="Questions" items={step.questions ?? []} />
-                            <DetailList label="Tips" items={step.tips ?? []} />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Objections section */}
-          {objections.length > 0 && (
-            <div className="mt-2">
-              <button
-                onClick={() => setObjectionsOpen(o => !o)}
-                className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-stone-50 transition-colors group"
-              >
-                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">Objections · {objections.length}</p>
-                <ChevronDown className={cn("w-3.5 h-3.5 text-stone-300 group-hover:text-stone-400 transition-transform duration-200", !objectionsOpen && "-rotate-90")} />
-              </button>
-
-              {objectionsOpen && (
-                <div className="space-y-0.5 mt-0.5">
-                  {objections.map(obj => {
-                    const expanded = expandedObjId === obj.id;
-                    const hasDetails = [(obj.responses?.length ?? 0), (obj.trigger_phrases?.length ?? 0)].some(Boolean);
-                    return (
-                      <div key={obj.id} className="rounded-xl border border-transparent hover:bg-stone-50 transition-all">
-                        <button
-                          className="w-full flex items-start gap-2.5 px-3 py-2.5 text-left"
-                          onClick={() => setExpandedObjId(expanded ? null : obj.id)}
-                        >
-                          <div className="shrink-0 w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center mt-0.5">
-                            <span className="text-[9px] text-amber-600 font-bold">!</span>
-                          </div>
-                          <p className="flex-1 text-[13px] font-medium text-stone-700 leading-snug">{obj.label}</p>
-                          {(obj.key_reframe || hasDetails) && <ChevronDown className={cn("w-3 h-3 text-stone-300 shrink-0 mt-1 transition-transform duration-200", expanded && "rotate-180")} />}
-                        </button>
-                        {expanded && (
-                          <div className="px-3 pb-3 border-t border-stone-100 pt-2 space-y-0.5">
-                            {obj.key_reframe && <p className="text-[11px] text-stone-500 leading-relaxed">{obj.key_reframe}</p>}
-                            <DetailList label="Réponses" items={obj.responses ?? []} />
-                            <DetailList label="Phrases déclencheurs" items={obj.trigger_phrases ?? []} />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {steps.length === 0 && objections.length === 0 && (
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+          {steps.length === 0 && objections.length === 0 ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-5 h-5 animate-spin text-stone-300" />
             </div>
+          ) : (
+            <>
+              {steps.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+                    Étapes · {steps.length}
+                  </p>
+                  {steps.map(step => (
+                    <StepCard key={step.id} step={step} />
+                  ))}
+                </div>
+              )}
+
+              {objections.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
+                    Objections · {objections.length}
+                  </p>
+                  {objections.map(obj => (
+                    <ObjectionCard key={obj.id} objection={obj} />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
-
-        {steps.length > 0 && (
-          <div className="px-4 py-3 border-t border-stone-100 shrink-0 flex items-center justify-between">
-            <button onClick={() => setCurrentStep(s => Math.max(0, s - 1))} disabled={currentStep === 0} className="text-xs text-stone-400 hover:text-stone-700 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">← Précédente</button>
-            <span className="text-xs text-stone-400 tabular-nums">{currentStep + 1} / {steps.length}</span>
-            <button onClick={() => setCurrentStep(s => Math.min(steps.length - 1, s + 1))} disabled={currentStep === steps.length - 1} className="text-xs text-stone-400 hover:text-stone-700 disabled:opacity-25 disabled:cursor-not-allowed transition-colors">Suivante →</button>
-          </div>
-        )}
       </div>
     </div>
   );
