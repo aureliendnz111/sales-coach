@@ -9,6 +9,22 @@ const supabase = createClient(
 
 type Params = { params: Promise<{ id: string }> };
 
+export async function GET(_req: Request, { params }: Params) {
+  const { userId } = await auth();
+  if (!userId) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  const { id } = await params;
+  const { data, error } = await supabase
+    .from("scripts")
+    .select("id, name, goal, duration_minutes, steps(id, order, name, goal, duration_estimate_minutes), objections(id, order, label, key_reframe)")
+    .eq("id", id)
+    .eq("user_id", userId)
+    .order("order", { referencedTable: "steps", ascending: true })
+    .order("order", { referencedTable: "objections", ascending: true })
+    .single();
+  if (error || !data) return NextResponse.json({ error: "Script introuvable" }, { status: 404 });
+  return NextResponse.json({ script: data });
+}
+
 // Mise à jour complète du script (métadonnées + étapes + objections)
 export async function PUT(req: Request, { params }: Params) {
   const { userId } = await auth();

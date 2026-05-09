@@ -26,7 +26,7 @@ const NAV = [
   { href: "/dashboard", icon: LayoutDashboard },
   { href: "/scripts", icon: FileText },
   { href: "/call-analysis", icon: PhoneCall },
-  { href: "/playground", icon: Swords, soon: true },
+  { href: "/playground", icon: Swords },
   { href: "/sessions", icon: Headphones, soon: true },
   { href: "/analytics", icon: BarChart2, soon: true },
 ] as const;
