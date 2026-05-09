@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
-import { LayoutDashboard, FileText, Headphones, PhoneCall, BarChart2, Swords, LogOut, Settings, ChevronUp, ChevronLeft, ChevronDown, Check } from "lucide-react";
+import { LayoutDashboard, FileText, Headphones, PhoneCall, Swords, LogOut, Settings, ChevronUp, ChevronLeft, ChevronDown, Check } from "lucide-react";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
@@ -14,7 +14,6 @@ const NAV_LABELS: Record<string, Record<Lang, string>> = {
   "/call-analysis":{ fr: "Analyse de calls",   en: "Call Analysis",  pt: "Análise de chamadas" },
   "/playground":   { fr: "Playground",         en: "Playground",     pt: "Playground" },
   "/sessions":     { fr: "Live Copilot",       en: "Live Copilot",   pt: "Live Copilot" },
-  "/analytics":    { fr: "Analytics",          en: "Analytics",      pt: "Análises" },
 };
 
 const SOON_LABEL: Record<Lang, string> = { fr: "Bientôt", en: "Soon", pt: "Em breve" };
@@ -28,7 +27,6 @@ const NAV = [
   { href: "/call-analysis", icon: PhoneCall },
   { href: "/playground", icon: Swords },
   { href: "/sessions", icon: Headphones, soon: true },
-  { href: "/analytics", icon: BarChart2, soon: true },
 ] as const;
 
 function UserMenu({ collapsed, lang }: { collapsed: boolean; lang: Lang }) {
