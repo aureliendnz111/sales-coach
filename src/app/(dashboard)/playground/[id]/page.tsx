@@ -117,7 +117,7 @@ export default function PlaygroundSessionDetailPage() {
       <button onClick={() => router.push("/playground")} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors mb-6">
         <ArrowLeft className="w-4 h-4" /> Playground
       </button>
-      <p className="text-stone-400 text-sm">Session introuvable.</p>
+      <p className="text-stone-400 text-sm">{i18n.playground.notFound[lang]}</p>
     </div>
   );
 
@@ -135,7 +135,7 @@ export default function PlaygroundSessionDetailPage() {
     <div className="max-w-lg mx-auto py-16 text-center space-y-3">
       <p className="text-[15px] font-medium text-rose-600">{i18n.analysisDetail.failed[lang]}</p>
       <p className="text-[13px] text-stone-500">{i18n.analysisDetail.failedSub[lang]}</p>
-      <button onClick={() => router.push("/playground")} className="text-[13px] text-stone-600 underline">Retour au playground</button>
+      <button onClick={() => router.push("/playground")} className="text-[13px] text-stone-600 underline">{i18n.playground.errorBack[lang]}</button>
     </div>
   );
 
@@ -167,7 +167,7 @@ export default function PlaygroundSessionDetailPage() {
                   {session.persona_name ?? "Prospect IA"}
                 </h1>
                 {isArchived && (
-                  <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-0.5 rounded-full font-medium">Archivé</span>
+                  <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-0.5 rounded-full font-medium">{i18n.playground.archivedBadge[lang]}</span>
                 )}
               </div>
               <div className="flex items-center gap-3 mt-1 text-[12px] text-stone-500">
@@ -194,23 +194,23 @@ export default function PlaygroundSessionDetailPage() {
             className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 hover:border-stone-300 transition-all disabled:opacity-50"
           >
             {archiving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : isArchived ? <ArchiveX className="w-3.5 h-3.5" /> : <Archive className="w-3.5 h-3.5" />}
-            {isArchived ? "Désarchiver" : "Archiver"}
+            {isArchived ? i18n.playground.unarchive[lang] : i18n.playground.archive[lang]}
           </button>
           {!confirmDelete ? (
             <button
               onClick={() => setConfirmDelete(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-rose-500 border border-rose-200 rounded-lg hover:bg-rose-50 hover:border-rose-300 transition-all"
             >
-              <Trash2 className="w-3.5 h-3.5" /> Supprimer
+              <Trash2 className="w-3.5 h-3.5" /> {i18n.playground.delete_[lang]}
             </button>
           ) : (
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-stone-500">Confirmer ?</span>
+              <span className="text-xs text-stone-500">{i18n.playground.confirmQ[lang]}</span>
               <button onClick={deleteSession} disabled={deleting} className="px-2.5 py-1.5 text-xs text-white bg-rose-500 hover:bg-rose-400 rounded-lg transition-colors disabled:opacity-50">
-                {deleting ? <Loader2 className="w-3 h-3 animate-spin" /> : "Oui"}
+                {deleting ? <Loader2 className="w-3 h-3 animate-spin" /> : i18n.playground.yes[lang]}
               </button>
               <button onClick={() => setConfirmDelete(false)} className="px-2.5 py-1.5 text-xs text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 transition-colors">
-                Annuler
+                {i18n.common.cancel[lang]}
               </button>
             </div>
           )}
@@ -223,9 +223,9 @@ export default function PlaygroundSessionDetailPage() {
           <div className="w-10 h-10 rounded-full bg-stone-100 flex items-center justify-center">
             <Clock className="w-5 h-5 text-stone-400" />
           </div>
-          <p className="text-[14px] font-medium text-stone-600">Analyse non disponible</p>
+          <p className="text-[14px] font-medium text-stone-600">{i18n.playground.pendingTitle[lang]}</p>
           <p className="text-[13px] text-stone-400 max-w-xs leading-relaxed">
-            Le score et la transcription de cet appel d&apos;entraînement seront disponibles une fois le système vocal activé.
+            {i18n.playground.pendingSub[lang]}
           </p>
         </div>
       )}

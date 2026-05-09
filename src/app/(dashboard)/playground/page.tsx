@@ -5,6 +5,8 @@ import { Mic, MicOff, PhoneOff, ChevronLeft, Loader2, Plus, Swords, Clock, FileT
 import { cn } from "@/lib/utils";
 import { StepCard } from "@/components/scripts/StepCard";
 import { ObjectionCard } from "@/components/scripts/ObjectionCard";
+import { useLang, type Lang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 import Link from "next/link";
 
 type Phase = "home" | "setup" | "countdown" | "call";
@@ -44,40 +46,27 @@ type Persona = {
   description: string; tags: string[];
 };
 
-const AI_PERSONAS: Persona[] = [
-  {
-    id: "sophie",
-    emoji: "👩‍💼",
-    name: "Sophie",
-    role: "Dirigeante PME",
-    description: "Pragmatique et directe. Peu de temps, pose vite la question du prix.",
-    tags: ["B2B", "PME"],
-  },
-  {
-    id: "marc",
-    emoji: "👨‍💻",
-    name: "Marc",
-    role: "DSI Grands comptes",
-    description: "Analytique, beaucoup de questions techniques. Cycle de décision long.",
-    tags: ["Tech", "Enterprise"],
-  },
-  {
-    id: "lucie",
-    emoji: "👩‍🦱",
-    name: "Lucie",
-    role: "Coach sportif indépendant",
-    description: "Enthousiaste mais sensible au prix. Veut voir des résultats rapides.",
-    tags: ["Sport", "B2C"],
-  },
-  {
-    id: "thomas",
-    emoji: "👨‍💼",
-    name: "Thomas",
-    role: "Directeur commercial",
-    description: "Connaît bien les techniques de vente. Met la pression sur la valeur ajoutée.",
-    tags: ["Sales", "B2B"],
-  },
-];
+const PERSONA_BASE = [
+  { id: "sophie", emoji: "👩‍💼", name: "Sophie", tags: ["B2B", "PME"],        roleKey: "sophieRole", descKey: "sophieDesc" },
+  { id: "marc",   emoji: "👨‍💻", name: "Marc",   tags: ["Tech", "Enterprise"], roleKey: "marcRole",   descKey: "marcDesc"   },
+  { id: "lucie",  emoji: "👩‍🦱", name: "Lucie",  tags: ["Sport", "B2C"],       roleKey: "lucieRole",  descKey: "lucieDesc"  },
+  { id: "thomas", emoji: "👨‍💼", name: "Thomas", tags: ["Sales", "B2B"],       roleKey: "thomasRole", descKey: "thomasDesc" },
+] as const;
+
+function getPersonas(lang: Lang): Persona[] {
+  return PERSONA_BASE.map(p => ({
+    id: p.id,
+    emoji: p.emoji,
+    name: p.name,
+    tags: [...p.tags],
+    role: i18n.playground[p.roleKey][lang],
+    description: i18n.playground[p.descKey][lang],
+  }));
+}
+
+const PERSONA_EMOJI: Record<string, string> = {
+  sophie: "👩‍💼", marc: "👨‍💻", lucie: "👩‍🦱", thomas: "👨‍💼",
+};
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -93,17 +82,20 @@ function formatDuration(s: number) {
   return rem > 0 ? `${m} min ${rem} sec` : `${m} min`;
 }
 
-function relativeDate(iso: string) {
+const DATE_LOCALE: Record<Lang, string> = { fr: "fr-FR", en: "en-GB", pt: "pt-PT" };
+
+function relativeDate(iso: string, lang: Lang) {
   const diff = Date.now() - new Date(iso).getTime();
   const min = Math.floor(diff / 60000);
   const h = Math.floor(diff / 3600000);
   const d = Math.floor(diff / 86400000);
-  if (min < 2) return "À l'instant";
-  if (min < 60) return `Il y a ${min} min`;
-  if (h < 24) return `Il y a ${h}h`;
-  if (d === 1) return "Hier";
-  if (d < 7) return `Il y a ${d} jours`;
-  return new Date(iso).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+  const pg = i18n.playground;
+  if (min < 2) return pg.relNow[lang];
+  if (min < 60) return pg.relMin[lang].replace("{n}", String(min));
+  if (h < 24) return pg.relHours[lang].replace("{n}", String(h));
+  if (d === 1) return pg.relYesterday[lang];
+  if (d < 7) return pg.relDays[lang].replace("{n}", String(d));
+  return new Date(iso).toLocaleDateString(DATE_LOCALE[lang], { day: "numeric", month: "short" });
 }
 
 // ── sub-components ────────────────────────────────────────────────────────────
@@ -130,20 +122,16 @@ function VoiceWave({ active }: { active: boolean }) {
   );
 }
 
-
-// ── main component ────────────────────────────────────────────────────────────
-
-const PERSONA_EMOJI: Record<string, string> = {
-  sophie: "👩‍💼", marc: "👨‍💻", lucie: "👩‍🦱", thomas: "👨‍💼",
-};
+// ── access gate ───────────────────────────────────────────────────────────────
 
 const ACCESS_CODE = "MADONNA";
 const STORAGE_KEY = "playground_unlocked";
 
-function AccessGate({ onUnlock }: { onUnlock: () => void }) {
+function AccessGate({ onUnlock, lang }: { onUnlock: () => void; lang: Lang }) {
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
   const [shaking, setShaking] = useState(false);
+  const pg = i18n.playground;
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -168,8 +156,8 @@ function AccessGate({ onUnlock }: { onUnlock: () => void }) {
               <Lock className="w-5 h-5 text-violet-500" />
             </div>
             <div>
-              <h1 className="text-[18px] font-semibold text-stone-900 tracking-tight">Accès restreint</h1>
-              <p className="text-sm text-stone-500 mt-1">Playground est en accès anticipé. Entre le code pour continuer.</p>
+              <h1 className="text-[18px] font-semibold text-stone-900 tracking-tight">{pg.accessTitle[lang]}</h1>
+              <p className="text-sm text-stone-500 mt-1">{pg.accessSub[lang]}</p>
             </div>
           </div>
 
@@ -178,7 +166,7 @@ function AccessGate({ onUnlock }: { onUnlock: () => void }) {
               type="text"
               value={value}
               onChange={e => { setValue(e.target.value); setError(false); }}
-              placeholder="Code d'accès"
+              placeholder={pg.accessPlaceholder[lang]}
               autoFocus
               className={cn(
                 "w-full px-4 py-2.5 rounded-lg border text-[14px] text-center tracking-widest font-medium uppercase focus:outline-none focus:ring-2 transition-all",
@@ -188,13 +176,13 @@ function AccessGate({ onUnlock }: { onUnlock: () => void }) {
                 shaking ? "[animation:shake_0.4s_ease]" : ""
               )}
             />
-            {error && <p className="text-[12px] text-rose-500 text-center">Code incorrect. Réessaie.</p>}
+            {error && <p className="text-[12px] text-rose-500 text-center">{pg.accessError[lang]}</p>}
             <button
               type="submit"
               disabled={!value.trim()}
               className="w-full flex items-center justify-center gap-1.5 text-[13px] font-medium px-3.5 py-2.5 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >
-              Accéder au Playground
+              {pg.accessCta[lang]}
             </button>
           </form>
         </div>
@@ -203,8 +191,12 @@ function AccessGate({ onUnlock }: { onUnlock: () => void }) {
   );
 }
 
+// ── main component ────────────────────────────────────────────────────────────
+
 export default function PlaygroundPage() {
   const router = useRouter();
+  const { lang } = useLang();
+  const pg = i18n.playground;
   const [unlocked, setUnlocked] = useState(false);
   const [phase, setPhase] = useState<Phase>("home");
 
@@ -306,6 +298,12 @@ export default function PlaygroundPage() {
     setPhase("countdown");
   }
 
+  const personas = getPersonas(lang);
+  const selected = scripts.find(s => s.id === selectedId);
+  const activePersona = personas.find(p => p.id === selectedPersonaId) ?? personas[0];
+  const steps: Step[] = fullScript?.steps ?? [];
+  const objections: Objection[] = fullScript?.objections ?? [];
+
   function endCall() {
     streamRef.current?.getTracks().forEach(t => t.stop());
     streamRef.current = null;
@@ -327,12 +325,7 @@ export default function PlaygroundPage() {
     setPhase("home");
   }
 
-  const selected = scripts.find(s => s.id === selectedId);
-  const activePersona = AI_PERSONAS.find(p => p.id === selectedPersonaId) ?? AI_PERSONAS[0];
-  const steps: Step[] = fullScript?.steps ?? [];
-  const objections: Objection[] = fullScript?.objections ?? [];
-
-  if (!unlocked) return <AccessGate onUnlock={() => setUnlocked(true)} />;
+  if (!unlocked) return <AccessGate lang={lang} onUnlock={() => setUnlocked(true)} />;
 
   // ── HOME ──────────────────────────────────────────────────────────────────
   if (phase === "home") {
@@ -355,7 +348,7 @@ export default function PlaygroundPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Playground</h1>
-            <p className="text-sm text-stone-500 mt-0.5">Entraîne-toi face à un prospect IA et obtiens un score après chaque appel.</p>
+            <p className="text-sm text-stone-500 mt-0.5">{pg.subtitle[lang]}</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -368,11 +361,11 @@ export default function PlaygroundPage() {
               )}
             >
               <Archive className="w-3.5 h-3.5" />
-              {showArchived ? "Masquer les archives" : "Archives"}
+              {showArchived ? i18n.common.hideArchives[lang] : i18n.common.archives[lang]}
             </button>
             {!showArchived && (
               <button onClick={() => setPhase("setup")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors">
-                <Plus className="w-4 h-4" /> Nouvel appel
+                <Plus className="w-4 h-4" /> {pg.newCall[lang]}
               </button>
             )}
           </div>
@@ -380,7 +373,7 @@ export default function PlaygroundPage() {
 
         {loadingSessions ? (
           <div className="flex items-center gap-2 text-sm text-stone-400 py-8 justify-center">
-            <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
+            <Loader2 className="w-4 h-4 animate-spin" /> {i18n.common.loading[lang]}
           </div>
         ) : sessions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -389,22 +382,22 @@ export default function PlaygroundPage() {
             </div>
             <div className="text-center">
               <p className="text-[14px] font-medium text-stone-700">
-                {showArchived ? "Aucun appel archivé" : "Aucun appel d'entraînement"}
+                {showArchived ? pg.noArchivedTitle[lang] : pg.noCallsTitle[lang]}
               </p>
               <p className="text-sm text-stone-400 mt-0.5">
-                {showArchived ? "Les appels archivés apparaîtront ici." : "Lance ton premier appel pour commencer à progresser."}
+                {showArchived ? pg.noArchivedSub[lang] : pg.noCallsSub[lang]}
               </p>
             </div>
             {!showArchived && (
               <button onClick={() => setPhase("setup")} className="flex items-center gap-1.5 text-[13px] font-medium px-3.5 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors mt-1">
-                <Plus className="w-4 h-4" /> Démarrer un appel
+                <Plus className="w-4 h-4" /> {pg.startCall[lang]}
               </button>
             )}
           </div>
         ) : (
           <div className="space-y-2">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
-              {showArchived ? "Archives" : "Derniers appels"} · {sessions.length}
+              {showArchived ? i18n.common.archives[lang] : pg.lastCalls[lang]} · {sessions.length}
             </p>
             {sessions.map(s => {
               const emoji = s.persona_id ? (PERSONA_EMOJI[s.persona_id] ?? "🧑‍💼") : "🧑‍💼";
@@ -426,7 +419,7 @@ export default function PlaygroundPage() {
                         <Clock className="w-3 h-3" />{formatDuration(s.duration_seconds)}
                       </span>
                       <span className="text-stone-200">·</span>
-                      <span className="text-xs text-stone-400">{relativeDate(s.created_at)}</span>
+                      <span className="text-xs text-stone-400">{relativeDate(s.created_at, lang)}</span>
                     </div>
                   </div>
 
@@ -437,14 +430,14 @@ export default function PlaygroundPage() {
                   >
                     <button
                       onClick={() => archiveSession(s.id, !showArchived)}
-                      title={showArchived ? "Désarchiver" : "Archiver"}
+                      title={showArchived ? pg.unarchive[lang] : pg.archive[lang]}
                       className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
                     >
                       {showArchived ? <ArchiveX className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
                     </button>
                     <button
                       onClick={() => deleteSession(s.id)}
-                      title="Supprimer"
+                      title={pg.delete_[lang]}
                       className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -452,7 +445,7 @@ export default function PlaygroundPage() {
                   </div>
 
                   <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-1 rounded-full font-medium shrink-0 group-hover:opacity-0 transition-opacity">
-                    Score bientôt
+                    {pg.scoreSoon[lang]}
                   </span>
                 </div>
               );
@@ -482,7 +475,7 @@ export default function PlaygroundPage() {
         <div key={countdownNum} className="count-digit text-[160px] font-bold text-white leading-none tabular-nums">
           {countdownNum}
         </div>
-        <p className="text-white/20 text-xs uppercase tracking-widest">Prépare-toi</p>
+        <p className="text-white/20 text-xs uppercase tracking-widest">{pg.getReady[lang]}</p>
       </div>
     );
   }
@@ -490,7 +483,7 @@ export default function PlaygroundPage() {
   // ── SETUP ─────────────────────────────────────────────────────────────────
   if (phase === "setup") {
     const canStart = !!selectedId && !!selectedPersonaId && !loadingScript;
-    const chosenPersona = AI_PERSONAS.find(p => p.id === selectedPersonaId);
+    const chosenPersona = personas.find(p => p.id === selectedPersonaId);
 
     return (
       <div className="max-w-3xl mx-auto px-8 py-10 space-y-10">
@@ -501,25 +494,25 @@ export default function PlaygroundPage() {
           >
             <ChevronLeft className="w-4 h-4" /> Playground
           </button>
-          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvel appel d'entraînement</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Configure ton appel en deux étapes, puis lance.</p>
+          <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{pg.setupTitle[lang]}</h1>
+          <p className="text-sm text-stone-500 mt-0.5">{pg.setupSub[lang]}</p>
         </div>
 
         {/* ── 1. Script ── */}
         <div className="space-y-3">
           <div className="flex items-center gap-2.5">
             <span className="w-6 h-6 rounded-full bg-stone-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">1</span>
-            <p className="text-[13px] font-semibold text-stone-800">Choisis ton script</p>
+            <p className="text-[13px] font-semibold text-stone-800">{pg.pickScript[lang]}</p>
           </div>
 
           {loadingList ? (
             <div className="flex items-center gap-2 text-sm text-stone-400 py-4 pl-8">
-              <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
+              <Loader2 className="w-4 h-4 animate-spin" /> {i18n.common.loading[lang]}
             </div>
           ) : scripts.length === 0 ? (
             <div className="ml-8 border border-dashed border-stone-200 rounded-xl px-5 py-8 text-center">
-              <p className="text-sm text-stone-500 mb-2">Aucun script disponible.</p>
-              <Link href="/scripts/new" className="text-sm text-violet-600 hover:text-violet-700 font-medium">Créer un script →</Link>
+              <p className="text-sm text-stone-500 mb-2">{pg.noScripts[lang]}</p>
+              <Link href="/scripts/new" className="text-sm text-violet-600 hover:text-violet-700 font-medium">{pg.createScript[lang]}</Link>
             </div>
           ) : (
             <div className="ml-8 space-y-2">
@@ -538,7 +531,7 @@ export default function PlaygroundPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-[13px] font-semibold text-stone-900 truncate">{s.name}</p>
-                        {s.is_default && <span className="text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium shrink-0">Par défaut</span>}
+                        {s.is_default && <span className="text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium shrink-0">{i18n.common.default_[lang]}</span>}
                       </div>
                       {s.goal && <p className="text-xs text-stone-400 line-clamp-1">{s.goal}</p>}
                     </div>
@@ -549,8 +542,8 @@ export default function PlaygroundPage() {
                     )}
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><FileText className="w-3 h-3" />{s.steps[0]?.count ?? 0} étapes</span>
-                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><ShieldAlert className="w-3 h-3" />{s.objections[0]?.count ?? 0} objections</span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><FileText className="w-3 h-3" />{s.steps[0]?.count ?? 0} {i18n.scripts.steps[lang]}</span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><ShieldAlert className="w-3 h-3" />{s.objections[0]?.count ?? 0} {i18n.scripts.objections[lang]}</span>
                     <span className="flex items-center gap-1 text-[11px] text-stone-400"><Clock className="w-3 h-3" />{s.duration_minutes} min</span>
                   </div>
                 </button>
@@ -563,11 +556,11 @@ export default function PlaygroundPage() {
         <div className="space-y-3">
           <div className="flex items-center gap-2.5">
             <span className="w-6 h-6 rounded-full bg-stone-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">2</span>
-            <p className="text-[13px] font-semibold text-stone-800">Choisis ton prospect IA</p>
+            <p className="text-[13px] font-semibold text-stone-800">{pg.pickPersona[lang]}</p>
           </div>
 
           <div className="ml-8 grid grid-cols-2 gap-3">
-            {AI_PERSONAS.map(persona => (
+            {personas.map(persona => (
               <button
                 key={persona.id}
                 onClick={() => setSelectedPersonaId(persona.id)}
@@ -609,10 +602,10 @@ export default function PlaygroundPage() {
             <div className="text-sm">
               {canStart ? (
                 <p className="font-medium text-stone-800">
-                  Appel avec <span className="text-violet-700">{chosenPersona?.name}</span> sur <span className="text-violet-700">{selected?.name}</span>
+                  {pg.setupWith[lang]} <span className="text-violet-700">{chosenPersona?.name}</span> {pg.setupOn[lang]} <span className="text-violet-700">{selected?.name}</span>
                 </p>
               ) : (
-                <p className="text-stone-400">Sélectionne un script et un prospect pour continuer.</p>
+                <p className="text-stone-400">{pg.setupHint[lang]}</p>
               )}
             </div>
             <button
@@ -621,7 +614,7 @@ export default function PlaygroundPage() {
               className="shrink-0 flex items-center gap-1.5 text-[13px] font-medium px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-700 transition-colors disabled:opacity-40 disabled:pointer-events-none"
             >
               {loadingScript && <Loader2 className="w-4 h-4 animate-spin" />}
-              Démarrer l'appel
+              {pg.startCallCta[lang]}
             </button>
           </div>
         </div>
@@ -674,7 +667,7 @@ export default function PlaygroundPage() {
               </div>
             )}
             <div className="absolute bottom-3 left-3">
-              <span className="text-xs text-white/40 font-medium">Toi</span>
+              <span className="text-xs text-white/40 font-medium">{pg.you[lang]}</span>
             </div>
           </div>
         </div>
@@ -701,7 +694,7 @@ export default function PlaygroundPage() {
       {/* Right: script panel */}
       <div className="flex-1 flex flex-col bg-stone-50 border-l border-stone-200 min-w-0">
         <div className="px-5 py-4 border-b border-stone-200 bg-white shrink-0">
-          <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">Process</p>
+          <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">{pg.processLabel[lang]}</p>
           <p className="text-[14px] font-semibold text-stone-800 mt-0.5 truncate">{fullScript?.name}</p>
         </div>
 
@@ -715,7 +708,7 @@ export default function PlaygroundPage() {
               {steps.length > 0 && (
                 <div className="space-y-2">
                   <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
-                    Étapes · {steps.length}
+                    {pg.stepsSection[lang]} · {steps.length}
                   </p>
                   {steps.map(step => (
                     <StepCard key={step.id} step={step} />
@@ -726,7 +719,7 @@ export default function PlaygroundPage() {
               {objections.length > 0 && (
                 <div className="space-y-2">
                   <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
-                    Objections · {objections.length}
+                    {pg.objectionsSection[lang]} · {objections.length}
                   </p>
                   {objections.map(obj => (
                     <ObjectionCard key={obj.id} objection={obj} />
