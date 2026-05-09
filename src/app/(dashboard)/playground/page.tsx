@@ -35,6 +35,46 @@ type TrainingSession = {
   duration_seconds: number; created_at: string;
 };
 
+type Persona = {
+  id: string; emoji: string; name: string; role: string;
+  description: string; tags: string[];
+};
+
+const AI_PERSONAS: Persona[] = [
+  {
+    id: "sophie",
+    emoji: "👩‍💼",
+    name: "Sophie",
+    role: "Dirigeante PME",
+    description: "Pragmatique et directe. Peu de temps, pose vite la question du prix.",
+    tags: ["B2B", "PME"],
+  },
+  {
+    id: "marc",
+    emoji: "👨‍💻",
+    name: "Marc",
+    role: "DSI Grands comptes",
+    description: "Analytique, beaucoup de questions techniques. Cycle de décision long.",
+    tags: ["Tech", "Enterprise"],
+  },
+  {
+    id: "lucie",
+    emoji: "👩‍🦱",
+    name: "Lucie",
+    role: "Coach sportif indépendant",
+    description: "Enthousiaste mais sensible au prix. Veut voir des résultats rapides.",
+    tags: ["Sport", "B2C"],
+  },
+  {
+    id: "thomas",
+    emoji: "👨‍💼",
+    name: "Thomas",
+    role: "Directeur commercial",
+    description: "Connaît bien les techniques de vente. Met la pression sur la valeur ajoutée.",
+    tags: ["Sales", "B2B"],
+  },
+];
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function formatTime(s: number) {
@@ -115,6 +155,7 @@ export default function PlaygroundPage() {
   // setup state
   const [scripts, setScripts] = useState<ScriptItem[]>([]);
   const [selectedId, setSelectedId] = useState("");
+  const [selectedPersonaId, setSelectedPersonaId] = useState("");
   const [fullScript, setFullScript] = useState<FullScript | null>(null);
   const [loadingList, setLoadingList] = useState(true);
   const [loadingScript, setLoadingScript] = useState(false);
@@ -188,6 +229,7 @@ export default function PlaygroundPage() {
   }, [phase]);
 
   function startCall() {
+    if (!selectedId || !selectedPersonaId) return;
     setCallDuration(0); setCurrentStep(0); setIsMuted(false);
     setCameraError(false); setExpandedStepId(null); setExpandedObjId(null);
     setPhase("call");
@@ -209,6 +251,7 @@ export default function PlaygroundPage() {
   }
 
   const selected = scripts.find(s => s.id === selectedId);
+  const activePersona = AI_PERSONAS.find(p => p.id === selectedPersonaId) ?? AI_PERSONAS[0];
   const steps: Step[] = fullScript?.steps ?? [];
   const objections: Objection[] = fullScript?.objections ?? [];
 
@@ -277,8 +320,11 @@ export default function PlaygroundPage() {
 
   // ── SETUP ─────────────────────────────────────────────────────────────────
   if (phase === "setup") {
+    const canStart = !!selectedId && !!selectedPersonaId && !loadingScript;
+    const chosenPersona = AI_PERSONAS.find(p => p.id === selectedPersonaId);
+
     return (
-      <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
+      <div className="max-w-3xl mx-auto px-8 py-10 space-y-10">
         <div>
           <button
             onClick={() => setPhase("home")}
@@ -287,27 +333,28 @@ export default function PlaygroundPage() {
             <ChevronLeft className="w-4 h-4" /> Playground
           </button>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Nouvel appel d'entraînement</h1>
-          <p className="text-sm text-stone-500 mt-0.5">Sélectionne un script, puis lance l'appel avec Sophie.</p>
+          <p className="text-sm text-stone-500 mt-0.5">Configure ton appel en deux étapes, puis lance.</p>
         </div>
 
-        <div className="grid grid-cols-5 gap-6 items-start">
-          {/* Left: script list */}
-          <div className="col-span-3 space-y-3">
-            <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">Script à utiliser</p>
+        {/* ── 1. Script ── */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-stone-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">1</span>
+            <p className="text-[13px] font-semibold text-stone-800">Choisis ton script</p>
+          </div>
 
-            {loadingList ? (
-              <div className="flex items-center gap-2 text-sm text-stone-400 py-4">
-                <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
-              </div>
-            ) : scripts.length === 0 ? (
-              <div className="border border-dashed border-stone-200 rounded-xl px-5 py-8 text-center">
-                <p className="text-sm text-stone-500 mb-2">Aucun script disponible.</p>
-                <Link href="/scripts/new" className="text-sm text-violet-600 hover:text-violet-700 font-medium transition-colors">
-                  Créer un script →
-                </Link>
-              </div>
-            ) : (
-              scripts.map(s => (
+          {loadingList ? (
+            <div className="flex items-center gap-2 text-sm text-stone-400 py-4 pl-8">
+              <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
+            </div>
+          ) : scripts.length === 0 ? (
+            <div className="ml-8 border border-dashed border-stone-200 rounded-xl px-5 py-8 text-center">
+              <p className="text-sm text-stone-500 mb-2">Aucun script disponible.</p>
+              <Link href="/scripts/new" className="text-sm text-violet-600 hover:text-violet-700 font-medium">Créer un script →</Link>
+            </div>
+          ) : (
+            <div className="ml-8 space-y-2">
+              {scripts.map(s => (
                 <button
                   key={s.id}
                   onClick={() => setSelectedId(s.id)}
@@ -318,15 +365,13 @@ export default function PlaygroundPage() {
                       : "border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm"
                   )}
                 >
-                  <div className="flex items-start justify-between gap-3 mb-2.5">
+                  <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 mb-0.5">
                         <p className="text-[13px] font-semibold text-stone-900 truncate">{s.name}</p>
-                        {s.is_default && (
-                          <span className="text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium shrink-0">Par défaut</span>
-                        )}
+                        {s.is_default && <span className="text-[10px] bg-violet-100 text-violet-600 px-2 py-0.5 rounded-full font-medium shrink-0">Par défaut</span>}
                       </div>
-                      {s.goal && <p className="text-xs text-stone-400 mt-0.5 line-clamp-1">{s.goal}</p>}
+                      {s.goal && <p className="text-xs text-stone-400 line-clamp-1">{s.goal}</p>}
                     </div>
                     {selectedId === s.id && (
                       <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center shrink-0 mt-0.5">
@@ -335,64 +380,80 @@ export default function PlaygroundPage() {
                     )}
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1 text-[11px] text-stone-400">
-                      <FileText className="w-3 h-3" />{s.steps[0]?.count ?? 0} étapes
-                    </span>
-                    <span className="flex items-center gap-1 text-[11px] text-stone-400">
-                      <ShieldAlert className="w-3 h-3" />{s.objections[0]?.count ?? 0} objections
-                    </span>
-                    <span className="flex items-center gap-1 text-[11px] text-stone-400">
-                      <Clock className="w-3 h-3" />{s.duration_minutes} min
-                    </span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><FileText className="w-3 h-3" />{s.steps[0]?.count ?? 0} étapes</span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><ShieldAlert className="w-3 h-3" />{s.objections[0]?.count ?? 0} objections</span>
+                    <span className="flex items-center gap-1 text-[11px] text-stone-400"><Clock className="w-3 h-3" />{s.duration_minutes} min</span>
                   </div>
                 </button>
-              ))
-            )}
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── 2. Persona ── */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2.5">
+            <span className="w-6 h-6 rounded-full bg-stone-900 text-white text-[11px] font-bold flex items-center justify-center shrink-0">2</span>
+            <p className="text-[13px] font-semibold text-stone-800">Choisis ton prospect IA</p>
           </div>
 
-          {/* Right: AI persona + CTA */}
-          <div className="col-span-2">
-            <div className="border border-stone-200 rounded-xl bg-white p-5 space-y-5 sticky top-6">
-              {/* Avatar */}
-              <div className="flex flex-col items-center text-center pt-1 pb-1">
-                <div className="w-16 h-16 rounded-full bg-violet-100 flex items-center justify-center text-3xl mb-3">
-                  🧑‍💼
-                </div>
-                <p className="text-[15px] font-semibold text-stone-900">Sophie</p>
-                <p className="text-xs text-stone-400 mt-0.5">Prospect IA</p>
-              </div>
-
-              {/* Briefed on */}
-              <div className={cn("rounded-lg px-3 py-2.5 transition-colors", selected ? "bg-violet-50 border border-violet-100" : "bg-stone-50 border border-stone-100")}>
-                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-1">Briefée sur</p>
-                <p className={cn("text-[13px] font-medium", selected ? "text-violet-900" : "text-stone-400 italic")}>
-                  {selected ? selected.name : "Aucun script sélectionné"}
-                </p>
-              </div>
-
-              {/* Feature list */}
-              <ul className="space-y-2.5">
-                {[
-                  "Joue un prospect réaliste selon ton secteur",
-                  "Soulève les objections de ton script",
-                  "L'appel sera scoré sur 6 dimensions",
-                ].map(item => (
-                  <li key={item} className="flex items-start gap-2.5 text-xs text-stone-500">
-                    <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 text-[9px] font-bold">✓</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
-              <Button
-                className="w-full gap-2 h-9"
-                disabled={!selectedId || loadingScript || loadingList}
-                onClick={startCall}
+          <div className="ml-8 grid grid-cols-2 gap-3">
+            {AI_PERSONAS.map(persona => (
+              <button
+                key={persona.id}
+                onClick={() => setSelectedPersonaId(persona.id)}
+                className={cn(
+                  "text-left p-4 rounded-xl border transition-all",
+                  selectedPersonaId === persona.id
+                    ? "border-violet-300 bg-violet-50 ring-1 ring-violet-200"
+                    : "border-stone-200 bg-white hover:border-stone-300 hover:shadow-sm"
+                )}
               >
-                {loadingScript && <Loader2 className="w-4 h-4 animate-spin" />}
-                Démarrer l'appel
-              </Button>
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-2xl leading-none">{persona.emoji}</span>
+                    <div>
+                      <p className="text-[13px] font-semibold text-stone-900 leading-tight">{persona.name}</p>
+                      <p className="text-[11px] text-stone-400">{persona.role}</p>
+                    </div>
+                  </div>
+                  {selectedPersonaId === persona.id && (
+                    <div className="w-5 h-5 rounded-full bg-violet-600 flex items-center justify-center shrink-0">
+                      <span className="text-[9px] text-white font-bold">✓</span>
+                    </div>
+                  )}
+                </div>
+                <p className="text-[11px] text-stone-500 leading-relaxed">{persona.description}</p>
+                <div className="flex gap-1 mt-2.5">
+                  {persona.tags.map(tag => (
+                    <span key={tag} className="text-[10px] bg-stone-100 text-stone-400 px-2 py-0.5 rounded-full">{tag}</span>
+                  ))}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* ── CTA ── */}
+        <div className="ml-8">
+          <div className={cn("rounded-xl border p-4 flex items-center justify-between gap-4 transition-all", canStart ? "border-violet-200 bg-violet-50" : "border-stone-200 bg-stone-50")}>
+            <div className="text-sm">
+              {canStart ? (
+                <p className="font-medium text-stone-800">
+                  Appel avec <span className="text-violet-700">{chosenPersona?.name}</span> sur <span className="text-violet-700">{selected?.name}</span>
+                </p>
+              ) : (
+                <p className="text-stone-400">Sélectionne un script et un prospect pour continuer.</p>
+              )}
             </div>
+            <Button
+              className="shrink-0 gap-2 h-9 px-5"
+              disabled={!canStart}
+              onClick={startCall}
+            >
+              {loadingScript && <Loader2 className="w-4 h-4 animate-spin" />}
+              Démarrer l'appel
+            </Button>
           </div>
         </div>
       </div>
@@ -417,10 +478,13 @@ export default function PlaygroundPage() {
           {/* AI tile */}
           <div className="flex-1 relative rounded-2xl bg-[#18181D] flex flex-col items-center justify-center border border-white/[0.06] overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-violet-950/20 to-transparent pointer-events-none" />
-            <VoiceWave active={aiSpeaking} />
+            <div className="flex flex-col items-center gap-4">
+              <span className="text-5xl leading-none opacity-80">{activePersona.emoji}</span>
+              <VoiceWave active={aiSpeaking} />
+            </div>
             {aiSpeaking && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-violet-400 animate-pulse" />}
             <div className="absolute bottom-3 left-3">
-              <span className="text-xs text-white/40 font-medium">Sophie · Prospect</span>
+              <span className="text-xs text-white/40 font-medium">{activePersona.name} · {activePersona.role}</span>
             </div>
           </div>
 
