@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Mic, MicOff, PhoneOff, ChevronLeft, Loader2 } from "lucide-react";
+import { Mic, MicOff, PhoneOff, ChevronLeft, ChevronDown, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -21,6 +21,10 @@ type Step = {
   name: string;
   goal: string | null;
   duration_estimate_minutes: number | null;
+  script_lines: string[] | null;
+  questions: string[] | null;
+  tips: string[] | null;
+  key_phrases: string[] | null;
 };
 
 type Objection = {
@@ -28,6 +32,8 @@ type Objection = {
   order: number;
   label: string;
   key_reframe: string | null;
+  responses: string[] | null;
+  trigger_phrases: string[] | null;
 };
 
 type FullScript = {
@@ -73,6 +79,23 @@ function formatTime(s: number) {
   return `${m}:${(s % 60).toString().padStart(2, "0")}`;
 }
 
+function DetailList({ label, items }: { label: string; items: string[] }) {
+  if (!items.length) return null;
+  return (
+    <div className="mt-2">
+      <p className="text-[9px] font-semibold text-stone-400 uppercase tracking-wider mb-1">{label}</p>
+      <ul className="space-y-0.5">
+        {items.map((item, i) => (
+          <li key={i} className="text-[11px] text-stone-500 leading-relaxed flex gap-1.5">
+            <span className="shrink-0 text-stone-300 mt-0.5">·</span>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export default function PlaygroundPage() {
   const [phase, setPhase] = useState<"setup" | "call">("setup");
   const [scripts, setScripts] = useState<ScriptItem[]>([]);
@@ -85,6 +108,13 @@ export default function PlaygroundPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [callDuration, setCallDuration] = useState(0);
   const [cameraError, setCameraError] = useState(false);
+
+  // Script panel accordion state
+  const [stepsOpen, setStepsOpen] = useState(true);
+  const [objectionsOpen, setObjectionsOpen] = useState(true);
+  const [expandedStepId, setExpandedStepId] = useState<string | null>(null);
+  const [expandedObjId, setExpandedObjId] = useState<string | null>(null);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -141,6 +171,8 @@ export default function PlaygroundPage() {
     setCurrentStep(0);
     setIsMuted(false);
     setCameraError(false);
+    setExpandedStepId(null);
+    setExpandedObjId(null);
     setPhase("call");
   }
 
@@ -249,22 +281,22 @@ export default function PlaygroundPage() {
           <div className="w-24" />
         </div>
 
-        {/* Video tiles */}
-        <div className="flex-1 grid grid-cols-2 gap-3 p-4">
-          {/* AI tile */}
-          <div className="relative rounded-2xl bg-[#18181D] flex flex-col items-center justify-center border border-white/[0.06] overflow-hidden">
+        {/* Video tiles — vertical stack */}
+        <div className="flex-1 flex flex-col gap-3 p-4">
+          {/* AI tile — top */}
+          <div className="flex-1 relative rounded-2xl bg-[#18181D] flex flex-col items-center justify-center border border-white/[0.06] overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-b from-violet-950/20 to-transparent pointer-events-none" />
             <VoiceWave active={aiSpeaking} />
             {aiSpeaking && (
               <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-violet-400 animate-pulse" />
             )}
-            <div className="absolute bottom-3 left-3 flex items-center gap-1.5">
+            <div className="absolute bottom-3 left-3">
               <span className="text-xs text-white/40 font-medium">Sophie · Prospect</span>
             </div>
           </div>
 
-          {/* User tile */}
-          <div className="relative rounded-2xl bg-[#18181D] overflow-hidden border border-white/[0.06]">
+          {/* User tile — bottom */}
+          <div className="flex-1 relative rounded-2xl bg-[#18181D] overflow-hidden border border-white/[0.06]">
             {!cameraError ? (
               <video
                 ref={videoRef}
@@ -316,75 +348,157 @@ export default function PlaygroundPage() {
       </div>
 
       {/* Right: script panel */}
-      <div className="flex-1 flex flex-col bg-white border-l border-stone-200">
+      <div className="flex-1 flex flex-col bg-white border-l border-stone-200 min-w-0">
         <div className="px-5 py-4 border-b border-stone-100 shrink-0">
           <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">Process</p>
           <p className="text-[14px] font-semibold text-stone-800 mt-0.5 truncate">{fullScript?.name}</p>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
+        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
+
+          {/* ── ÉTAPES section ── */}
           {steps.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-2">
-                Étapes · {steps.length}
-              </p>
-              {steps.map((step, i) => {
-                const active = i === currentStep;
-                const done = i < currentStep;
-                return (
-                  <button
-                    key={step.id}
-                    onClick={() => setCurrentStep(i)}
-                    className={cn(
-                      "w-full flex items-start gap-3 px-3 py-2.5 rounded-xl text-left transition-all",
-                      active
-                        ? "bg-violet-50 border border-violet-200 shadow-sm"
-                        : done
-                        ? "opacity-40 hover:opacity-60"
-                        : "hover:bg-stone-50 border border-transparent"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5",
-                        active ? "bg-violet-600 text-white" : done ? "bg-emerald-500 text-white" : "bg-stone-100 text-stone-400"
-                      )}
-                    >
-                      {done ? "✓" : i + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={cn("text-[13px] font-medium leading-snug", active ? "text-violet-900" : "text-stone-700")}>
-                        {step.name}
-                      </p>
-                      {step.goal && (
-                        <p className="text-[11px] text-stone-400 mt-0.5 leading-relaxed line-clamp-2">{step.goal}</p>
-                      )}
-                    </div>
-                    {step.duration_estimate_minutes != null && (
-                      <span className="text-[10px] text-stone-300 shrink-0 mt-1">{step.duration_estimate_minutes}min</span>
-                    )}
-                  </button>
-                );
-              })}
+            <div>
+              <button
+                onClick={() => setStepsOpen(o => !o)}
+                className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-stone-50 transition-colors group"
+              >
+                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
+                  Étapes · {steps.length}
+                </p>
+                <ChevronDown
+                  className={cn("w-3.5 h-3.5 text-stone-300 group-hover:text-stone-400 transition-transform duration-200", !stepsOpen && "-rotate-90")}
+                />
+              </button>
+
+              {stepsOpen && (
+                <div className="space-y-0.5 mt-0.5">
+                  {steps.map((step, i) => {
+                    const active = i === currentStep;
+                    const done = i < currentStep;
+                    const expanded = expandedStepId === step.id;
+                    const hasDetails = (step.script_lines?.length ?? 0) > 0 || (step.questions?.length ?? 0) > 0 || (step.tips?.length ?? 0) > 0 || (step.key_phrases?.length ?? 0) > 0;
+
+                    return (
+                      <div
+                        key={step.id}
+                        className={cn(
+                          "rounded-xl border transition-all",
+                          active
+                            ? "border-violet-200 bg-violet-50"
+                            : done
+                            ? "border-transparent opacity-45 hover:opacity-70"
+                            : "border-transparent hover:bg-stone-50"
+                        )}
+                      >
+                        {/* Step header row */}
+                        <button
+                          className="w-full flex items-start gap-2.5 px-3 py-2.5 text-left"
+                          onClick={() => {
+                            setCurrentStep(i);
+                            if (hasDetails || step.goal) setExpandedStepId(expanded ? null : step.id);
+                          }}
+                        >
+                          <div
+                            className={cn(
+                              "shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold mt-0.5",
+                              active ? "bg-violet-600 text-white" : done ? "bg-emerald-500 text-white" : "bg-stone-100 text-stone-400"
+                            )}
+                          >
+                            {done ? "✓" : i + 1}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={cn("text-[13px] font-medium leading-snug", active ? "text-violet-900" : "text-stone-700")}>
+                              {step.name}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                            {step.duration_estimate_minutes != null && (
+                              <span className="text-[10px] text-stone-300">{step.duration_estimate_minutes}min</span>
+                            )}
+                            {(hasDetails || step.goal) && (
+                              <ChevronDown
+                                className={cn("w-3 h-3 text-stone-300 transition-transform duration-200", expanded && "rotate-180")}
+                              />
+                            )}
+                          </div>
+                        </button>
+
+                        {/* Expanded details */}
+                        {expanded && (
+                          <div className="px-3 pb-3 space-y-0.5 border-t border-stone-100 pt-2">
+                            {step.goal && (
+                              <p className="text-[11px] text-stone-500 leading-relaxed">{step.goal}</p>
+                            )}
+                            <DetailList label="Phrases clés" items={step.key_phrases ?? []} />
+                            <DetailList label="Script" items={step.script_lines ?? []} />
+                            <DetailList label="Questions" items={step.questions ?? []} />
+                            <DetailList label="Tips" items={step.tips ?? []} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
 
+          {/* ── OBJECTIONS section ── */}
           {objections.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider mb-2">
-                Objections · {objections.length}
-              </p>
-              {objections.map(obj => (
-                <div
-                  key={obj.id}
-                  className="px-3 py-2.5 rounded-xl border border-stone-100 hover:border-stone-200 transition-colors bg-white"
-                >
-                  <p className="text-[13px] font-medium text-stone-700">{obj.label}</p>
-                  {obj.key_reframe && (
-                    <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">{obj.key_reframe}</p>
-                  )}
+            <div className="mt-2">
+              <button
+                onClick={() => setObjectionsOpen(o => !o)}
+                className="flex items-center justify-between w-full px-2 py-2 rounded-lg hover:bg-stone-50 transition-colors group"
+              >
+                <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">
+                  Objections · {objections.length}
+                </p>
+                <ChevronDown
+                  className={cn("w-3.5 h-3.5 text-stone-300 group-hover:text-stone-400 transition-transform duration-200", !objectionsOpen && "-rotate-90")}
+                />
+              </button>
+
+              {objectionsOpen && (
+                <div className="space-y-0.5 mt-0.5">
+                  {objections.map(obj => {
+                    const expanded = expandedObjId === obj.id;
+                    const hasDetails = (obj.responses?.length ?? 0) > 0 || (obj.trigger_phrases?.length ?? 0) > 0;
+
+                    return (
+                      <div
+                        key={obj.id}
+                        className="rounded-xl border border-transparent hover:bg-stone-50 transition-all"
+                      >
+                        <button
+                          className="w-full flex items-start gap-2.5 px-3 py-2.5 text-left"
+                          onClick={() => setExpandedObjId(expanded ? null : obj.id)}
+                        >
+                          <div className="shrink-0 w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center mt-0.5">
+                            <span className="text-[9px] text-amber-600 font-bold">!</span>
+                          </div>
+                          <p className="flex-1 text-[13px] font-medium text-stone-700 leading-snug">{obj.label}</p>
+                          {(obj.key_reframe || hasDetails) && (
+                            <ChevronDown
+                              className={cn("w-3 h-3 text-stone-300 shrink-0 mt-1 transition-transform duration-200", expanded && "rotate-180")}
+                            />
+                          )}
+                        </button>
+
+                        {expanded && (
+                          <div className="px-3 pb-3 border-t border-stone-100 pt-2 space-y-0.5">
+                            {obj.key_reframe && (
+                              <p className="text-[11px] text-stone-500 leading-relaxed">{obj.key_reframe}</p>
+                            )}
+                            <DetailList label="Réponses" items={obj.responses ?? []} />
+                            <DetailList label="Phrases déclencheurs" items={obj.trigger_phrases ?? []} />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
+              )}
             </div>
           )}
 
@@ -395,6 +509,7 @@ export default function PlaygroundPage() {
           )}
         </div>
 
+        {/* Step nav */}
         {steps.length > 0 && (
           <div className="px-4 py-3 border-t border-stone-100 shrink-0 flex items-center justify-between">
             <button

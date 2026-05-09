@@ -15,7 +15,7 @@ export async function GET(_req: Request, { params }: Params) {
   const { id } = await params;
   const { data, error } = await supabase
     .from("scripts")
-    .select("id, name, goal, duration_minutes, steps(id, order, name, goal, duration_estimate_minutes), objections(id, order, label, key_reframe)")
+    .select("id, name, goal, duration_minutes, steps(id, order, name, goal, duration_estimate_minutes, script_lines, questions, tips, key_phrases), objections(id, order, label, key_reframe, responses, trigger_phrases)")
     .eq("id", id)
     .eq("user_id", userId)
     .order("order", { referencedTable: "steps", ascending: true })
