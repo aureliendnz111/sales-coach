@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Mic, MicOff, PhoneOff, ChevronLeft, ChevronDown, Loader2, Plus, Swords, Clock, FileText, ShieldAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Mic, MicOff, PhoneOff, ChevronLeft, ChevronDown, Loader2, Plus, Swords, Clock, FileText, ShieldAlert, Archive, ArchiveX, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -32,7 +33,8 @@ type FullScript = {
 
 type TrainingSession = {
   id: string; script_id: string | null; script_name: string;
-  duration_seconds: number; created_at: string;
+  persona_id: string | null; persona_name: string | null;
+  duration_seconds: number; created_at: string; archived_at: string | null;
 };
 
 type Persona = {
@@ -145,12 +147,18 @@ function DetailList({ label, items }: { label: string; items: string[] }) {
 
 // ── main component ────────────────────────────────────────────────────────────
 
+const PERSONA_EMOJI: Record<string, string> = {
+  sophie: "👩‍💼", marc: "👨‍💻", lucie: "👩‍🦱", thomas: "👨‍💼",
+};
+
 export default function PlaygroundPage() {
+  const router = useRouter();
   const [phase, setPhase] = useState<Phase>("home");
 
   // home state
   const [sessions, setSessions] = useState<TrainingSession[]>([]);
   const [loadingSessions, setLoadingSessions] = useState(true);
+  const [showArchived, setShowArchived] = useState(false);
 
   // setup state
   const [scripts, setScripts] = useState<ScriptItem[]>([]);
@@ -174,14 +182,15 @@ export default function PlaygroundPage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  const loadSessions = useCallback(() => {
-    fetch("/api/playground/sessions")
+  const loadSessions = useCallback((archived = false) => {
+    setLoadingSessions(true);
+    fetch(`/api/playground/sessions?archived=${archived}`)
       .then(r => r.json())
       .then(d => setSessions(d.sessions ?? []))
       .finally(() => setLoadingSessions(false));
   }, []);
 
-  useEffect(() => { loadSessions(); }, [loadSessions]);
+  useEffect(() => { loadSessions(showArchived); }, [loadSessions, showArchived]);
 
   useEffect(() => {
     fetch("/api/scripts/list")
@@ -243,8 +252,14 @@ export default function PlaygroundPage() {
       fetch("/api/playground/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script_id: fullScript.id, script_name: fullScript.name, duration_seconds: callDuration }),
-      }).then(loadSessions);
+        body: JSON.stringify({
+          script_id: fullScript.id,
+          script_name: fullScript.name,
+          duration_seconds: callDuration,
+          persona_id: activePersona.id,
+          persona_name: activePersona.name,
+        }),
+      }).then(() => loadSessions(false));
     }
     setCallDuration(0);
     setPhase("home");
@@ -257,6 +272,20 @@ export default function PlaygroundPage() {
 
   // ── HOME ──────────────────────────────────────────────────────────────────
   if (phase === "home") {
+    async function archiveSession(id: string, archive: boolean) {
+      setSessions(prev => prev.filter(s => s.id !== id));
+      await fetch(`/api/playground/sessions/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ archived: archive }),
+      });
+    }
+
+    async function deleteSession(id: string) {
+      setSessions(prev => prev.filter(s => s.id !== id));
+      await fetch(`/api/playground/sessions/${id}`, { method: "DELETE" });
+    }
+
     return (
       <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
         <div className="flex items-center justify-between">
@@ -269,6 +298,24 @@ export default function PlaygroundPage() {
           </Button>
         </div>
 
+        {/* Archived toggle */}
+        <div className="flex items-center gap-2">
+          {[false, true].map(archived => (
+            <button
+              key={String(archived)}
+              onClick={() => setShowArchived(archived)}
+              className={cn(
+                "text-xs px-3 py-1.5 rounded-full border transition-colors",
+                showArchived === archived
+                  ? "bg-stone-900 text-white border-stone-900"
+                  : "border-stone-200 text-stone-500 hover:border-stone-400"
+              )}
+            >
+              {archived ? "Archivés" : "Actifs"}
+            </button>
+          ))}
+        </div>
+
         {loadingSessions ? (
           <div className="flex items-center gap-2 text-sm text-stone-400 py-8 justify-center">
             <Loader2 className="w-4 h-4 animate-spin" /> Chargement...
@@ -279,39 +326,75 @@ export default function PlaygroundPage() {
               <Swords className="w-7 h-7 text-violet-400" />
             </div>
             <div className="text-center">
-              <p className="text-[14px] font-medium text-stone-700">Aucun appel d'entraînement</p>
-              <p className="text-sm text-stone-400 mt-0.5">Lance ton premier appel pour commencer à progresser.</p>
+              <p className="text-[14px] font-medium text-stone-700">
+                {showArchived ? "Aucun appel archivé" : "Aucun appel d'entraînement"}
+              </p>
+              <p className="text-sm text-stone-400 mt-0.5">
+                {showArchived ? "Les appels archivés apparaîtront ici." : "Lance ton premier appel pour commencer à progresser."}
+              </p>
             </div>
-            <Button onClick={() => setPhase("setup")} className="gap-2 mt-1">
-              <Plus className="w-4 h-4" /> Démarrer un appel
-            </Button>
+            {!showArchived && (
+              <Button onClick={() => setPhase("setup")} className="gap-2 mt-1">
+                <Plus className="w-4 h-4" /> Démarrer un appel
+              </Button>
+            )}
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2">
             <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">
-              Derniers appels · {sessions.length}
+              {showArchived ? "Archivés" : "Derniers appels"} · {sessions.length}
             </p>
-            {sessions.map(s => (
-              <div
-                key={s.id}
-                className="flex items-center gap-4 px-5 py-4 bg-white border border-stone-200 rounded-xl hover:border-stone-300 transition-colors"
-              >
-                <div className="w-9 h-9 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
-                  <Swords className="w-4.5 h-4.5 text-violet-500" />
+            {sessions.map(s => {
+              const emoji = s.persona_id ? (PERSONA_EMOJI[s.persona_id] ?? "🧑‍💼") : "🧑‍💼";
+              return (
+                <div
+                  key={s.id}
+                  onClick={() => router.push(`/playground/${s.id}`)}
+                  className="group flex items-center gap-4 px-5 py-4 bg-white border border-stone-200 rounded-xl hover:border-stone-300 hover:shadow-sm transition-all cursor-pointer"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-violet-50 flex items-center justify-center shrink-0 text-xl">
+                    {emoji}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-medium text-stone-800 truncate">
+                      {s.persona_name ? `${s.persona_name} · ` : ""}{s.script_name}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="flex items-center gap-1 text-xs text-stone-400">
+                        <Clock className="w-3 h-3" />{formatDuration(s.duration_seconds)}
+                      </span>
+                      <span className="text-stone-200">·</span>
+                      <span className="text-xs text-stone-400">{relativeDate(s.created_at)}</span>
+                    </div>
+                  </div>
+
+                  {/* Hover actions */}
+                  <div
+                    className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <button
+                      onClick={() => archiveSession(s.id, !showArchived)}
+                      title={showArchived ? "Désarchiver" : "Archiver"}
+                      className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                    >
+                      {showArchived ? <ArchiveX className="w-4 h-4" /> : <Archive className="w-4 h-4" />}
+                    </button>
+                    <button
+                      onClick={() => deleteSession(s.id)}
+                      title="Supprimer"
+                      className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-50 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-1 rounded-full font-medium shrink-0 group-hover:opacity-0 transition-opacity">
+                    Score bientôt
+                  </span>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-medium text-stone-800 truncate">{s.script_name}</p>
-                  <p className="text-xs text-stone-400 mt-0.5">{relativeDate(s.created_at)}</p>
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0 text-xs text-stone-400">
-                  <Clock className="w-3.5 h-3.5" />
-                  {formatDuration(s.duration_seconds)}
-                </div>
-                <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-1 rounded-full font-medium shrink-0">
-                  Score bientôt
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
