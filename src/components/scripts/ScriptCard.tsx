@@ -1,9 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Star, Loader2, FileText, Clock, ShieldAlert } from "lucide-react";
+import { Loader2, FileText, Clock, ShieldAlert, Star, Archive, ArchiveX, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/lib/lang-context";
 import { i18n } from "@/lib/i18n";
@@ -23,6 +21,10 @@ export function ScriptCard({ script }: { script: Script }) {
   const router = useRouter();
   const { lang } = useLang();
   const [settingDefault, setSettingDefault] = useState(false);
+  const [archiving, setArchiving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  const isArchived = !!script.archived_at;
 
   async function handleSetDefault(e: React.MouseEvent) {
     e.preventDefault();
@@ -36,10 +38,36 @@ export function ScriptCard({ script }: { script: Script }) {
     }
   }
 
+  async function handleArchive(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setArchiving(true);
+    await fetch(`/api/scripts/${script.id}`, {
+      method: isArchived ? "PUT" : "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(isArchived ? { script: { _unarchive: true } } : { archive: true }),
+    });
+    router.refresh();
+    setArchiving(false);
+  }
+
+  async function handleDelete(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDeleting(true);
+    await fetch(`/api/scripts/${script.id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ archive: false }),
+    });
+    router.refresh();
+    setDeleting(false);
+  }
+
   return (
-    <Link
-      href={`/scripts/${script.id}`}
-      className="group flex items-center gap-4 px-4 py-3.5 hover:bg-stone-50 transition-colors"
+    <div
+      onClick={() => router.push(`/scripts/${script.id}`)}
+      className="group flex items-center gap-4 px-4 py-3.5 hover:bg-stone-50 transition-colors cursor-pointer"
     >
       <div className={cn(
         "w-8 h-8 rounded-lg flex items-center justify-center shrink-0 transition-colors",
@@ -78,23 +106,38 @@ export function ScriptCard({ script }: { script: Script }) {
         </span>
       </div>
 
-      <div className="w-7 shrink-0 flex items-center justify-center">
-        {!script.is_default && !script.archived_at && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 p-0 text-stone-300 hover:text-amber-500 hover:bg-amber-50"
+      {/* Hover actions */}
+      <div
+        className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        onClick={e => e.stopPropagation()}
+      >
+        {!script.is_default && !isArchived && (
+          <button
             onClick={handleSetDefault}
             disabled={settingDefault}
             title={i18n.scripts.setDefault[lang]}
+            className="p-1.5 rounded-lg text-stone-300 hover:text-amber-500 hover:bg-amber-50 transition-colors disabled:opacity-50"
           >
-            {settingDefault
-              ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              : <Star className="w-3.5 h-3.5" />
-            }
-          </Button>
+            {settingDefault ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Star className="w-3.5 h-3.5" />}
+          </button>
         )}
+        <button
+          onClick={handleArchive}
+          disabled={archiving}
+          title={isArchived ? i18n.playground.unarchive[lang] : i18n.playground.archive[lang]}
+          className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors disabled:opacity-50"
+        >
+          {archiving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : isArchived ? <ArchiveX className="w-3.5 h-3.5" /> : <Archive className="w-3.5 h-3.5" />}
+        </button>
+        <button
+          onClick={handleDelete}
+          disabled={deleting}
+          title={i18n.playground.delete_[lang]}
+          className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-rose-50 transition-colors disabled:opacity-50"
+        >
+          {deleting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+        </button>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -2,7 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ScriptActions } from "@/components/scripts/ScriptActions";
 import { ScriptContent } from "@/components/scripts/ScriptContent";
 import { PlaceholderBanner } from "@/components/scripts/PlaceholderBanner";
@@ -53,11 +52,12 @@ export default async function ScriptDetailPage({ params }: Params) {
           <ChevronLeft className="w-4 h-4" /> Scripts
         </Link>
         <div className="flex items-center gap-2">
-          <Button asChild size="sm" variant="outline" className="h-8 text-xs gap-1.5 border-stone-200">
-            <Link href={`/scripts/${id}/edit`}>
-              <Pencil className="w-3.5 h-3.5" /> Modifier
-            </Link>
-          </Button>
+          <Link
+            href={`/scripts/${id}/edit`}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-stone-500 border border-stone-200 rounded-lg hover:bg-stone-50 hover:border-stone-300 transition-all"
+          >
+            <Pencil className="w-3.5 h-3.5" /> Modifier
+          </Link>
           <ScriptActions scriptId={id} isArchived={!!script.archived_at} isDefault={!!script.is_default} />
         </div>
       </div>
