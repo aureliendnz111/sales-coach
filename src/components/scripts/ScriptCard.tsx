@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, FileText, Clock, ShieldAlert, Star, Archive, ArchiveX, Trash2 } from "lucide-react";
+import { Loader2, FileText, Clock, ShieldAlert, Star, Archive, ArchiveX, Trash2, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLang } from "@/lib/lang-context";
 import { i18n } from "@/lib/i18n";
@@ -21,10 +21,21 @@ export function ScriptCard({ script }: { script: Script }) {
   const router = useRouter();
   const { lang } = useLang();
   const [settingDefault, setSettingDefault] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const isArchived = !!script.archived_at;
+
+  async function handleDuplicate(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDuplicating(true);
+    const res = await fetch(`/api/scripts/${script.id}/duplicate`, { method: "POST" });
+    const data = await res.json();
+    if (data.scriptId) router.push(`/scripts/${data.scriptId}`);
+    setDuplicating(false);
+  }
 
   async function handleSetDefault(e: React.MouseEvent) {
     e.preventDefault();
@@ -111,6 +122,14 @@ export function ScriptCard({ script }: { script: Script }) {
         className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
         onClick={e => e.stopPropagation()}
       >
+        <button
+          onClick={handleDuplicate}
+          disabled={duplicating}
+          title="Dupliquer"
+          className="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors disabled:opacity-50"
+        >
+          {duplicating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Copy className="w-3.5 h-3.5" />}
+        </button>
         {!script.is_default && !isArchived && (
           <button
             onClick={handleSetDefault}

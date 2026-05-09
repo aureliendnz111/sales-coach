@@ -41,20 +41,18 @@ export default function ScriptsPage() {
           <p className="text-sm text-stone-500 mt-0.5">{i18n.scripts.subtitle[lang]}</p>
         </div>
         <div className="flex items-center gap-2">
-          {archived.length > 0 && (
-            <button
-              onClick={() => setShowArchived(a => !a)}
-              className={cn(
-                "flex items-center gap-1.5 text-[13px] px-3.5 py-2 rounded-lg border transition-colors",
-                showArchived
-                  ? "bg-stone-100 border-stone-300 text-stone-700 font-medium"
-                  : "border-stone-200 text-stone-500 hover:bg-stone-50"
-              )}
-            >
-              <Archive className="w-3.5 h-3.5" />
-              {showArchived ? i18n.common.hideArchives[lang] : i18n.common.archives[lang]}
-            </button>
-          )}
+          <button
+            onClick={() => setShowArchived(a => !a)}
+            className={cn(
+              "flex items-center gap-1.5 text-[13px] px-3.5 py-2 rounded-lg border transition-colors",
+              showArchived
+                ? "bg-stone-100 border-stone-300 text-stone-700 font-medium"
+                : "border-stone-200 text-stone-500 hover:bg-stone-50"
+            )}
+          >
+            <Archive className="w-3.5 h-3.5" />
+            {showArchived ? i18n.common.hideArchives[lang] : i18n.common.archives[lang]}
+          </button>
           {!showArchived && (
             <button
               onClick={() => !atScriptLimit && router.push("/scripts/new")}
