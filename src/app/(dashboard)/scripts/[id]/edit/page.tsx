@@ -24,13 +24,13 @@ export default async function EditScriptPage({ params }: Params) {
   if (!script) notFound();
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <Link href={`/scripts/${id}`} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+      <Link href={`/scripts/${id}`} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Retour au script
       </Link>
       <div>
-        <h1 className="text-2xl font-bold">Modifier le script</h1>
-        <p className="text-sm text-muted-foreground mt-1">Les modifications remplacent le contenu existant.</p>
+        <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Modifier le script</h1>
+        <p className="text-sm text-stone-500 mt-0.5">Les modifications remplacent le contenu existant.</p>
       </div>
       <ScriptEditor
         scriptId={id}
