@@ -11,8 +11,8 @@ type L<T> = Record<Lang, T>;
 
 function AppFrame({ url, children, dark = false, className }: { url: string; children: React.ReactNode; dark?: boolean; className?: string }) {
   return (
-    <div className={cn("rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 ring-1", dark ? "ring-white/10 bg-[#0E0E16]" : "ring-stone-200 bg-white", className)}>
-      <div className={cn("flex items-center gap-3 px-3.5 py-2.5 border-b", dark ? "bg-[#16161F] border-white/5" : "bg-stone-100 border-stone-200")}>
+    <div className={cn("flex flex-col h-[600px] sm:h-[520px] rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 ring-1", dark ? "ring-white/10 bg-[#0E0E16]" : "ring-stone-200 bg-stone-50", className)}>
+      <div className={cn("shrink-0 flex items-center gap-3 px-3.5 py-2.5 border-b", dark ? "bg-[#16161F] border-white/5" : "bg-stone-100 border-stone-200")}>
         <div className="flex items-center gap-1.5 shrink-0" aria-hidden>
           <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
           <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
@@ -22,7 +22,8 @@ function AppFrame({ url, children, dark = false, className }: { url: string; chi
           {url}
         </div>
       </div>
-      {children}
+      {/* All mockups share the same frame height; the body fills what's left */}
+      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">{children}</div>
     </div>
   );
 }
@@ -71,7 +72,7 @@ export function ScriptBuilderMockup({ lang }: { lang: Lang }) {
   const active = 1;
   return (
     <AppFrame url="rumios.ai/scripts/closing-3-mois">
-      <div className="bg-stone-50 p-4 sm:p-5">
+      <div className="flex-1 bg-stone-50 p-4 sm:p-5">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
@@ -214,8 +215,8 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
   const caption = t.lines[t.lines.length - 1].text;
   return (
     <AppFrame url="rumios.ai/playground" dark>
-      <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_190px]">
-        <div className="p-3 sm:p-4 flex flex-col gap-3 min-w-0">
+      <div className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_190px]">
+        <div className="p-3 sm:p-4 flex flex-col gap-3 min-w-0 min-h-0">
           {/* Call header */}
           <div className="flex items-center justify-between gap-3">
             <p className="text-[11px] font-medium text-stone-400 truncate">{t.title}</p>
@@ -225,9 +226,9 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
           </div>
 
           {/* Video tiles */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="flex-1 min-h-[150px] grid grid-cols-2 gap-2">
             {/* AI prospect — speaking */}
-            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-violet-950 via-[#1A1530] to-[#101018] ring-2 ring-violet-500/70 flex flex-col items-center justify-center gap-2">
+            <div className="relative h-full rounded-xl overflow-hidden bg-gradient-to-br from-violet-950 via-[#1A1530] to-[#101018] ring-2 ring-violet-500/70 flex flex-col items-center justify-center gap-2">
               <div className="relative">
                 <span className="absolute -inset-2 rounded-full bg-violet-500/25 animate-ping" aria-hidden />
                 <span className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-sky-400 flex items-center justify-center shadow-lg shadow-violet-900/50">
@@ -246,7 +247,7 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
             </div>
 
             {/* The user, with photo */}
-            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-stone-700 to-stone-900 flex items-center justify-center">
+            <div className="relative h-full rounded-xl overflow-hidden bg-gradient-to-br from-stone-700 to-stone-900 flex items-center justify-center">
               <span className="rounded-full ring-2 ring-white/20 shadow-lg shadow-black/40">
                 <UserAvatar size={64} />
               </span>
@@ -357,7 +358,7 @@ export function AnalysisMockup({ lang }: { lang: Lang }) {
   const t = ANALYSIS[lang];
   return (
     <AppFrame url="rumios.ai/call-analysis/marie-d">
-      <div className="bg-stone-50 p-4 sm:p-5 space-y-3">
+      <div className="flex-1 bg-stone-50 p-4 sm:p-5 space-y-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[13px] font-semibold text-stone-900 truncate">{t.title}</p>
@@ -471,7 +472,7 @@ export function ProgressMockup({ lang }: { lang: Lang }) {
   const values = ["2", "12", "74"];
   return (
     <AppFrame url="rumios.ai/dashboard">
-      <div className="bg-stone-50 p-4 sm:p-5 space-y-3">
+      <div className="flex-1 bg-stone-50 p-4 sm:p-5 space-y-3">
         <p className="text-[15px] font-semibold text-stone-900 tracking-tight">{t.hello}</p>
         <div className="grid grid-cols-3 gap-2">
           {t.kpis.map((k, i) => (
@@ -541,14 +542,14 @@ export function CopilotMockup({ lang }: { lang: Lang }) {
   const t = COPILOT[lang];
   return (
     <AppFrame url="meet.google.com/abc-defg-hij" dark>
-      <div className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
-        <div className="flex-1 min-w-0">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-stone-700 to-stone-800 flex items-center justify-center relative">
+      <div className="flex-1 min-h-0 p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
+        <div className="flex-1 min-w-0 min-h-0 flex flex-col">
+          <div className="flex-1 min-h-[110px] grid grid-cols-2 gap-2">
+            <div className="h-full rounded-xl bg-gradient-to-br from-stone-700 to-stone-800 flex items-center justify-center relative">
               <span className="w-11 h-11 rounded-full bg-sky-600 text-white text-[14px] font-semibold flex items-center justify-center">TL</span>
               <span className="absolute bottom-1.5 left-1.5 text-[9.5px] text-white/80 bg-black/40 rounded px-1.5 py-0.5">Thomas L.</span>
             </div>
-            <div className="aspect-[4/3] rounded-xl bg-gradient-to-br from-stone-800 to-stone-900 flex items-center justify-center relative">
+            <div className="h-full rounded-xl bg-gradient-to-br from-stone-800 to-stone-900 flex items-center justify-center relative">
               <span className="w-11 h-11 rounded-full bg-violet-600 text-white text-[14px] font-semibold flex items-center justify-center">CM</span>
               <span className="absolute bottom-1.5 left-1.5 text-[9.5px] text-white/80 bg-black/40 rounded px-1.5 py-0.5 flex items-center gap-1"><Video className="w-2.5 h-2.5" />{t.you}</span>
             </div>

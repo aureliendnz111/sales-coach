@@ -14,13 +14,13 @@ const CATEGORIES: {
   id: CategoryId;
   icon: LucideIcon;
   soon?: boolean;
-  accent: { chip: string; icon: string };
+  accent: { chip: string; icon: string; pill: string };
   Mockup: (p: { lang: Lang }) => React.ReactElement;
   copy: Record<Lang, CategoryCopy>;
 }[] = [
   {
     id: "prepare", icon: FileText, Mockup: ScriptBuilderMockup,
-    accent: { chip: "bg-violet-50", icon: "text-violet-600" },
+    accent: { chip: "bg-violet-50", icon: "text-violet-600", pill: "bg-violet-50 text-violet-700 ring-violet-200" },
     copy: {
       fr: { label: "Préparer", feature: "Script Builder", title: "Votre process de vente, enfin formalisé.", desc: "Partez d'un template éprouvé ou laissez l'IA structurer votre offre. Étapes, questions clés et réponses aux objections : tout est prêt avant l'appel.", bullets: ["Templates par secteur, personnalisables en minutes", "Étapes chronométrées avec objectifs et questions clés", "Bibliothèque d'objections avec recadrages"] },
       en: { label: "Prepare", feature: "Script Builder", title: "Your sales process, finally written down.", desc: "Start from a proven template or let AI structure your offer. Stages, key questions and objection responses: everything is ready before the call.", bullets: ["Industry templates you can tailor in minutes", "Timed stages with goals and key questions", "Objection library with reframes"] },
@@ -29,7 +29,7 @@ const CATEGORIES: {
   },
   {
     id: "practice", icon: Swords, Mockup: PlaygroundMockup,
-    accent: { chip: "bg-sky-50", icon: "text-sky-600" },
+    accent: { chip: "bg-sky-50", icon: "text-sky-600", pill: "bg-sky-50 text-sky-700 ring-sky-200" },
     copy: {
       fr: { label: "S'entraîner", feature: "Playground", title: "Répétez face à un prospect IA, sans enjeu.", desc: "Choisissez un persona, lancez l'appel à la voix et entraînez-vous sur votre script. Le prospect objecte, hésite, relance — comme en vrai.", bullets: ["4 personas réalistes (B2B, tech, B2C…)", "Appel vocal avec votre script affiché en direct", "Questions du script cochées au fil de l'appel"] },
       en: { label: "Practice", feature: "Playground", title: "Rehearse against an AI prospect, risk-free.", desc: "Pick a persona, start a voice call and practice on your own script. The prospect objects, hesitates and pushes back — just like the real thing.", bullets: ["4 realistic personas (B2B, tech, B2C…)", "Voice call with your script shown live", "Script questions checked off as you go"] },
@@ -38,7 +38,7 @@ const CATEGORIES: {
   },
   {
     id: "analyze", icon: PhoneCall, Mockup: AnalysisMockup,
-    accent: { chip: "bg-emerald-50", icon: "text-emerald-600" },
+    accent: { chip: "bg-emerald-50", icon: "text-emerald-600", pill: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
     copy: {
       fr: { label: "Analyser", feature: "Analyse de call", title: "Sachez exactement ce qui a fait signer — ou décrocher.", desc: "Collez le transcript de votre appel. En quelques secondes : un score sur 100, les moments clés annotés et trois actions concrètes pour le prochain call.", bullets: ["Score sur 6 dimensions, comparé à votre script", "Moments clés du transcript annotés par l'IA", "Temps de parole et 3 actions prioritaires"] },
       en: { label: "Analyze", feature: "Call Analysis", title: "Know exactly what closed the deal — or lost it.", desc: "Paste your call transcript. Within seconds: a score out of 100, annotated key moments and three concrete actions for the next call.", bullets: ["Score across 6 dimensions, checked against your script", "Key transcript moments annotated by AI", "Talk ratio and 3 priority actions"] },
@@ -47,7 +47,7 @@ const CATEGORIES: {
   },
   {
     id: "progress", icon: TrendingUp, Mockup: ProgressMockup,
-    accent: { chip: "bg-amber-50", icon: "text-amber-600" },
+    accent: { chip: "bg-amber-50", icon: "text-amber-600", pill: "bg-amber-50 text-amber-700 ring-amber-200" },
     copy: {
       fr: { label: "Progresser", feature: "Dashboard", title: "Mesurez vos progrès, call après call.", desc: "Votre score moyen, vos résultats et vos axes faibles réunis sur un seul écran. Vous savez où vous en êtes et sur quoi travailler cette semaine.", bullets: ["Score moyen et évolution dans le temps", "Historique de vos calls et de leurs résultats", "Votre axe faible récurrent mis en avant"] },
       en: { label: "Improve", feature: "Dashboard", title: "Track your progress, call after call.", desc: "Your average score, outcomes and weak spots on a single screen. You know where you stand and what to work on this week.", bullets: ["Average score and trend over time", "History of your calls and their outcomes", "Your recurring weak spot highlighted"] },
@@ -56,7 +56,7 @@ const CATEGORIES: {
   },
   {
     id: "live", icon: Headphones, Mockup: CopilotMockup, soon: true,
-    accent: { chip: "bg-fuchsia-50", icon: "text-fuchsia-600" },
+    accent: { chip: "bg-fuchsia-50", icon: "text-fuchsia-600", pill: "bg-fuchsia-50 text-fuchsia-700 ring-fuchsia-200" },
     copy: {
       fr: { label: "En direct", feature: "Live Copilot", title: "La bonne réponse, au bon moment, pendant l'appel.", desc: "Rumios écoute votre appel, suit votre progression dans le script et vous souffle une réponse dès qu'une objection apparaît.", bullets: ["Détection des objections en temps réel", "Réponses tirées de votre propre script", "Suivi de l'étape en cours, discret à l'écran"] },
       en: { label: "Live", feature: "Live Copilot", title: "The right answer, at the right time, during the call.", desc: "Rumios listens to your call, tracks where you are in your script and suggests a reply the moment an objection comes up.", bullets: ["Real-time objection detection", "Replies drawn from your own script", "Current-stage tracking, discreet on screen"] },
@@ -90,6 +90,17 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
     return () => obs.disconnect();
   }, []);
 
+  function goTo(e: React.MouseEvent<HTMLAnchorElement>, id: CategoryId) {
+    const target = document.getElementById(`feature-${id}`);
+    if (!target) return;
+    e.preventDefault();
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // scroll-mt on the target leaves room for the floating nav + sticky category bar
+    target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    history.replaceState(null, "", `#feature-${id}`);
+    setActive(id);
+  }
+
   // Keep the active chip visible in the horizontally scrollable bar (mobile)
   useEffect(() => {
     const chip = chipRefs.current[active];
@@ -122,6 +133,7 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
                   key={c.id}
                   ref={el => { chipRefs.current[c.id] = el; }}
                   href={`#feature-${c.id}`}
+                  onClick={e => goTo(e, c.id)}
                   aria-current={selected ? "true" : undefined}
                   className={cn(
                     "shrink-0 flex items-center gap-1.5 rounded-full pl-2 pr-3 py-1.5 text-[12.5px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500",
@@ -153,16 +165,17 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
                 className="scroll-mt-40 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-gradient-to-b from-stone-50 to-white border border-stone-100 rounded-3xl p-5 sm:p-8 md:p-10"
               >
                 <div className={cn("lg:col-span-5", flip && "lg:order-2")}>
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className={cn("w-8 h-8 rounded-lg flex items-center justify-center", cat.accent.chip)}>
-                      <cat.icon className={cn("w-4 h-4", cat.accent.icon)} />
+                  <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2 mb-4">
+                    <span className={cn("w-9 h-9 rounded-xl flex items-center justify-center", cat.accent.chip)}>
+                      <cat.icon className={cn("w-[18px] h-[18px]", cat.accent.icon)} />
                     </span>
-                    <span className={cn("text-[11px] font-semibold uppercase tracking-widest", cat.accent.icon)}>0{i + 1} · {copy.label}</span>
-                    <span className={cn("text-[10.5px] font-medium px-2 py-0.5 rounded-full", cat.soon ? "bg-stone-100 text-stone-500" : "bg-emerald-50 text-emerald-700")}>
+                    <span className={cn("text-[13px] font-bold uppercase tracking-wider", cat.accent.icon)}>{copy.label}</span>
+                    <span className={cn("text-[13px] font-semibold px-3 py-1 rounded-full ring-1", cat.accent.pill)}>{copy.feature}</span>
+                    <span className={cn("flex items-center gap-1 text-[11px] font-medium", cat.soon ? "text-stone-400" : "text-emerald-600")}>
+                      <span className={cn("w-1.5 h-1.5 rounded-full", cat.soon ? "bg-stone-300" : "bg-emerald-500")} />
                       {cat.soon ? ui.soon : ui.available}
                     </span>
                   </div>
-                  <p className="text-[12px] font-medium text-stone-400 mb-1.5">{copy.feature}</p>
                   <h3 id={`feature-title-${cat.id}`} className="text-[22px] md:text-[28px] font-bold tracking-tight leading-tight text-stone-900 text-balance">{copy.title}</h3>
                   <p className="text-[14px] text-stone-500 leading-relaxed mt-3">{copy.desc}</p>
                   <ul className="mt-5 space-y-2.5">
