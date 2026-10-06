@@ -63,3 +63,20 @@ a[href*="clerk.dev"] {
 .cl-footer > *:last-child:has(a[href*="clerk.dev"]) {
   display: none !important;
 }
+
+/* Landing mockups */
+@keyframes rumios-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rumios-fade-up { animation: rumios-fade-up 0.35s ease-out both; }
+
+@keyframes rumios-wave {
+  from { transform: scaleY(0.25); }
+  to { transform: scaleY(1); }
+}
+.rumios-wave { transform-origin: center; animation: rumios-wave 0.5s ease-in-out infinite alternate; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rumios-fade-up, .rumios-wave { animation: none; }
+}
