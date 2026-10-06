@@ -1,8 +1,14 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { SignIn } from "@clerk/nextjs";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import Link from "next/link";
 
-export default function SignInPage() {
+export default async function SignInPage() {
+  // Already signed in (e.g. a landing CTA): go straight to the app
+  const { userId } = await auth();
+  if (userId) redirect("/dashboard");
+
   return (
     <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center px-4 py-12">
       <Link href="/" className="flex items-center gap-2 mb-8 hover:opacity-80 transition-opacity cursor-pointer">

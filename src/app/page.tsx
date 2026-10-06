@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@clerk/nextjs";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, Sparkles, Lock, Swords, type LucideIcon } from "lucide-react";
@@ -23,10 +23,10 @@ const PROFILE_STYLES: Record<"closer" | "coach" | "founder", { icon: LucideIcon;
   founder: { icon: Rocket,        chip: "bg-amber-50 text-amber-600", bar: "from-amber-300 to-amber-500" },
 };
 
-const UI_EXTRA: Record<Lang, { signin: string; trust: [string, string, string]; menu: string; footerLinks: string }> = {
-  fr: { signin: "Se connecter", trust: ["Gratuit pour commencer", "Sans carte bancaire", "Compatible tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Liens" },
-  en: { signin: "Sign in", trust: ["Free to start", "No credit card", "Works with tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Links" },
-  pt: { signin: "Entrar", trust: ["Grátis para começar", "Sem cartão de crédito", "Compatível com tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Links" },
+const UI_EXTRA: Record<Lang, { dashboard: string; signin: string; trust: [string, string, string]; menu: string; footerLinks: string }> = {
+  fr: { dashboard: "Mon dashboard", signin: "Se connecter", trust: ["Gratuit pour commencer", "Sans carte bancaire", "Compatible tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Liens" },
+  en: { dashboard: "My dashboard", signin: "Sign in", trust: ["Free to start", "No credit card", "Works with tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Links" },
+  pt: { dashboard: "O meu dashboard", signin: "Entrar", trust: ["Grátis para começar", "Sem cartão de crédito", "Compatível com tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Links" },
 };
 
 const METRIC_CHIPS = [
@@ -409,7 +409,7 @@ const CONTENT = {
 
 const LANG_LABELS: Record<Lang, string> = { fr: "Français", en: "English", pt: "Português" };
 
-function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void }) {
+function FloatingNav({ lang, setLang, signedIn }: { lang: Lang; setLang: (l: Lang) => void; signedIn: boolean }) {
   const c = CONTENT[lang];
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -521,16 +521,18 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
           <button onClick={() => setMobileOpen(o => !o)} aria-label={ui.menu} aria-expanded={mobileOpen} className="p-1.5 rounded-full hover:bg-white/8 transition-colors">
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
-          <Link href="/sign-up" className="text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
-            {ctaLabel}
+          <Link href={signedIn ? "/dashboard" : "/sign-up"} className="text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
+            {signedIn ? ui.dashboard : ctaLabel}
           </Link>
         </div>
 
-        <Link href="/sign-in" className="hidden md:block ml-1 whitespace-nowrap text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
-          {ui.signin}
-        </Link>
-        <Link href="/sign-up" className="hidden md:block whitespace-nowrap text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
-          {ctaLabel}
+        {!signedIn && (
+          <Link href="/sign-in" className="hidden md:block ml-1 whitespace-nowrap text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
+            {ui.signin}
+          </Link>
+        )}
+        <Link href={signedIn ? "/dashboard" : "/sign-up"} className={cn("hidden md:block whitespace-nowrap text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors", signedIn && "ml-1")}>
+          {signedIn ? ui.dashboard : ctaLabel}
         </Link>
       </div>
 
@@ -544,11 +546,13 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
               </button>
             ))}
           </div>
-          <div className="border-t border-white/10 px-2 py-2">
-            <Link href="/sign-in" className="flex items-center w-full px-4 py-3 text-[14px] text-stone-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
-              {ui.signin}
-            </Link>
-          </div>
+          {!signedIn && (
+            <div className="border-t border-white/10 px-2 py-2">
+              <Link href="/sign-in" className="flex items-center w-full px-4 py-3 text-[14px] text-stone-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                {ui.signin}
+              </Link>
+            </div>
+          )}
           <div className="border-t border-white/10 px-2 py-2 space-y-0.5">
             {(["fr", "en", "pt"] as Lang[]).map(l => (
               <button key={l} onClick={() => { setLang(l); setMobileOpen(false); }}
@@ -592,18 +596,16 @@ function FaqItem({ q, a, id }: { q: string; a: string; id: string }) {
 }
 
 export default function HomePage() {
-  const { isSignedIn, isLoaded } = useAuth();
-  const router = useRouter();
+  // Signed-in users can browse the landing too: CTAs then lead to the dashboard
+  const { isSignedIn } = useAuth();
+  const signedIn = !!isSignedIn;
   const { lang, setLang } = useLang();
-  useEffect(() => {
-    if (isLoaded && isSignedIn) router.push("/dashboard");
-  }, [isLoaded, isSignedIn, router]);
 
   const c = CONTENT[lang];
 
   return (
     <div className="bg-white text-stone-900 min-h-screen">
-      <FloatingNav lang={lang} setLang={setLang} />
+      <FloatingNav lang={lang} setLang={setLang} signedIn={signedIn} />
 
       {/* ── HERO ── */}
       <section className="relative pt-24 pb-20 px-5 md:pt-32 md:pb-24 md:px-6 bg-[#09090B] overflow-hidden">
@@ -636,12 +638,14 @@ export default function HomePage() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/sign-up" className="w-full sm:w-auto flex items-center justify-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-7 py-3 rounded-lg hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-900/40 hover:-translate-y-0.5 transition-all">
-              {c.hero.cta} <ArrowRight className="w-3.5 h-3.5" />
+            <Link href={signedIn ? "/dashboard" : "/sign-up"} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-7 py-3 rounded-lg hover:bg-violet-500 hover:shadow-xl hover:shadow-violet-900/40 hover:-translate-y-0.5 transition-all">
+              {signedIn ? UI_EXTRA[lang].dashboard : c.hero.cta} <ArrowRight className="w-3.5 h-3.5" />
             </Link>
-            <Link href="/sign-in" className="w-full sm:w-auto text-[14px] text-stone-400 hover:text-white px-5 py-3 rounded-lg border border-stone-700 hover:border-stone-500 transition-all">
-              {c.hero.ctaSecondary}
-            </Link>
+            {!signedIn && (
+              <Link href="/sign-in" className="w-full sm:w-auto text-[14px] text-stone-400 hover:text-white px-5 py-3 rounded-lg border border-stone-700 hover:border-stone-500 transition-all">
+                {c.hero.ctaSecondary}
+              </Link>
+            )}
           </div>
 
           {/* Trust row */}
@@ -869,7 +873,7 @@ export default function HomePage() {
             {c.floatingNav.map(item => (
               <a key={item.href} href={item.href} className="hover:text-white transition-colors">{item.label}</a>
             ))}
-            <Link href="/sign-in" className="hover:text-white transition-colors">{UI_EXTRA[lang].signin}</Link>
+            <Link href={signedIn ? "/dashboard" : "/sign-in"} className="hover:text-white transition-colors">{signedIn ? UI_EXTRA[lang].dashboard : UI_EXTRA[lang].signin}</Link>
             <Link href="/mentions-legales" className="hover:text-white transition-colors">{c.legal}</Link>
           </nav>
           <div className="flex flex-col items-center md:items-end gap-1">
