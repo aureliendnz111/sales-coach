@@ -86,7 +86,7 @@ export default function NewAnalysisPage() {
   const outcomeKeys = ["closed", "next_call", "no_decision", "lost"] as const;
 
   return (
-    <div className="max-w-4xl px-8 py-10 space-y-6">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <div>
         <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{i18n.newAnalysis.title[lang]}</h1>
         <p className="text-sm text-stone-500 mt-0.5">{i18n.newAnalysis.subtitle[lang]}</p>

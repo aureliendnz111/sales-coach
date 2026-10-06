@@ -344,7 +344,7 @@ export default function PlaygroundPage() {
     }
 
     return (
-      <div className="max-w-4xl px-8 py-10 space-y-8">
+      <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Playground</h1>
@@ -486,7 +486,7 @@ export default function PlaygroundPage() {
     const chosenPersona = personas.find(p => p.id === selectedPersonaId);
 
     return (
-      <div className="max-w-3xl px-8 py-10 space-y-10">
+      <div className="max-w-3xl mx-auto px-8 py-10 space-y-10">
         <div>
           <button
             onClick={() => setPhase("home")}

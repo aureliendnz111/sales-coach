@@ -24,7 +24,7 @@ export default async function EditScriptPage({ params }: Params) {
   if (!script) notFound();
 
   return (
-    <div className="max-w-4xl px-8 py-10 space-y-6">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
       <Link href={`/scripts/${id}`} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors">
         <ArrowLeft className="w-4 h-4" /> Retour au script
       </Link>

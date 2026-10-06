@@ -42,7 +42,7 @@ export default async function ScriptDetailPage({ params }: Params) {
     );
 
   return (
-    <div className="max-w-4xl px-8 py-10 space-y-8">
+    <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
       {/* Back + actions */}
       <div className="flex items-center justify-between">
         <Link

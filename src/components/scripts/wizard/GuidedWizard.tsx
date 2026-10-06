@@ -136,7 +136,7 @@ export function GuidedWizard() {
 
   // Wizard questions
   return (
-    <div className="max-w-xl space-y-8">
+    <div className="max-w-xl mx-auto space-y-8">
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span>Question {step + 1} sur {QUESTIONS.length}</span>
