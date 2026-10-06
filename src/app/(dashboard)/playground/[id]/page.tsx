@@ -113,7 +113,7 @@ export default function PlaygroundSessionDetailPage() {
   );
 
   if (!session) return (
-    <div className="max-w-4xl mx-auto px-8 py-10">
+    <div className="max-w-4xl px-8 py-10">
       <button onClick={() => router.push("/playground")} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors mb-6">
         <ArrowLeft className="w-4 h-4" /> Playground
       </button>
@@ -150,7 +150,7 @@ export default function PlaygroundSessionDetailPage() {
   const hasDone = session.status === "done" && session.scores;
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+    <div className="max-w-4xl px-8 py-10 space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">

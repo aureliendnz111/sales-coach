@@ -65,7 +65,7 @@ export default function NewScriptPage() {
 
   if (mode === "guided") {
     return (
-      <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+      <div className="max-w-4xl px-8 py-10 space-y-6">
         <BackButton onClick={() => setMode(null)} label={t.back[lang]} />
         <div>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.guidedPageTitle[lang]}</h1>
@@ -78,7 +78,7 @@ export default function NewScriptPage() {
 
   if (mode === "template") {
     return (
-      <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+      <div className="max-w-4xl px-8 py-10 space-y-6">
         <BackButton onClick={() => setMode(null)} label={t.back[lang]} />
         <div>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.templatePageTitle[lang]}</h1>
@@ -91,7 +91,7 @@ export default function NewScriptPage() {
 
   if (mode === "scratch") {
     return (
-      <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+      <div className="max-w-4xl px-8 py-10 space-y-6">
         <BackButton onClick={() => setMode(null)} label={t.back[lang]} />
         <div>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{t.scratchPageTitle[lang]}</h1>
@@ -103,7 +103,7 @@ export default function NewScriptPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
+    <div className="max-w-4xl px-8 py-10 space-y-8">
       <div>
         <Link
           href="/scripts"
