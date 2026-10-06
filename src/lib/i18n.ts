@@ -53,10 +53,11 @@ export const i18n = {
     onboardProgress:   { fr: "{n}/3 terminées", en: "{n}/3 done", pt: "{n}/3 concluídas" } as Txt,
   },
   nav: {
-    before:            { fr: "Avant l'appel", en: "Before the call", pt: "Antes da chamada" } as Txt,
-    during:            { fr: "Pendant l'appel", en: "During the call", pt: "Durante a chamada" } as Txt,
-    after:             { fr: "Après l'appel", en: "After the call", pt: "Depois da chamada" } as Txt,
+    prepare:           { fr: "Préparer", en: "Prepare", pt: "Preparar" } as Txt,
+    practice:          { fr: "S'entraîner", en: "Practice", pt: "Treinar" } as Txt,
+    analyze:           { fr: "Analyser", en: "Analyze", pt: "Analisar" } as Txt,
     progress:          { fr: "Progresser", en: "Improve", pt: "Progredir" } as Txt,
+    live:              { fr: "Pratiquer", en: "Perform", pt: "Praticar" } as Txt,
   },
   layout: {
     desktopTitle:      { fr: "Rumios est disponible sur ordinateur", en: "Rumios is available on desktop", pt: "O Rumios está disponível no computador" } as Txt,
