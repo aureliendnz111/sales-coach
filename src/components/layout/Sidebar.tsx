@@ -7,6 +7,7 @@ import { RumiosLogo } from "@/components/RumiosLogo";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { useLang, type Lang } from "@/lib/lang-context";
+import { i18n } from "@/lib/i18n";
 
 const NAV_LABELS: Record<string, Record<Lang, string>> = {
   "/dashboard":    { fr: "Dashboard",         en: "Dashboard",      pt: "Dashboard" },
@@ -21,13 +22,15 @@ const SETTINGS_LABEL: Record<Lang, string> = { fr: "Paramètres", en: "Settings"
 const SIGNOUT_LABEL: Record<Lang, string> = { fr: "Se déconnecter", en: "Sign out", pt: "Terminar sessão" };
 const LANG_LABELS: Record<Lang, string> = { fr: "Français", en: "English", pt: "Português" };
 
-const NAV = [
-  { href: "/dashboard", icon: LayoutDashboard },
-  { href: "/scripts", icon: FileText },
-  { href: "/call-analysis", icon: PhoneCall },
-  { href: "/playground", icon: Swords },
-  { href: "/sessions", icon: Headphones, soon: true },
-] as const;
+type NavItem = { href: string; icon: typeof LayoutDashboard; soon?: boolean };
+
+// Nav grouped by moment of the sales cycle — mirrors the categories on the landing page.
+const NAV_GROUPS: { key: "before" | "during" | "after" | null; items: NavItem[] }[] = [
+  { key: null,     items: [{ href: "/dashboard", icon: LayoutDashboard }] },
+  { key: "before", items: [{ href: "/scripts", icon: FileText }, { href: "/playground", icon: Swords }] },
+  { key: "during", items: [{ href: "/sessions", icon: Headphones, soon: true }] },
+  { key: "after",  items: [{ href: "/call-analysis", icon: PhoneCall }] },
+];
 
 function UserMenu({ collapsed, lang }: { collapsed: boolean; lang: Lang }) {
   const { user } = useUser();
@@ -155,38 +158,46 @@ export function Sidebar() {
       </Link>
 
       {/* Nav */}
-      <nav className="flex-1 space-y-px">
-        {NAV.map(({ href, icon: Icon, ...rest }) => {
-          const soon = "soon" in rest ? rest.soon : false;
-          const active = pathname === href || pathname.startsWith(href + "/");
-          const label = NAV_LABELS[href]?.[lang] ?? href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              title={collapsed ? label : undefined}
-              className={cn(
-                "flex items-center rounded-md text-[13.5px] transition-colors",
-                collapsed ? "justify-center px-2 py-[7px]" : "gap-2 px-3 py-[6px]",
-                active
-                  ? "bg-violet-50 text-violet-900 font-medium"
-                  : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
-              )}
-            >
-              <Icon className={cn("w-4 h-4 shrink-0", active ? "text-violet-700" : "text-stone-400")} />
-              {!collapsed && (
-                <>
-                  <span className="flex-1">{label}</span>
-                  {soon && (
-                    <span className="text-[10px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-full font-medium leading-none">
-                      {SOON_LABEL[lang]}
-                    </span>
+      <nav className="flex-1 space-y-3" aria-label="Main">
+        {NAV_GROUPS.map(({ key, items }) => (
+          <div key={key ?? "home"} className="space-y-px">
+            {key && (collapsed
+              ? <div className="mx-2 mb-1.5 border-t border-stone-100" aria-hidden />
+              : <p className="px-3 pb-1 text-[10.5px] font-semibold uppercase tracking-wider text-stone-400">{i18n.nav[key][lang]}</p>
+            )}
+            {items.map(({ href, icon: Icon, soon }) => {
+              const active = pathname === href || pathname.startsWith(href + "/");
+              const label = NAV_LABELS[href]?.[lang] ?? href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  title={collapsed ? label : undefined}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex items-center rounded-md text-[13.5px] transition-colors",
+                    collapsed ? "justify-center px-2 py-[7px]" : "gap-2 px-3 py-[6px]",
+                    active
+                      ? "bg-violet-50 text-violet-900 font-medium"
+                      : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
                   )}
-                </>
-              )}
-            </Link>
-          );
-        })}
+                >
+                  <Icon className={cn("w-4 h-4 shrink-0", active ? "text-violet-700" : "text-stone-400")} />
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1">{label}</span>
+                      {soon && (
+                        <span className="text-[10px] bg-stone-100 text-stone-500 px-1.5 py-0.5 rounded-full font-medium leading-none">
+                          {SOON_LABEL[lang]}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* Language selector */}

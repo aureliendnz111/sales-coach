@@ -3,22 +3,16 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { PhoneCall, FileText, Zap, CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Swords, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check } from "lucide-react";
+import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { useLang, type Lang } from "@/lib/lang-context";
+import { FeatureShowcase } from "@/components/landing/FeatureShowcase";
 
 const PROBLEM_STYLES = [
   { icon: AlertTriangle, iconBg: "bg-rose-50", iconColor: "text-rose-500", accent: "border-rose-100" },
   { icon: RefreshCw,     iconBg: "bg-orange-50", iconColor: "text-orange-500", accent: "border-orange-100" },
   { icon: TrendingDown,  iconBg: "bg-red-50", iconColor: "text-red-500", accent: "border-red-100" },
-] as const;
-
-const FEATURE_STYLES = [
-  { iconBg: "bg-violet-50", iconColor: "text-violet-600" },
-  { iconBg: "bg-emerald-50", iconColor: "text-emerald-600" },
-  { iconBg: "bg-amber-50", iconColor: "text-amber-500" },
-  { iconBg: "bg-sky-50", iconColor: "text-sky-600" },
 ] as const;
 
 const STEP_COLORS = ["text-violet-400", "text-blue-400", "text-emerald-400"] as const;
@@ -31,27 +25,6 @@ const METRIC_COLORS = [
   "text-blue-400",
   "text-violet-300",
 ] as const;
-
-const PREVIEW_TABS: Record<Lang, { label: string; src: string; caption: string }[]> = {
-  fr: [
-    { label: "Dashboard", src: "/screenshot-dashboard.png", caption: "Vue d'ensemble de votre activité — scripts actifs, calls du mois et score moyen." },
-    { label: "Script Builder", src: "/screenshot-script-builder.png", caption: "Structurez vos étapes, questions et objections dans un script guidé — prêt à utiliser en appel." },
-    { label: "Templates", src: "/screenshot-script-template.png", caption: "Partez d'un template éprouvé par secteur et adaptez-le à votre offre en quelques minutes." },
-    { label: "Analyse de call", src: "/screenshot-analysis.png", caption: "Score IA sur 6 dimensions, synthèse, points forts et axes d'amélioration après chaque appel." },
-  ],
-  en: [
-    { label: "Dashboard", src: "/screenshot-dashboard.png", caption: "Overview of your activity — active scripts, calls this month, and average score." },
-    { label: "Script Builder", src: "/screenshot-script-builder.png", caption: "Structure your steps, questions and objections in a guided script — ready to use on every call." },
-    { label: "Templates", src: "/screenshot-script-template.png", caption: "Start from a proven template by industry and tailor it to your offer in minutes." },
-    { label: "Call Analysis", src: "/screenshot-analysis.png", caption: "AI score across 6 dimensions, synthesis, strengths and improvement areas after every call." },
-  ],
-  pt: [
-    { label: "Dashboard", src: "/screenshot-dashboard.png", caption: "Vista geral da sua atividade — guiões ativos, chamadas do mês e pontuação média." },
-    { label: "Script Builder", src: "/screenshot-script-builder.png", caption: "Estruture as suas etapas, perguntas e objeções num guião guiado — pronto para usar em cada chamada." },
-    { label: "Modelos", src: "/screenshot-script-template.png", caption: "Parta de um modelo comprovado por setor e adapte-o à sua oferta em minutos." },
-    { label: "Análise de chamada", src: "/screenshot-analysis.png", caption: "Pontuação IA em 6 dimensões, síntese, pontos fortes e eixos de melhoria após cada chamada." },
-  ],
-};
 
 const CONTENT = {
   fr: {
@@ -95,16 +68,6 @@ const CONTENT = {
         { title: "Vous ne savez pas pourquoi vous avez perdu", desc: "Chaque deal raté reste flou. Vous improvisez la prochaine fois." },
         { title: "Votre script change à chaque appel", desc: "Rien n'est formalisé. Ce qui marche disparaît avec le call." },
         { title: "Impossible de mesurer vos progrès", desc: "Vous avancez à l'aveugle, sans savoir si vous vous améliorez vraiment." },
-      ],
-    },
-    features: {
-      label: "La solution",
-      headline: "Tout ce qu'il faut pour mieux vendre en appel.",
-      items: [
-        { icon: FileText, title: "Builder", description: "Partez de zéro ou d'un template. Structurez vos étapes, vos questions clés, vos réponses aux objections. Votre process, formalisé.", tag: "Disponible", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: PhoneCall, title: "Analyse", description: "Collez le transcript. Recevez un score sur 100, vos points forts, ce qui a bloqué et trois actions concrètes pour le prochain appel.", tag: "Disponible", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: Zap, title: "Copilot", description: "Suggestions en temps réel basées sur votre script. Sachez toujours où vous en êtes et quoi dire face à chaque objection.", tag: "Bientôt", tagColor: "bg-stone-100 text-stone-500" },
-        { icon: Swords, title: "Playground", description: "Simulez un appel complet face à une IA qui joue le prospect. Rodez votre pitch, testez vos réponses, sans aucun enjeu.", tag: "Bientôt", tagColor: "bg-stone-100 text-stone-500" },
       ],
     },
     metrics: {
@@ -153,6 +116,7 @@ const CONTENT = {
           "Accès aux templates",
           "Score sur 6 dimensions",
           "Synthèse IA après chaque call",
+          "Playground — simulation d'appels",
         ],
       },
       pro: {
@@ -166,7 +130,6 @@ const CONTENT = {
           "Scripts illimités",
           "Analyses illimitées",
           "Analytics & suivi de progression",
-          "Playground — simulation d'appels",
           "Live Copilot en temps réel",
           "Support prioritaire",
         ],
@@ -179,7 +142,7 @@ const CONTENT = {
         { q: "Ai-je besoin d'enregistrer mes calls ?", a: "Non. Vous avez juste besoin du transcript texte de votre call. Des outils comme tl;dv, Fathom ou Otter.ai génèrent ces transcripts automatiquement. Vous pouvez aussi en coller un manuellement." },
         { q: "Quels types de calls peuvent être analysés ?", a: "Tout appel de vente avec un transcript : closing, découverte, suivi, relance. Peu importe le format ou la plateforme. Google Meet, Zoom, Teams — du moment que vous avez le texte, Rumios peut l'analyser." },
         { q: "Comment fonctionne le scoring ?", a: "L'IA analyse le transcript sur 6 dimensions (process, découverte, objections, posture, conclusion, score global) et retourne une note sur 100 avec des recommandations concrètes pour chaque axe." },
-        { q: "C'est quoi le Playground ?", a: "Une simulation d'appel face à une IA qui joue le rôle du prospect. Vous pouvez vous entraîner autant de fois que vous voulez avant un vrai call, sans aucun enjeu. Cette fonctionnalité est en cours de développement." },
+        { q: "C'est quoi le Playground ?", a: "Une simulation d'appel face à une IA qui joue le rôle du prospect. Vous pouvez vous entraîner autant de fois que vous voulez avant un vrai call, sans aucun enjeu. Choisissez un persona, lancez l'appel à la voix et entraînez-vous directement sur votre script." },
         { q: "Combien coûte Rumios ?", a: "Rumios est gratuit pour commencer : 2 scripts et 5 analyses de calls par mois. Des plans avec plus de capacités arriveront prochainement." },
         { q: "Puis-je utiliser Rumios sans script préexistant ?", a: "Oui. L'analyse fonctionne même sans script de référence. Mais les résultats sont bien plus précis quand l'IA peut comparer le call à vos étapes et vos objections préparées." },
       ],
@@ -235,16 +198,6 @@ const CONTENT = {
         { title: "No way to measure progress", desc: "You're flying blind, with no idea if you're actually improving." },
       ],
     },
-    features: {
-      label: "The solution",
-      headline: "Everything you need to sell better on calls.",
-      items: [
-        { icon: FileText, title: "Builder", description: "Start from scratch or a template. Structure your stages, key questions, and objection responses. Your process, formalized.", tag: "Available", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: PhoneCall, title: "Analyse", description: "Paste the transcript. Get a score out of 100, your strengths, what blocked the deal, and three concrete actions for the next call.", tag: "Available", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: Zap, title: "Copilot", description: "Real-time suggestions based on your script. Always know where you are and what to say when an objection comes up.", tag: "Coming soon", tagColor: "bg-stone-100 text-stone-500" },
-        { icon: Swords, title: "Playground", description: "Simulate a full sales call against an AI playing the prospect. Test your responses, sharpen your pitch, with nothing at stake.", tag: "Coming soon", tagColor: "bg-stone-100 text-stone-500" },
-      ],
-    },
     metrics: {
       label: "What Rumios measures",
       headline: "A precise score across six dimensions.",
@@ -291,6 +244,7 @@ const CONTENT = {
           "Access to templates",
           "Score across 6 dimensions",
           "AI summary after every call",
+          "Playground — call simulation",
         ],
       },
       pro: {
@@ -304,7 +258,6 @@ const CONTENT = {
           "Unlimited scripts",
           "Unlimited analyses",
           "Analytics & progress tracking",
-          "Playground — call simulation",
           "Live Copilot in real time",
           "Priority support",
         ],
@@ -317,7 +270,7 @@ const CONTENT = {
         { q: "Do I need to record my calls?", a: "No. You just need the text transcript of your call. Tools like tl;dv, Fathom, or Otter.ai generate these automatically. You can also paste one manually." },
         { q: "What types of calls can be analyzed?", a: "Any sales call with a transcript: closing, discovery, follow-up, re-engagement. Format doesn't matter. Google Meet, Zoom, Teams — as long as you have the text, Rumios can analyze it." },
         { q: "How does the scoring work?", a: "The AI analyzes the transcript across 6 dimensions (process, discovery, objections, posture, close, overall score) and returns a grade out of 100 with concrete recommendations for each area." },
-        { q: "What is the Playground?", a: "A simulated sales call against an AI playing the prospect. You can practice as many times as you want before a real call, with nothing at stake. This feature is coming soon." },
+        { q: "What is the Playground?", a: "A simulated sales call against an AI playing the prospect. You can practice as many times as you want before a real call, with nothing at stake. Pick a persona, start a voice call and practice directly on your own script." },
         { q: "How much does Rumios cost?", a: "Rumios is free to start: 2 scripts and 5 call analyses per month. Plans with higher limits are coming soon." },
         { q: "Can I use Rumios without a script?", a: "Yes. Analysis works even without a reference script. But results are much more precise when the AI can compare the call to your prepared stages and objections." },
       ],
@@ -373,16 +326,6 @@ const CONTENT = {
         { title: "Impossível medir o progresso", desc: "Avança às cegas, sem saber se está realmente a melhorar." },
       ],
     },
-    features: {
-      label: "A solução",
-      headline: "Tudo o que precisa para vender melhor ao telefone.",
-      items: [
-        { icon: FileText, title: "Builder", description: "Comece do zero ou de um modelo. Estruture as suas etapas, perguntas-chave e respostas às objeções. O seu processo, formalizado.", tag: "Disponível", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: PhoneCall, title: "Análise", description: "Cole o transcript. Receba uma pontuação em 100, os seus pontos fortes, o que bloqueou e três ações concretas para a próxima chamada.", tag: "Disponível", tagColor: "bg-emerald-50 text-emerald-700" },
-        { icon: Zap, title: "Copilot", description: "Sugestões em tempo real baseadas no seu guião. Saiba sempre onde está e o que dizer perante cada objeção.", tag: "Em breve", tagColor: "bg-stone-100 text-stone-500" },
-        { icon: Swords, title: "Playground", description: "Simule uma chamada completa com uma IA que interpreta o prospect. Treine o seu pitch, teste as suas respostas, sem nenhum risco.", tag: "Em breve", tagColor: "bg-stone-100 text-stone-500" },
-      ],
-    },
     metrics: {
       label: "O que o Rumios mede",
       headline: "Uma pontuação precisa em seis dimensões.",
@@ -429,6 +372,7 @@ const CONTENT = {
           "Acesso aos modelos",
           "Pontuação em 6 dimensões",
           "Síntese IA após cada chamada",
+          "Playground — simulação de chamadas",
         ],
       },
       pro: {
@@ -442,7 +386,6 @@ const CONTENT = {
           "Guiões ilimitados",
           "Análises ilimitadas",
           "Analytics & acompanhamento de progresso",
-          "Playground — simulação de chamadas",
           "Live Copilot em tempo real",
           "Suporte prioritário",
         ],
@@ -455,7 +398,7 @@ const CONTENT = {
         { q: "Preciso de gravar as minhas chamadas?", a: "Não. Precisa apenas do transcript em texto da sua chamada. Ferramentas como tl;dv, Fathom ou Otter.ai geram esses transcripts automaticamente. Também pode colar um manualmente." },
         { q: "Que tipos de chamadas podem ser analisadas?", a: "Qualquer chamada de venda com transcript: fecho, descoberta, acompanhamento, reativação. O formato não importa. Google Meet, Zoom, Teams — desde que tenha o texto, o Rumios pode analisar." },
         { q: "Como funciona a pontuação?", a: "A IA analisa o transcript em 6 dimensões (processo, descoberta, objeções, postura, fecho, pontuação global) e devolve uma nota em 100 com recomendações concretas para cada área." },
-        { q: "O que é o Playground?", a: "Uma simulação de chamada com uma IA que interpreta o prospect. Pode praticar quantas vezes quiser antes de uma chamada real, sem nenhum risco. Esta funcionalidade está em desenvolvimento." },
+        { q: "O que é o Playground?", a: "Uma simulação de chamada com uma IA que interpreta o prospect. Pode praticar quantas vezes quiser antes de uma chamada real, sem nenhum risco. Escolha uma persona, inicie a chamada por voz e treine diretamente com o seu guião." },
         { q: "Quanto custa o Rumios?", a: "O Rumios é gratuito para começar: 2 guiões e 5 análises de chamadas por mês. Planos com mais capacidade chegam em breve." },
         { q: "Posso usar o Rumios sem guião?", a: "Sim. A análise funciona mesmo sem guião de referência. Mas os resultados são muito mais precisos quando a IA pode comparar a chamada com as suas etapas e objeções preparadas." },
       ],
@@ -623,7 +566,6 @@ export default function HomePage() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   const { lang, setLang } = useLang();
-  const [activePreview, setActivePreview] = useState(0);
   const [heroScore, setHeroScore] = useState(0);
   const [barsReady, setBarsReady] = useState(false);
 
@@ -783,79 +725,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ── FEATURES ── */}
-      <section id="features" className="py-14 px-5 md:py-24 md:px-6">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.features.label}</p>
-            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.features.headline}</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-            {c.features.items.map((f, i) => (
-              <div key={f.title} className="bg-white border border-stone-200 rounded-2xl p-6 flex flex-col gap-4 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 hover:-translate-y-1 transition-all duration-200">
-                <div className="flex items-start justify-between">
-                  <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", FEATURE_STYLES[i].iconBg)}>
-                    <f.icon className={cn("w-5 h-5", FEATURE_STYLES[i].iconColor)} />
-                  </div>
-                  <span className={cn("text-[11px] font-medium px-2.5 py-1 rounded-full", f.tagColor)}>{f.tag}</span>
-                </div>
-                <div>
-                  <h3 className="text-[15px] font-semibold text-stone-900 mb-2 leading-snug">{f.title}</h3>
-                  <p className="text-[13px] text-stone-500 leading-relaxed">{f.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-10 md:mt-12">
-            <Link href="/sign-up" className="inline-flex items-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-6 py-2.5 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-900/30 transition-all">
-              {lang === "fr" ? "Essayer gratuitement" : lang === "en" ? "Try for free" : "Experimentar gratuitamente"} <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-            <p className="text-[12px] text-stone-400 mt-2.5">
-              {lang === "fr" ? "Gratuit · Sans carte bancaire" : lang === "en" ? "Free · No credit card required" : "Grátis · Sem cartão de crédito"}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── PRODUCT PREVIEW ── */}
-      <section className="py-14 px-5 md:py-24 md:px-6 bg-stone-50 border-y border-stone-100">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8 md:mb-10">
-            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">
-              {lang === "fr" ? "Aperçu" : lang === "en" ? "Preview" : "Pré-visualização"}
-            </p>
-            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">
-              {lang === "fr" ? "Voyez Rumios en action." : lang === "en" ? "See Rumios in action." : "Veja o Rumios em ação."}
-            </h2>
-          </div>
-          <div className="flex items-center justify-center gap-2 mb-8 flex-wrap">
-            {PREVIEW_TABS[lang].map((tab, i) => (
-              <button key={i} onClick={() => setActivePreview(i)}
-                className={cn("text-[13px] font-medium px-4 py-2 rounded-full transition-colors",
-                  activePreview === i ? "bg-violet-600 text-white shadow-md shadow-violet-900/20" : "bg-stone-100 text-stone-500 hover:bg-stone-200 hover:text-stone-700")}>
-                {tab.label}
-              </button>
-            ))}
-          </div>
-          {/* Browser frame */}
-          <div className="rounded-2xl overflow-hidden shadow-2xl border border-stone-200">
-            {/* Chrome bar */}
-            <div className="bg-[#E8E8E8] px-4 py-2.5 flex items-center gap-3 border-b border-stone-300">
-              {/* Traffic lights */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                <span className="w-3 h-3 rounded-full bg-[#FF5F57]" />
-                <span className="w-3 h-3 rounded-full bg-[#FFBD2E]" />
-                <span className="w-3 h-3 rounded-full bg-[#28C840]" />
-              </div>
-              <div className="flex-1 bg-white/70 rounded-md px-3 py-1 min-w-0" />
-            </div>
-            {/* Screenshot */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={PREVIEW_TABS[lang][activePreview].src} alt={PREVIEW_TABS[lang][activePreview].label} className="w-full h-auto block" />
-          </div>
-          <p className="text-center text-[13px] text-stone-400 mt-4">{PREVIEW_TABS[lang][activePreview].caption}</p>
-        </div>
-      </section>
+      {/* ── FEATURES (by category, with mockups) ── */}
+      <FeatureShowcase lang={lang} />
 
       {/* ── METRICS ── */}
       <section className="py-14 px-5 md:py-20 md:px-6 bg-[#09090B] text-white">

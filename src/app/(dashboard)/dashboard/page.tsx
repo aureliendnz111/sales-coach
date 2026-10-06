@@ -16,11 +16,15 @@ export default async function DashboardPage() {
     { count: callsThisMonth },
     { data: scoresData },
     { data: recentAnalyses },
+    { count: totalAnalyses },
+    { count: trainingCount },
   ] = await Promise.all([
     supabase.from("scripts").select("*", { count: "exact", head: true }).eq("user_id", userId!).is("archived_at", null),
     supabase.from("call_analyses").select("*", { count: "exact", head: true }).eq("user_id", userId!).eq("status", "done").gte("created_at", startOfMonth.toISOString()),
     supabase.from("call_analyses").select("scores").eq("user_id", userId!).eq("status", "done").gte("created_at", startOfMonth.toISOString()),
     supabase.from("call_analyses").select("id, prospect_name, call_date, outcome, status, scores, created_at").eq("user_id", userId!).neq("status", "archived").order("created_at", { ascending: false }).limit(5),
+    supabase.from("call_analyses").select("*", { count: "exact", head: true }).eq("user_id", userId!).neq("status", "archived"),
+    supabase.from("training_sessions").select("*", { count: "exact", head: true }).eq("user_id", userId!),
   ]);
 
   const firstName = user?.firstName ?? "vous";
@@ -37,6 +41,8 @@ export default async function DashboardPage() {
       calls={calls}
       avgScore={avgScore}
       overallScores={overallScores}
+      hasAnalysis={(totalAnalyses ?? 0) > 0}
+      hasTraining={(trainingCount ?? 0) > 0}
       recentAnalyses={(recentAnalyses ?? []) as Parameters<typeof DashboardContent>[0]["recentAnalyses"]}
     />
   );
