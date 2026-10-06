@@ -88,7 +88,7 @@ export function RecentAnalyses({ analyses }: { analyses: Analysis[] }) {
                   ) : overall !== null ? (
                     <span className={cn("text-[13px] font-bold tabular-nums px-2 py-0.5 rounded-lg", scoreCol)}>{overall}</span>
                   ) : (
-                    <span className="text-stone-300 text-[12px]">—</span>
+                    <span className="text-stone-300 text-[12px]">-</span>
                   )}
                 </td>
               </tr>

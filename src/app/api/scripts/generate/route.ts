@@ -57,6 +57,7 @@ Règles :
 - Les questions doivent être ouvertes et orientées vers le prospect
 - Les tips doivent être des conseils stratégiques non-évidents
 - Tout en français
+- N'utilise jamais de tiret cadratin (—) ni de tiret demi-cadratin (–) : une virgule, deux-points ou un point à la place
 - Réponds UNIQUEMENT avec le JSON, sans texte avant ou après`;
 
   const message = await client.messages.create({

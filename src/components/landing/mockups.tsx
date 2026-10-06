@@ -9,10 +9,10 @@ import type { Lang } from "@/lib/lang-context";
 
 type L<T> = Record<Lang, T>;
 
-// Every mockup is laid out on a fixed 16:9 canvas, then scaled to the width it
+// Every mockup is laid out on a fixed 16:10 canvas (MacBook screen ratio), then scaled to the width it
 // is given, so all of them keep the exact same proportions on desktop and mobile.
 const CANVAS_W = 800;
-const CANVAS_H = 450;
+const CANVAS_H = 500;
 
 function AppFrame({ url, children, dark = false }: { url: string; children: React.ReactNode; dark?: boolean }) {
   const boxRef = useRef<HTMLDivElement>(null);
@@ -27,7 +27,7 @@ function AppFrame({ url, children, dark = false }: { url: string; children: Reac
   }, []);
 
   return (
-    <div ref={boxRef} className="relative w-full aspect-video">
+    <div ref={boxRef} className="relative w-full aspect-[16/10]">
       <div
         className={cn("absolute top-0 left-0 flex flex-col rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 ring-1 origin-top-left transition-opacity duration-300",
           dark ? "ring-white/10 bg-[#0E0E16]" : "ring-stone-200 bg-stone-50",
@@ -64,7 +64,7 @@ const SCRIPT: L<{
   phrasesLabel: string; phrases: string[]; objection: string; category: string; reframe: string;
 }> = {
   fr: {
-    name: "Closing — Accompagnement 3 mois", default_: "Par défaut", tabs: ["Étapes", "Objections"],
+    name: "Closing : accompagnement 3 mois", default_: "Par défaut", tabs: ["Étapes", "Objections"],
     steps: [{ name: "Cadre & rapport", min: 3 }, { name: "Découverte", min: 15 }, { name: "Reformulation", min: 5 }, { name: "Présentation de l'offre", min: 10 }, { name: "Closing", min: 7 }],
     stepLabel: "Étape 2", goalLabel: "Objectif", goal: "Faire émerger la douleur principale et chiffrer le coût de l'inaction.",
     questionsLabel: "Questions clés", questions: ["Qu'est-ce qui vous a poussé à réserver cet appel aujourd'hui ?", "Si rien ne change d'ici 6 mois, qu'est-ce que ça vous coûte ?", "Qu'avez-vous déjà essayé jusqu'ici ?"],
@@ -72,7 +72,7 @@ const SCRIPT: L<{
     objection: "« C'est trop cher »", category: "Prix", reframe: "Revenir au coût de l'inaction chiffré en découverte",
   },
   en: {
-    name: "Closing — 3-month coaching", default_: "Default", tabs: ["Stages", "Objections"],
+    name: "Closing: 3-month coaching", default_: "Default", tabs: ["Stages", "Objections"],
     steps: [{ name: "Frame & rapport", min: 3 }, { name: "Discovery", min: 15 }, { name: "Recap", min: 5 }, { name: "Offer presentation", min: 10 }, { name: "Close", min: 7 }],
     stepLabel: "Stage 2", goalLabel: "Goal", goal: "Surface the main pain and put a number on the cost of doing nothing.",
     questionsLabel: "Key questions", questions: ["What made you book this call today?", "If nothing changes in 6 months, what does it cost you?", "What have you already tried so far?"],
@@ -80,7 +80,7 @@ const SCRIPT: L<{
     objection: "“It's too expensive”", category: "Price", reframe: "Bring it back to the cost of inaction from discovery",
   },
   pt: {
-    name: "Fecho — Acompanhamento 3 meses", default_: "Predefinido", tabs: ["Etapas", "Objeções"],
+    name: "Fecho: acompanhamento 3 meses", default_: "Predefinido", tabs: ["Etapas", "Objeções"],
     steps: [{ name: "Enquadramento", min: 3 }, { name: "Descoberta", min: 15 }, { name: "Reformulação", min: 5 }, { name: "Apresentação da oferta", min: 10 }, { name: "Fecho", min: 7 }],
     stepLabel: "Etapa 2", goalLabel: "Objetivo", goal: "Fazer emergir a dor principal e quantificar o custo da inação.",
     questionsLabel: "Perguntas-chave", questions: ["O que o levou a marcar esta chamada hoje?", "Se nada mudar em 6 meses, quanto lhe custa?", "O que já experimentou até agora?"],
@@ -467,14 +467,14 @@ const PROGRESS: L<{
 const TREND = [52, 58, 55, 63, 66, 64, 71, 78];
 
 function TrendChart() {
-  const w = 300, h = 56, pad = 5;
+  const w = 300, h = 84, pad = 6;
   const min = 40, max = 90;
   const pts = TREND.map((v, i) => [pad + (i * (w - pad * 2)) / (TREND.length - 1), h - pad - ((v - min) / (max - min)) * (h - pad * 2)] as const);
   const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
   const area = `${line} L${pts[pts.length - 1][0]},${h} L${pts[0][0]},${h} Z`;
   const last = pts[pts.length - 1];
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-[56px]" preserveAspectRatio="none" role="img" aria-label={TREND.join(", ")}>
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-[84px]" preserveAspectRatio="none" role="img" aria-label={TREND.join(", ")}>
       <defs>
         <linearGradient id="rumios-trend" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.18" />

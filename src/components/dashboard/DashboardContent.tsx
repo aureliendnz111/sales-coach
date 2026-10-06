@@ -76,7 +76,7 @@ export function DashboardContent({ firstName, scripts, calls, avgScore, overallS
             <TrendingUp className="w-3.5 h-3.5" /> {i18n.dashboard.avgScore[lang]}
           </div>
           <p className={cn("text-[32px] font-bold tabular-nums leading-none pt-1", scoreColor)}>
-            {avgScore ?? "—"}
+            {avgScore ?? "-"}
           </p>
           <p className="text-[11px] text-stone-500">{scoreSubLabel}</p>
         </div>

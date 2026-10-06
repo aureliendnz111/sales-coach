@@ -39,7 +39,7 @@ export function ScoreCard({ label, subtitle, scoreLabel, score, items, insights 
   }, [score]);
 
   return (
-    <div ref={ref} className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/10 text-left">
+    <div ref={ref} className="h-full flex flex-col bg-white rounded-2xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/10 text-left">
       <div className="bg-[#0E0E16] px-5 py-4 flex items-start justify-between gap-4 border-b border-white/5">
         <div className="min-w-0">
           <p className="text-[11px] font-medium text-stone-500 uppercase tracking-widest">{label}</p>
@@ -50,7 +50,7 @@ export function ScoreCard({ label, subtitle, scoreLabel, score, items, insights 
           <p className="text-[11px] text-stone-500 mt-0.5">{scoreLabel}</p>
         </div>
       </div>
-      <div className="px-5 py-4 grid grid-cols-2 sm:grid-cols-3 gap-3 border-b border-stone-100">
+      <div className="flex-1 px-5 py-4 grid grid-cols-2 sm:grid-cols-3 content-center gap-x-3 gap-y-5 border-b border-stone-100">
         {items.map((item, i) => (
           <div key={item.label} className="space-y-1.5">
             <div className="flex items-center justify-between">

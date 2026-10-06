@@ -10,8 +10,8 @@ import { ObjectionCard } from "@/components/scripts/ObjectionCard";
 import { ArrowLeft, ArrowRight, Sparkles, Check, Loader2 } from "lucide-react";
 
 const QUESTIONS = [
-  { key: "offer", label: "Quelle est ton offre ?", placeholder: "Ex: Coaching business 0 to 1 — 3 mois d'accompagnement intensif pour lancer sa boîte et signer ses premiers clients", hint: "Décris ce que tu vends en une phrase claire." },
-  { key: "price", label: "Quel est le prix et la durée de ton offre ?", placeholder: "Ex: 3000€ pour 3 mois, soit 1000€/mois", hint: "Sois précis — ça servira à construire l'étape prix." },
+  { key: "offer", label: "Quelle est ton offre ?", placeholder: "Ex: Coaching business 0 to 1 : 3 mois d'accompagnement intensif pour lancer sa boîte et signer ses premiers clients", hint: "Décris ce que tu vends en une phrase claire." },
+  { key: "price", label: "Quel est le prix et la durée de ton offre ?", placeholder: "Ex: 3000€ pour 3 mois, soit 1000€/mois", hint: "Sois précis : ça servira à construire l'étape prix." },
   { key: "target", label: "Qui est ta cible idéale ?", placeholder: "Ex: Entrepreneurs en devenir de 25-40 ans, salariés qui veulent se lancer, avec une idée de business mais sans méthode", hint: "Plus c'est précis, meilleur sera le script." },
   { key: "pains", label: "Quelles sont les 3 douleurs principales de ta cible ?", placeholder: "Ex: Ne sait pas par où commencer, peur de l'échec, se sent seul et sans guidance, perd du temps sur les mauvaises priorités", hint: "Ces douleurs seront utilisées dans les questions de qualification." },
   { key: "objections", label: "Quelles objections entends-tu le plus souvent ?", placeholder: "Ex: C'est trop cher, je vais y réfléchir, ce n'est pas le bon moment, j'en parle à ma femme", hint: "Liste-les séparées par des virgules." },

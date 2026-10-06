@@ -105,7 +105,7 @@ export function ScratchBuilder() {
           <p className="text-[11px] font-semibold text-stone-400 uppercase tracking-wider">Informations générales</p>
           <div className="space-y-1.5">
             <Label className="text-xs text-stone-600">Nom du script *</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Call de closing — Offre Premium" className="h-9 text-sm border-stone-200" />
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ex: Call de closing Offre Premium" className="h-9 text-sm border-stone-200" />
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-stone-600">Objectif du call</Label>
