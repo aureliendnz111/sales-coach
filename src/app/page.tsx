@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, FileText, Swords, PhoneCall, Sparkles, Lock, type LucideIcon } from "lucide-react";
+import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, Sparkles, Lock, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { useLang, type Lang } from "@/lib/lang-context";
@@ -15,13 +15,6 @@ const PROBLEM_STYLES = [
   { icon: RefreshCw,     iconBg: "bg-orange-50", iconColor: "text-orange-500", accent: "border-orange-100" },
   { icon: TrendingDown,  iconBg: "bg-red-50", iconColor: "text-red-500", accent: "border-red-100" },
 ] as const;
-
-const STEP_STYLES: { icon: LucideIcon; chip: string; num: string; pill: string }[] = [
-  { icon: FileText,   chip: "bg-violet-50 text-violet-600",   num: "text-violet-500",  pill: "bg-violet-50 text-violet-700 ring-violet-200 hover:bg-violet-100" },
-  { icon: Swords,     chip: "bg-sky-50 text-sky-600",         num: "text-sky-500",     pill: "bg-sky-50 text-sky-700 ring-sky-200 hover:bg-sky-100" },
-  { icon: PhoneCall,  chip: "bg-emerald-50 text-emerald-600", num: "text-emerald-500", pill: "bg-emerald-50 text-emerald-700 ring-emerald-200 hover:bg-emerald-100" },
-  { icon: TrendingUp, chip: "bg-amber-50 text-amber-600",     num: "text-amber-500",   pill: "bg-amber-50 text-amber-700 ring-amber-200 hover:bg-amber-100" },
-];
 
 const PROFILE_STYLES: Record<"closer" | "coach" | "founder", { icon: LucideIcon; chip: string; bar: string }> = {
   closer:  { icon: Target,        chip: "bg-rose-50 text-rose-600",   bar: "from-rose-400 to-rose-500" },
@@ -58,7 +51,6 @@ const CONTENT = {
     nav: { signin: "Se connecter", signup: "Essayer gratuitement" },
     floatingNav: [
       { label: "Fonctionnalités", href: "#features" },
-      { label: "Comment ça marche", href: "#how" },
       { label: "Tarifs", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
@@ -108,17 +100,6 @@ const CONTENT = {
         { icon: TrendingUp, label: "Conclusion", desc: "La demande de closing est-elle bien posée ?" },
         { icon: BarChart2, label: "Gestion des objections", desc: "Chaque objection est détectée et évaluée." },
         { icon: CheckCircle2, label: "Score global", desc: "Une note claire, comparable d'un call à l'autre." },
-      ],
-    },
-    steps: {
-      label: "Comment ça marche",
-      headline: "Quatre étapes. Un cycle qui progresse à chaque call.",
-      loop: "Chaque analyse nourrit votre script : le cycle recommence, en mieux.",
-      items: [
-        { number: "01", title: "Préparez votre script", feature: "Script Builder", href: "#feature-prepare", description: "Partez d'un template ou décrivez votre offre : Rumios structure vos étapes, vos questions clés et vos réponses aux objections." },
-        { number: "02", title: "Entraînez-vous avant l'appel", feature: "Playground", href: "#feature-practice", description: "Lancez une simulation vocale face à un prospect IA et répétez votre script jusqu'à ce qu'il devienne naturel." },
-        { number: "03", title: "Analysez vos vrais calls", feature: "Analyse de call", href: "#feature-analyze", description: "Collez le transcript (tl;dv, Fathom, Otter.ai…). Score sur 100, moments clés annotés et 3 actions concrètes." },
-        { number: "04", title: "Suivez vos progrès", feature: "Dashboard", href: "#feature-progress", description: "Score moyen, résultats et axe faible récurrent : vous savez quoi travailler, puis vous ajustez votre script." },
       ],
     },
     profiles: {
@@ -189,7 +170,6 @@ const CONTENT = {
     nav: { signin: "Sign in", signup: "Try for free" },
     floatingNav: [
       { label: "Features", href: "#features" },
-      { label: "How it works", href: "#how" },
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
@@ -239,17 +219,6 @@ const CONTENT = {
         { icon: TrendingUp, label: "Close", desc: "Was the closing ask clear and well-timed?" },
         { icon: BarChart2, label: "Objection handling", desc: "Every objection is detected and evaluated." },
         { icon: CheckCircle2, label: "Overall score", desc: "A clear grade, comparable call to call." },
-      ],
-    },
-    steps: {
-      label: "How it works",
-      headline: "Four steps. A loop that improves with every call.",
-      loop: "Every analysis feeds your script: the loop starts again, better.",
-      items: [
-        { number: "01", title: "Prepare your script", feature: "Script Builder", href: "#feature-prepare", description: "Start from a template or describe your offer: Rumios structures your stages, key questions and objection responses." },
-        { number: "02", title: "Practice before the call", feature: "Playground", href: "#feature-practice", description: "Run a voice simulation against an AI prospect and rehearse your script until it feels natural." },
-        { number: "03", title: "Analyze your real calls", feature: "Call Analysis", href: "#feature-analyze", description: "Paste the transcript (tl;dv, Fathom, Otter.ai…). Score out of 100, annotated key moments and 3 concrete actions." },
-        { number: "04", title: "Track your progress", feature: "Dashboard", href: "#feature-progress", description: "Average score, outcomes and recurring weak spot: you know what to work on, then you refine your script." },
       ],
     },
     profiles: {
@@ -320,7 +289,6 @@ const CONTENT = {
     nav: { signin: "Entrar", signup: "Começar grátis" },
     floatingNav: [
       { label: "Funcionalidades", href: "#features" },
-      { label: "Como funciona", href: "#how" },
       { label: "Preços", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
@@ -370,17 +338,6 @@ const CONTENT = {
         { icon: TrendingUp, label: "Fecho", desc: "O pedido de fecho foi bem colocado?" },
         { icon: BarChart2, label: "Gestão de objeções", desc: "Cada objeção é detetada e avaliada." },
         { icon: CheckCircle2, label: "Pontuação global", desc: "Uma nota clara, comparável de chamada em chamada." },
-      ],
-    },
-    steps: {
-      label: "Como funciona",
-      headline: "Quatro passos. Um ciclo que melhora a cada chamada.",
-      loop: "Cada análise alimenta o seu guião: o ciclo recomeça, melhor.",
-      items: [
-        { number: "01", title: "Prepare o seu guião", feature: "Script Builder", href: "#feature-prepare", description: "Parta de um modelo ou descreva a sua oferta: o Rumios estrutura as etapas, perguntas-chave e respostas às objeções." },
-        { number: "02", title: "Treine antes da chamada", feature: "Playground", href: "#feature-practice", description: "Faça uma simulação por voz com um prospeto IA e ensaie o guião até soar natural." },
-        { number: "03", title: "Analise as suas chamadas reais", feature: "Análise de chamada", href: "#feature-analyze", description: "Cole o transcript (tl;dv, Fathom, Otter.ai…). Pontuação em 100, momentos-chave anotados e 3 ações concretas." },
-        { number: "04", title: "Acompanhe o seu progresso", feature: "Dashboard", href: "#feature-progress", description: "Pontuação média, resultados e ponto fraco recorrente: sabe no que trabalhar e ajusta o seu guião." },
       ],
     },
     profiles: {
@@ -774,56 +731,6 @@ export default function HomePage() {
                 </div>
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section id="how" className="py-14 px-5 md:py-24 md:px-6 scroll-mt-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.steps.label}</p>
-            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
-          </div>
-          <ol className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <span className="hidden lg:block absolute top-[46px] left-[12%] right-[12%] border-t-2 border-dashed border-stone-200" aria-hidden />
-            {c.steps.items.map((step, i) => {
-              const st = STEP_STYLES[i];
-              const Icon = st.icon;
-              return (
-                <li key={step.number} className="relative bg-white border border-stone-200 rounded-2xl p-5 flex flex-col hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 hover:-translate-y-0.5 transition-all duration-200">
-                  <div className="flex items-center justify-between mb-5">
-                    <span className={cn("relative w-12 h-12 rounded-2xl ring-4 ring-white flex items-center justify-center shadow-sm", st.chip)}>
-                      <Icon className="w-5 h-5" />
-                    </span>
-                    <span className={cn("text-[13px] font-bold tabular-nums tracking-wider", st.num)}>{step.number}</span>
-                  </div>
-                  <h3 className="text-[15px] font-semibold text-stone-900 mb-2 leading-snug">{step.title}</h3>
-                  <p className="text-[13px] text-stone-500 leading-relaxed flex-1">{step.description}</p>
-                  <a
-                    href={step.href}
-                    onClick={e => {
-                      const el = document.querySelector(step.href);
-                      if (!el) return;
-                      e.preventDefault();
-                      el.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
-                    }}
-                    className={cn("mt-4 self-start inline-flex items-center gap-1 text-[12px] font-semibold px-2.5 py-1 rounded-full ring-1 transition-colors", st.pill)}
-                  >
-                    {step.feature} <ArrowRight className="w-3 h-3" />
-                  </a>
-                </li>
-              );
-            })}
-          </ol>
-          <p className="mt-6 flex items-center justify-center gap-2 text-[13px] text-stone-500 text-center">
-            <RefreshCw className="w-4 h-4 text-violet-500 shrink-0" />{c.steps.loop}
-          </p>
-          <div className="mt-8 text-center">
-            <Link href="/sign-up" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-violet-600 hover:text-violet-700 transition-colors group">
-              {lang === "fr" ? "Créer mon compte gratuitement" : lang === "en" ? "Create my free account" : "Criar a minha conta grátis"}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
           </div>
         </div>
       </section>
