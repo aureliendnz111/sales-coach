@@ -191,6 +191,7 @@ const CONTENT = {
       note: "Gratuit pour commencer. Sans carte bancaire.",
     },
     footer: "Tous droits réservés",
+    legal: "Mentions légales",
   },
   en: {
     nav: { signin: "Sign in", signup: "Try for free" },
@@ -329,6 +330,7 @@ const CONTENT = {
       note: "Free to start. No credit card required.",
     },
     footer: "All rights reserved",
+    legal: "Legal notice",
   },
   pt: {
     nav: { signin: "Entrar", signup: "Começar grátis" },
@@ -467,6 +469,7 @@ const CONTENT = {
       note: "Grátis para começar. Sem cartão de crédito.",
     },
     footer: "Todos os direitos reservados",
+    legal: "Informação legal",
   },
 } as const;
 
@@ -1035,7 +1038,7 @@ export default function HomePage() {
             <span className="text-stone-700">·</span>
             <span>rumios.ai</span>
           </div>
-          <p>© 2026 · {c.footer}</p>
+          <p>© 2026 Vereda Numérica · {c.footer} · <Link href="/mentions-legales" className="hover:text-stone-400 underline-offset-2 hover:underline transition-colors">{c.legal}</Link></p>
           <p className="flex items-center gap-1 text-stone-600">
             Made by Aurélien with <Heart className="w-3 h-3 fill-stone-500 text-stone-500" /> in Portugal
           </p>
