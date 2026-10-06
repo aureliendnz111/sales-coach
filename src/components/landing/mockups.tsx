@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useRef, useState } from "react";
 import { Check, Clock, Mic, PhoneOff, Sparkles, ShieldAlert, ChevronRight, FileText, Lightbulb, ArrowUpRight, Video } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Lang } from "@/lib/lang-context";
@@ -147,11 +148,11 @@ export function ScriptBuilderMockup({ lang }: { lang: Lang }) {
 // ── 2. Playground ────────────────────────────────────────────────────────────
 
 const PLAY: L<{
-  role: string; live: string; lines: { who: "p" | "me"; text: string }[]; you: string;
+  role: string; live: string; lines: { who: "p" | "me"; text: string }[]; you: string; aiTag: string; title: string;
   stepLabel: string; step: string; hintLabel: string; hint: string; reply: string;
 }> = {
   fr: {
-    role: "Directrice commerciale · PME", live: "En appel", you: "Vous",
+    role: "Directrice commerciale · PME", live: "En appel", you: "Aurélien (vous)", aiTag: "Prospect IA", title: "Simulation · Closing 3 mois",
     lines: [
       { who: "p", text: "Honnêtement, on a déjà fait un coaching l'an dernier et ça n'a rien changé." },
       { who: "me", text: "Je comprends. Qu'est-ce qui n'avait pas fonctionné, selon vous ?" },
@@ -160,7 +161,7 @@ const PLAY: L<{
     stepLabel: "Étape en cours", step: "Découverte", hintLabel: "Objection détectée", hint: "Mauvaise expérience passée", reply: "Creuser : « Qu'est-ce qui devrait être différent cette fois ? »",
   },
   en: {
-    role: "Head of Sales · SMB", live: "On call", you: "You",
+    role: "Head of Sales · SMB", live: "On call", you: "Aurélien (you)", aiTag: "AI prospect", title: "Practice call · 3-month closing",
     lines: [
       { who: "p", text: "Honestly, we did a coaching program last year and nothing changed." },
       { who: "me", text: "I hear you. What didn't work for you, in your view?" },
@@ -169,7 +170,7 @@ const PLAY: L<{
     stepLabel: "Current stage", step: "Discovery", hintLabel: "Objection detected", hint: "Bad past experience", reply: "Dig in: “What would need to be different this time?”",
   },
   pt: {
-    role: "Diretora comercial · PME", live: "Em chamada", you: "Você",
+    role: "Diretora comercial · PME", live: "Em chamada", you: "Aurélien (você)", aiTag: "Prospeto IA", title: "Simulação · Fecho 3 meses",
     lines: [
       { who: "p", text: "Sinceramente, já fizemos um coaching no ano passado e nada mudou." },
       { who: "me", text: "Compreendo. O que é que não funcionou, na sua opinião?" },
@@ -179,46 +180,89 @@ const PLAY: L<{
   },
 };
 
+// Founder photo in the user's video tile. Drop the file at public/aurelien.jpg;
+// until it exists, initials are shown instead.
+const USER_PHOTO = "/aurelien.jpg";
+
+function UserAvatar({ size }: { size: number }) {
+  const [failed, setFailed] = useState(false);
+  const ref = useRef<HTMLImageElement>(null);
+  // The 404 can happen before hydration, in which case onError never fires
+  useEffect(() => {
+    const img = ref.current;
+    if (img && img.complete && img.naturalWidth === 0) setFailed(true);
+  }, []);
+  if (failed) {
+    return (
+      <span className="rounded-full bg-gradient-to-br from-stone-500 to-stone-700 text-white font-semibold flex items-center justify-center" style={{ width: size, height: size, fontSize: size * 0.32 }}>
+        AD
+      </span>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img ref={ref} src={USER_PHOTO} alt="Aurélien" onError={() => setFailed(true)} className="rounded-full object-cover" style={{ width: size, height: size }} />
+  );
+}
+
 export function PlaygroundMockup({ lang }: { lang: Lang }) {
   const t = PLAY[lang];
-  const bars = [0.35, 0.65, 1, 0.8, 0.55, 0.9, 0.45, 0.7, 0.4, 0.6, 0.85];
+  const bars = [0.4, 0.75, 1, 0.65, 0.9, 0.5, 0.8];
+  const caption = t.lines[t.lines.length - 1].text;
   return (
     <AppFrame url="rumios.ai/playground" dark>
       <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_170px]">
-        <div className="p-4 sm:p-5 flex flex-col gap-4 min-w-0">
+        <div className="p-3 sm:p-4 flex flex-col gap-3 min-w-0">
+          {/* Call header */}
           <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 text-white text-[12px] font-semibold flex items-center justify-center shrink-0 ring-2 ring-white/10" aria-hidden>SL</div>
-              <div className="min-w-0">
-                <p className="text-[12.5px] font-semibold text-white">Sophie</p>
-                <p className="text-[10.5px] text-stone-500 truncate">{t.role}</p>
-              </div>
-            </div>
+            <p className="text-[11px] font-medium text-stone-400 truncate">{t.title}</p>
             <div className="flex items-center gap-1.5 text-[10.5px] text-rose-300 bg-rose-500/10 border border-rose-500/20 rounded-full px-2 py-0.5 shrink-0">
               <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse" /> {t.live} · <span className="tabular-nums">04:32</span>
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-[4px] h-12" aria-hidden>
-            {bars.map((h, i) => (
-              <span key={i} className="rumios-wave w-[3px] rounded-full bg-violet-400" style={{ height: `${h * 44}px`, animationDelay: `${i * 70}ms` }} />
-            ))}
-          </div>
-
-          <div className="space-y-2">
-            {t.lines.map((l, i) => (
-              <div key={i} className={cn("flex", l.who === "me" && "justify-end")}>
-                <p className={cn("max-w-[85%] text-[11.5px] leading-snug rounded-2xl px-3 py-2",
-                  l.who === "me" ? "bg-violet-600 text-white rounded-br-md" : "bg-white/8 text-stone-200 rounded-bl-md")}>
-                  {l.text}
-                </p>
+          {/* Video tiles */}
+          <div className="grid grid-cols-2 gap-2">
+            {/* AI prospect — speaking */}
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-violet-950 via-[#1A1530] to-[#101018] ring-2 ring-violet-500/70 flex flex-col items-center justify-center gap-2">
+              <div className="relative">
+                <span className="absolute -inset-2 rounded-full bg-violet-500/25 animate-ping" aria-hidden />
+                <span className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-sky-400 flex items-center justify-center shadow-lg shadow-violet-900/50">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </span>
               </div>
-            ))}
+              <div className="flex items-end gap-[3px] h-4" aria-hidden>
+                {bars.map((h, i) => (
+                  <span key={i} className="rumios-wave w-[3px] rounded-full bg-violet-300" style={{ height: `${h * 16}px`, animationDelay: `${i * 80}ms` }} />
+                ))}
+              </div>
+              <span className="absolute bottom-1.5 left-1.5 flex items-center gap-1 text-[9.5px] text-white bg-black/50 rounded px-1.5 py-0.5 max-w-[calc(100%-12px)]">
+                <span className="truncate">Sophie · {t.role}</span>
+              </span>
+              <span className="absolute top-1.5 right-1.5 text-[8.5px] font-semibold uppercase tracking-wider text-violet-100 bg-violet-600/80 rounded px-1.5 py-0.5">{t.aiTag}</span>
+            </div>
+
+            {/* The user, with photo */}
+            <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gradient-to-br from-stone-700 to-stone-900 flex items-center justify-center">
+              <span className="rounded-full ring-2 ring-white/20 shadow-lg shadow-black/40">
+                <UserAvatar size={64} />
+              </span>
+              <span className="absolute bottom-1.5 left-1.5 flex items-center gap-1 text-[9.5px] text-white bg-black/50 rounded px-1.5 py-0.5">
+                <Mic className="w-2.5 h-2.5" />{t.you}
+              </span>
+            </div>
           </div>
 
-          <div className="flex items-center justify-center gap-3 pt-1">
+          {/* Live caption */}
+          <p className="text-[11px] leading-snug text-white/90 bg-black/50 rounded-lg px-3 py-2 text-center">
+            <span className="font-semibold text-violet-300">Sophie :</span> « {caption} »
+          </p>
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-2.5">
             <span className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"><Mic className="w-4 h-4 text-white" /></span>
-            <span className="w-11 h-11 rounded-full bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-900/40"><PhoneOff className="w-4 h-4 text-white" /></span>
+            <span className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center"><Video className="w-4 h-4 text-white" /></span>
+            <span className="w-12 h-9 rounded-full bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-900/40"><PhoneOff className="w-4 h-4 text-white" /></span>
           </div>
         </div>
 
