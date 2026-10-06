@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Check, FileText, Headphones, PhoneCall, Swords, TrendingUp, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -66,125 +66,138 @@ const CATEGORIES: {
 ];
 
 const UI: Record<Lang, { label: string; headline: string; sub: string; available: string; soon: string; cta: string; note: string }> = {
-  fr: { label: "Fonctionnalités", headline: "Un seul outil, de la préparation au closing.", sub: "Cinq modules, un par moment de votre cycle de vente. Cliquez pour voir chacun en action.", available: "Disponible", soon: "Bientôt", cta: "Essayer gratuitement", note: "Gratuit · Sans carte bancaire" },
-  en: { label: "Features", headline: "One tool, from prep to close.", sub: "Five modules, one for each moment of your sales cycle. Click to see each one in action.", available: "Available", soon: "Coming soon", cta: "Try for free", note: "Free · No credit card required" },
-  pt: { label: "Funcionalidades", headline: "Uma só ferramenta, da preparação ao fecho.", sub: "Cinco módulos, um para cada momento do seu ciclo de vendas. Clique para ver cada um em ação.", available: "Disponível", soon: "Em breve", cta: "Experimentar gratuitamente", note: "Grátis · Sem cartão de crédito" },
+  fr: { label: "Fonctionnalités", headline: "Un seul outil, de la préparation au closing.", sub: "Cinq modules, un par moment de votre cycle de vente.", available: "Disponible", soon: "Bientôt", cta: "Essayer gratuitement", note: "Gratuit · Sans carte bancaire" },
+  en: { label: "Features", headline: "One tool, from prep to close.", sub: "Five modules, one for each moment of your sales cycle.", available: "Available", soon: "Coming soon", cta: "Try for free", note: "Free · No credit card required" },
+  pt: { label: "Funcionalidades", headline: "Uma só ferramenta, da preparação ao fecho.", sub: "Cinco módulos, um para cada momento do seu ciclo de vendas.", available: "Disponível", soon: "Em breve", cta: "Experimentar gratuitamente", note: "Grátis · Sem cartão de crédito" },
 };
 
 export function FeatureShowcase({ lang }: { lang: Lang }) {
-  const [active, setActive] = useState(0);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const ui = UI[lang];
-  const cat = CATEGORIES[active];
-  const copy = cat.copy[lang];
-  const Mockup = cat.Mockup;
+  const [active, setActive] = useState<CategoryId>(CATEGORIES[0].id);
+  const chipRefs = useRef<Partial<Record<CategoryId, HTMLAnchorElement | null>>>({});
 
-  function select(i: number, focus = false) {
-    const next = (i + CATEGORIES.length) % CATEGORIES.length;
-    setActive(next);
-    const el = tabRefs.current[next];
-    if (focus) el?.focus();
-    el?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "smooth" });
-  }
+  // Highlight the chip of the category currently in view
+  useEffect(() => {
+    const els = CATEGORIES.map(c => document.getElementById(`feature-${c.id}`)).filter((el): el is HTMLElement => !!el);
+    const obs = new IntersectionObserver(
+      entries => {
+        const hit = entries.filter(e => e.isIntersecting)[0];
+        if (hit) setActive(hit.target.id.replace("feature-", "") as CategoryId);
+      },
+      { rootMargin: "-40% 0px -55% 0px" }
+    );
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
 
-  function onKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); select(active + 1, true); }
-    else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); select(active - 1, true); }
-    else if (e.key === "Home") { e.preventDefault(); select(0, true); }
-    else if (e.key === "End") { e.preventDefault(); select(CATEGORIES.length - 1, true); }
-  }
+  // Keep the active chip visible in the horizontally scrollable bar (mobile)
+  useEffect(() => {
+    const chip = chipRefs.current[active];
+    const bar = chip?.parentElement;
+    if (chip && bar && bar.scrollWidth > bar.clientWidth) {
+      bar.scrollTo({ left: chip.offsetLeft - bar.clientWidth / 2 + chip.clientWidth / 2, behavior: "smooth" });
+    }
+  }, [active]);
 
   return (
     <section id="features" className="py-14 px-5 md:py-24 md:px-6 scroll-mt-20">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8 md:mb-12">
+        <div className="text-center mb-8 md:mb-10">
           <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{ui.label}</p>
           <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight text-balance">{ui.headline}</h2>
           <p className="text-[14px] md:text-[15px] text-stone-500 mt-3 max-w-xl mx-auto">{ui.sub}</p>
         </div>
 
-        {/* Category tabs */}
-        <div
-          role="tablist"
-          aria-label={ui.label}
-          onKeyDown={onKeyDown}
-          className="flex md:grid md:grid-cols-5 gap-2 overflow-x-auto -mx-5 px-5 md:mx-0 md:px-0 pb-2 md:pb-0 snap-x [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {CATEGORIES.map((c, i) => {
-            const selected = i === active;
-            const Icon = c.icon;
-            return (
-              <button
-                key={c.id}
-                ref={el => { tabRefs.current[i] = el; }}
-                role="tab"
-                id={`feature-tab-${c.id}`}
-                aria-selected={selected}
-                aria-controls={`feature-panel-${c.id}`}
-                tabIndex={selected ? 0 : -1}
-                onClick={() => select(i)}
-                className={cn(
-                  "snap-start shrink-0 w-[150px] md:w-auto text-left rounded-xl border px-3.5 py-3 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2",
-                  selected ? "border-violet-300 bg-white shadow-md shadow-violet-100" : "border-stone-200 bg-stone-50/60 hover:bg-white hover:border-stone-300"
-                )}
-              >
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className={cn("w-8 h-8 rounded-lg flex items-center justify-center", selected ? c.accent.chip : "bg-stone-100")}>
-                    <Icon className={cn("w-4 h-4", selected ? c.accent.icon : "text-stone-400")} />
+        {/* Sticky category bar */}
+        <div className="sticky top-[72px] md:top-[84px] z-30 flex justify-center mb-6 md:mb-10 -mx-5 px-5 md:mx-0 md:px-0">
+          <nav
+            aria-label={ui.label}
+            className="flex gap-1 overflow-x-auto max-w-full bg-white border border-stone-200 rounded-full p-1 shadow-lg shadow-stone-900/10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {CATEGORIES.map((c, i) => {
+              const selected = c.id === active;
+              const Icon = c.icon;
+              return (
+                <a
+                  key={c.id}
+                  ref={el => { chipRefs.current[c.id] = el; }}
+                  href={`#feature-${c.id}`}
+                  aria-current={selected ? "true" : undefined}
+                  className={cn(
+                    "shrink-0 flex items-center gap-1.5 rounded-full pl-2 pr-3 py-1.5 text-[12.5px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500",
+                    selected ? "bg-stone-900 text-white" : "text-stone-500 hover:text-stone-900 hover:bg-stone-100"
+                  )}
+                >
+                  <span className={cn("w-5 h-5 rounded-full flex items-center justify-center", selected ? "bg-white/15" : c.accent.chip)}>
+                    <Icon className={cn("w-3 h-3", selected ? "text-white" : c.accent.icon)} />
                   </span>
-                  <span className="text-[10.5px] font-semibold tabular-nums text-stone-300">0{i + 1}</span>
+                  <span className="tabular-nums text-[10.5px] opacity-50">0{i + 1}</span>
+                  {c.copy[lang].label}
+                </a>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* One block per category, all visible */}
+        <div className="space-y-6 md:space-y-8">
+          {CATEGORIES.map((cat, i) => {
+            const copy = cat.copy[lang];
+            const Mockup = cat.Mockup;
+            const flip = i % 2 === 1;
+            return (
+              <article
+                key={cat.id}
+                id={`feature-${cat.id}`}
+                aria-labelledby={`feature-title-${cat.id}`}
+                className="scroll-mt-40 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-gradient-to-b from-stone-50 to-white border border-stone-100 rounded-3xl p-5 sm:p-8 md:p-10"
+              >
+                <div className={cn("lg:col-span-5", flip && "lg:order-2")}>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className={cn("w-8 h-8 rounded-lg flex items-center justify-center", cat.accent.chip)}>
+                      <cat.icon className={cn("w-4 h-4", cat.accent.icon)} />
+                    </span>
+                    <span className={cn("text-[11px] font-semibold uppercase tracking-widest", cat.accent.icon)}>0{i + 1} · {copy.label}</span>
+                    <span className={cn("text-[10.5px] font-medium px-2 py-0.5 rounded-full", cat.soon ? "bg-stone-100 text-stone-500" : "bg-emerald-50 text-emerald-700")}>
+                      {cat.soon ? ui.soon : ui.available}
+                    </span>
+                  </div>
+                  <p className="text-[12px] font-medium text-stone-400 mb-1.5">{copy.feature}</p>
+                  <h3 id={`feature-title-${cat.id}`} className="text-[22px] md:text-[28px] font-bold tracking-tight leading-tight text-stone-900 text-balance">{copy.title}</h3>
+                  <p className="text-[14px] text-stone-500 leading-relaxed mt-3">{copy.desc}</p>
+                  <ul className="mt-5 space-y-2.5">
+                    {copy.bullets.map(b => (
+                      <li key={b} className="flex items-start gap-2.5 text-[13.5px] text-stone-700">
+                        <span className="mt-0.5 w-4 h-4 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
+                          <Check className="w-2.5 h-2.5 text-violet-600" />
+                        </span>
+                        {b}
+                      </li>
+                    ))}
+                  </ul>
+                  {!cat.soon && (
+                    <Link href="/sign-up" className="mt-7 inline-flex items-center gap-1.5 text-[14px] font-semibold text-violet-600 hover:text-violet-700 group">
+                      {ui.cta} <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  )}
                 </div>
-                <p className={cn("text-[14px] font-semibold leading-tight", selected ? "text-stone-900" : "text-stone-600")}>{c.copy[lang].label}</p>
-                <p className="text-[11.5px] text-stone-400 mt-0.5 flex items-center gap-1.5">
-                  {c.copy[lang].feature}
-                  {c.soon && <span className="text-[9.5px] font-medium bg-stone-200/70 text-stone-500 rounded-full px-1.5 py-px">{ui.soon}</span>}
-                </p>
-              </button>
+
+                <div className={cn("lg:col-span-7 relative min-w-0", flip && "lg:order-1")}>
+                  <div className="absolute -inset-4 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.10),transparent_70%)] pointer-events-none" aria-hidden />
+                  <div className="relative">
+                    <Mockup lang={lang} />
+                  </div>
+                </div>
+              </article>
             );
           })}
         </div>
 
-        {/* Active panel */}
-        <div
-          key={cat.id}
-          role="tabpanel"
-          id={`feature-panel-${cat.id}`}
-          aria-labelledby={`feature-tab-${cat.id}`}
-          className="rumios-fade-up mt-6 md:mt-8 grid grid-cols-1 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8 lg:gap-12 items-center bg-gradient-to-b from-stone-50 to-white border border-stone-100 rounded-3xl p-5 sm:p-8 md:p-10"
-        >
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <span className={cn("text-[11px] font-semibold uppercase tracking-widest", cat.accent.icon)}>0{active + 1} · {copy.label}</span>
-              <span className={cn("text-[10.5px] font-medium px-2 py-0.5 rounded-full", cat.soon ? "bg-stone-100 text-stone-500" : "bg-emerald-50 text-emerald-700")}>
-                {cat.soon ? ui.soon : ui.available}
-              </span>
-            </div>
-            <h3 className="text-[22px] md:text-[28px] font-bold tracking-tight leading-tight text-stone-900 text-balance">{copy.title}</h3>
-            <p className="text-[14px] text-stone-500 leading-relaxed mt-3">{copy.desc}</p>
-            <ul className="mt-5 space-y-2.5">
-              {copy.bullets.map(b => (
-                <li key={b} className="flex items-start gap-2.5 text-[13.5px] text-stone-700">
-                  <span className="mt-0.5 w-4 h-4 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
-                    <Check className="w-2.5 h-2.5 text-violet-600" />
-                  </span>
-                  {b}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-7 flex flex-col sm:flex-row sm:items-center gap-3">
-              <Link href="/sign-up" className="inline-flex items-center justify-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-5 py-2.5 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-900/30 transition-all">
-                {ui.cta} <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <span className="text-[12px] text-stone-400 text-center sm:text-left">{ui.note}</span>
-            </div>
-          </div>
-
-          <div className="relative min-w-0">
-            <div className="absolute -inset-4 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.10),transparent_70%)] pointer-events-none" aria-hidden />
-            <div className="relative">
-              <Mockup lang={lang} />
-            </div>
-          </div>
+        <div className="text-center mt-10 md:mt-12">
+          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-6 py-3 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-900/30 transition-all">
+            {ui.cta} <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <p className="text-[12px] text-stone-400 mt-2.5">{ui.note}</p>
         </div>
       </div>
     </section>
