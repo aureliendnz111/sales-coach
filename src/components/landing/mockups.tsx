@@ -149,34 +149,37 @@ export function ScriptBuilderMockup({ lang }: { lang: Lang }) {
 
 const PLAY: L<{
   role: string; live: string; lines: { who: "p" | "me"; text: string }[]; you: string; aiTag: string; title: string;
-  stepLabel: string; step: string; hintLabel: string; hint: string; reply: string;
+  scriptLabel: string; steps: string[]; questions: { text: string; done: boolean }[];
 }> = {
   fr: {
+    scriptLabel: "Votre script", steps: ["Cadre & rapport", "Découverte", "Reformulation", "Offre", "Closing"],
+    questions: [{ text: "Qu'est-ce qui vous a poussé à réserver cet appel ?", done: true }, { text: "Qu'avez-vous déjà essayé jusqu'ici ?", done: true }, { text: "Si rien ne change d'ici 6 mois, qu'est-ce que ça vous coûte ?", done: false }],
     role: "Directrice commerciale · PME", live: "En appel", you: "Aurélien (vous)", aiTag: "Prospect IA", title: "Simulation · Closing 3 mois",
     lines: [
       { who: "p", text: "Honnêtement, on a déjà fait un coaching l'an dernier et ça n'a rien changé." },
       { who: "me", text: "Je comprends. Qu'est-ce qui n'avait pas fonctionné, selon vous ?" },
       { who: "p", text: "Trop théorique. Mes commerciaux n'ont rien appliqué en appel." },
     ],
-    stepLabel: "Étape en cours", step: "Découverte", hintLabel: "Objection détectée", hint: "Mauvaise expérience passée", reply: "Creuser : « Qu'est-ce qui devrait être différent cette fois ? »",
   },
   en: {
+    scriptLabel: "Your script", steps: ["Frame & rapport", "Discovery", "Recap", "Offer", "Close"],
+    questions: [{ text: "What made you book this call?", done: true }, { text: "What have you already tried so far?", done: true }, { text: "If nothing changes in 6 months, what does it cost you?", done: false }],
     role: "Head of Sales · SMB", live: "On call", you: "Aurélien (you)", aiTag: "AI prospect", title: "Practice call · 3-month closing",
     lines: [
       { who: "p", text: "Honestly, we did a coaching program last year and nothing changed." },
       { who: "me", text: "I hear you. What didn't work for you, in your view?" },
       { who: "p", text: "Too theoretical. My reps never applied any of it on calls." },
     ],
-    stepLabel: "Current stage", step: "Discovery", hintLabel: "Objection detected", hint: "Bad past experience", reply: "Dig in: “What would need to be different this time?”",
   },
   pt: {
+    scriptLabel: "O seu guião", steps: ["Enquadramento", "Descoberta", "Reformulação", "Oferta", "Fecho"],
+    questions: [{ text: "O que o levou a marcar esta chamada?", done: true }, { text: "O que já experimentou até agora?", done: true }, { text: "Se nada mudar em 6 meses, quanto lhe custa?", done: false }],
     role: "Diretora comercial · PME", live: "Em chamada", you: "Aurélien (você)", aiTag: "Prospeto IA", title: "Simulação · Fecho 3 meses",
     lines: [
       { who: "p", text: "Sinceramente, já fizemos um coaching no ano passado e nada mudou." },
       { who: "me", text: "Compreendo. O que é que não funcionou, na sua opinião?" },
       { who: "p", text: "Demasiado teórico. A minha equipa não aplicou nada nas chamadas." },
     ],
-    stepLabel: "Etapa atual", step: "Descoberta", hintLabel: "Objeção detetada", hint: "Má experiência anterior", reply: "Aprofundar: « O que teria de ser diferente desta vez? »",
   },
 };
 
@@ -211,7 +214,7 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
   const caption = t.lines[t.lines.length - 1].text;
   return (
     <AppFrame url="rumios.ai/playground" dark>
-      <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_170px]">
+      <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_190px]">
         <div className="p-3 sm:p-4 flex flex-col gap-3 min-w-0">
           {/* Call header */}
           <div className="flex items-center justify-between gap-3">
@@ -266,22 +269,38 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
           </div>
         </div>
 
-        <aside className="hidden sm:flex flex-col gap-3 border-l border-white/5 bg-white/[0.02] p-3.5">
-          <div>
-            <p className="text-[9.5px] font-semibold uppercase tracking-wider text-stone-500 mb-1.5">{t.stepLabel}</p>
-            <p className="text-[12px] font-semibold text-white">{t.step}</p>
-            <div className="flex gap-1 mt-2" aria-hidden>
-              {[0, 1, 2, 3, 4].map(i => (
-                <span key={i} className={cn("h-1 flex-1 rounded-full", i < 1 ? "bg-emerald-400" : i === 1 ? "bg-violet-400" : "bg-white/10")} />
-              ))}
-            </div>
-            <p className="text-[10px] text-stone-500 mt-1 tabular-nums">2 / 5</p>
-          </div>
-          <div className="rounded-lg border border-amber-400/20 bg-amber-400/5 p-2.5">
-            <p className="text-[9.5px] font-semibold uppercase tracking-wider text-amber-300/80 mb-1">{t.hintLabel}</p>
-            <p className="text-[11px] font-medium text-amber-100">{t.hint}</p>
-            <p className="text-[10.5px] text-stone-400 mt-1.5 leading-snug">{t.reply}</p>
-          </div>
+        <aside className="hidden sm:flex flex-col gap-2 border-l border-white/5 bg-white/[0.02] p-3">
+          <p className="flex items-center gap-1.5 text-[9.5px] font-semibold uppercase tracking-wider text-stone-500">
+            <FileText className="w-3 h-3" />{t.scriptLabel}
+          </p>
+          <ol className="space-y-1">
+            {t.steps.map((name, i) => {
+              const current = i === 1;
+              return (
+                <li key={name} className={cn("rounded-lg", current ? "bg-violet-500/10 ring-1 ring-violet-400/30 p-2" : "px-2 py-1")}>
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn("w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-bold shrink-0",
+                      i < 1 ? "bg-emerald-500 text-white" : current ? "bg-violet-500 text-white" : "bg-white/10 text-stone-500")}>
+                      {i < 1 ? <Check className="w-2 h-2" /> : i + 1}
+                    </span>
+                    <span className={cn("text-[10.5px] truncate", current ? "text-white font-semibold" : i < 1 ? "text-stone-500 line-through" : "text-stone-400")}>{name}</span>
+                  </div>
+                  {current && (
+                    <ul className="mt-1.5 space-y-1 pl-0.5">
+                      {t.questions.map(q => (
+                        <li key={q.text} className="flex gap-1.5 text-[9.5px] leading-snug">
+                          {q.done
+                            ? <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0 mt-px" />
+                            : <ChevronRight className="w-2.5 h-2.5 text-violet-300 shrink-0 mt-px" />}
+                          <span className={q.done ? "text-stone-500" : "text-violet-100 font-medium"}>{q.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
         </aside>
       </div>
     </AppFrame>
