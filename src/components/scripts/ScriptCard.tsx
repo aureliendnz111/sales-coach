@@ -101,25 +101,25 @@ export function ScriptCard({ script }: { script: Script }) {
         )}
       </div>
 
-      <div className="hidden sm:flex items-center shrink-0 text-xs text-stone-400 w-[220px]">
-        <span className="flex items-center gap-1.5 tabular-nums w-[72px]">
+      <div className="hidden sm:flex items-center shrink-0 text-xs text-stone-400 w-[248px]">
+        <span className="flex items-center gap-1.5 tabular-nums whitespace-nowrap w-[80px]">
           <FileText className="w-3 h-3 shrink-0" />
           {script.steps?.[0]?.count ?? 0} {i18n.scripts.steps[lang]}
         </span>
-        <span className="flex items-center gap-1.5 tabular-nums w-[90px]">
+        <span className="flex items-center gap-1.5 tabular-nums whitespace-nowrap w-[104px]">
           <ShieldAlert className="w-3 h-3 shrink-0" />
           {script.objections?.[0]?.count ?? 0} {i18n.scripts.objections[lang]}
         </span>
-        <span className="flex items-center gap-1.5 tabular-nums w-[58px]">
+        <span className="flex items-center gap-1.5 tabular-nums whitespace-nowrap w-[64px]">
           {script.duration_minutes ? (
             <><Clock className="w-3 h-3 shrink-0" />{script.duration_minutes} min</>
           ) : null}
         </span>
       </div>
 
-      {/* Hover actions */}
+      {/* Hover actions: fixed width (room for all 4 buttons) so the info columns line up on every row */}
       <div
-        className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
+        className="flex items-center justify-end gap-1 w-[116px] opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
         onClick={e => e.stopPropagation()}
       >
         <button
