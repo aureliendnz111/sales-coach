@@ -3,7 +3,7 @@ import type { Lang } from "@/lib/lang-context";
 
 type Txt = Record<Lang, string>;
 
-export type NavGroupKey = "before" | "during" | "after" | "progress" | null;
+export type NavGroupKey = "prepare" | "practice" | "analyze" | "progress" | "live" | null;
 export type NavItem = { href: string; icon: LucideIcon; soon?: boolean; tone: string };
 
 export const NAV_LABELS: Record<string, Txt> = {
@@ -16,14 +16,15 @@ export const NAV_LABELS: Record<string, Txt> = {
   "/settings":      { fr: "Paramètres",       en: "Settings",      pt: "Definições" },
 };
 
-// Nav grouped by moment of the sales cycle, mirroring the categories on the landing page.
-// `tone` is the icon chip color used in the page header (same colors as the landing).
+// Nav grouped by the same categories (and colors) as the landing page features.
+// `tone` is the icon chip color used in the page header.
 export const NAV_GROUPS: { key: NavGroupKey; items: NavItem[] }[] = [
-  { key: null,     items: [{ href: "/dashboard", icon: LayoutDashboard, tone: "bg-amber-50 text-amber-600" }] },
-  { key: "before", items: [{ href: "/scripts", icon: FileText, tone: "bg-violet-50 text-violet-600" }, { href: "/playground", icon: Swords, tone: "bg-sky-50 text-sky-600" }] },
-  { key: "during", items: [{ href: "/sessions", icon: Headphones, soon: true, tone: "bg-fuchsia-50 text-fuchsia-600" }] },
-  { key: "after",  items: [{ href: "/call-analysis", icon: PhoneCall, tone: "bg-emerald-50 text-emerald-600" }] },
-  { key: "progress", items: [{ href: "/statistics", icon: BarChart3, tone: "bg-indigo-50 text-indigo-600" }] },
+  { key: null,       items: [{ href: "/dashboard", icon: LayoutDashboard, tone: "bg-stone-100 text-stone-600" }] },
+  { key: "prepare",  items: [{ href: "/scripts", icon: FileText, tone: "bg-violet-50 text-violet-600" }] },
+  { key: "practice", items: [{ href: "/playground", icon: Swords, tone: "bg-sky-50 text-sky-600" }] },
+  { key: "live",     items: [{ href: "/sessions", icon: Headphones, soon: true, tone: "bg-fuchsia-50 text-fuchsia-600" }] },
+  { key: "analyze",  items: [{ href: "/call-analysis", icon: PhoneCall, tone: "bg-emerald-50 text-emerald-600" }] },
+  { key: "progress", items: [{ href: "/statistics", icon: BarChart3, tone: "bg-amber-50 text-amber-600" }] },
 ];
 
 const SETTINGS_ITEM: NavItem = { href: "/settings", icon: Settings, tone: "bg-stone-100 text-stone-600" };

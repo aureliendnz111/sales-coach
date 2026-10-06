@@ -445,19 +445,19 @@ const PROGRESS: L<{
   recentLabel: string; rows: { name: string; outcome: string; tone: string; score: number }[]; weakLabel: string; weak: string;
 }> = {
   fr: {
-    hello: "Bonjour Camille", kpis: ["Scripts actifs", "Calls ce mois", "Score moyen"], delta: "+9 pts vs mois dernier",
+    hello: "Statistiques", kpis: ["Calls analysés", "Taux de closing", "Score moyen"], delta: "+9 pts vs mois dernier",
     chartLabel: "Évolution du score", weeks: "8 dernières semaines", recentLabel: "Dernières analyses",
     rows: [{ name: "Marie D.", outcome: "Closé", tone: "text-emerald-600 bg-emerald-50", score: 78 }, { name: "Julien R.", outcome: "Prochain appel", tone: "text-sky-600 bg-sky-50", score: 71 }, { name: "Sarah K.", outcome: "Perdu", tone: "text-rose-600 bg-rose-50", score: 54 }],
     weakLabel: "Axe à travailler", weak: "Objections",
   },
   en: {
-    hello: "Hello Camille", kpis: ["Active scripts", "Calls this month", "Average score"], delta: "+9 pts vs last month",
+    hello: "Statistics", kpis: ["Calls analyzed", "Closing rate", "Average score"], delta: "+9 pts vs last month",
     chartLabel: "Score trend", weeks: "Last 8 weeks", recentLabel: "Recent analyses",
     rows: [{ name: "Marie D.", outcome: "Closed", tone: "text-emerald-600 bg-emerald-50", score: 78 }, { name: "Julien R.", outcome: "Next call", tone: "text-sky-600 bg-sky-50", score: 71 }, { name: "Sarah K.", outcome: "Lost", tone: "text-rose-600 bg-rose-50", score: 54 }],
     weakLabel: "Focus area", weak: "Objections",
   },
   pt: {
-    hello: "Olá Camille", kpis: ["Guiões ativos", "Chamadas este mês", "Pontuação média"], delta: "+9 pts vs mês passado",
+    hello: "Estatísticas", kpis: ["Chamadas analisadas", "Taxa de fecho", "Pontuação média"], delta: "+9 pts vs mês passado",
     chartLabel: "Evolução da pontuação", weeks: "Últimas 8 semanas", recentLabel: "Análises recentes",
     rows: [{ name: "Marie D.", outcome: "Fechado", tone: "text-emerald-600 bg-emerald-50", score: 78 }, { name: "Julien R.", outcome: "Próxima chamada", tone: "text-sky-600 bg-sky-50", score: 71 }, { name: "Sarah K.", outcome: "Perdido", tone: "text-rose-600 bg-rose-50", score: 54 }],
     weakLabel: "Eixo a trabalhar", weak: "Objeções",
@@ -491,9 +491,9 @@ function TrendChart() {
 
 export function ProgressMockup({ lang }: { lang: Lang }) {
   const t = PROGRESS[lang];
-  const values = ["2", "12", "74"];
+  const values = ["12", "58%", "74"];
   return (
-    <AppFrame url="rumios.ai/dashboard">
+    <AppFrame url="rumios.ai/statistics">
       <div className="flex-1 bg-stone-50 p-5 space-y-3">
         <p className="text-[15px] font-semibold text-stone-900 tracking-tight">{t.hello}</p>
         <div className="grid grid-cols-3 gap-2">

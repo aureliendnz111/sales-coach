@@ -37,6 +37,15 @@ const CATEGORIES: {
     },
   },
   {
+    id: "live", icon: Headphones, Mockup: CopilotMockup, soon: true,
+    accent: { chip: "bg-fuchsia-50", icon: "text-fuchsia-600", pill: "bg-fuchsia-50 text-fuchsia-700 ring-fuchsia-200" },
+    copy: {
+      fr: { label: "Pratiquer", feature: "Live Copilot", title: "La bonne réponse, au bon moment, pendant l'appel.", desc: "Rumios écoute votre appel, suit votre progression dans le script et vous souffle une réponse dès qu'une objection apparaît.", bullets: ["Détection des objections en temps réel", "Réponses tirées de votre propre script", "Suivi de l'étape en cours, discret à l'écran"] },
+      en: { label: "Perform", feature: "Live Copilot", title: "The right answer, at the right time, during the call.", desc: "Rumios listens to your call, tracks where you are in your script and suggests a reply the moment an objection comes up.", bullets: ["Real-time objection detection", "Replies drawn from your own script", "Current-stage tracking, discreet on screen"] },
+      pt: { label: "Praticar", feature: "Live Copilot", title: "A resposta certa, no momento certo, durante a chamada.", desc: "O Rumios ouve a sua chamada, acompanha a sua posição no guião e sugere uma resposta assim que surge uma objeção.", bullets: ["Deteção de objeções em tempo real", "Respostas retiradas do seu próprio guião", "Acompanhamento da etapa atual, discreto no ecrã"] },
+    },
+  },
+  {
     id: "analyze", icon: PhoneCall, Mockup: AnalysisMockup,
     accent: { chip: "bg-emerald-50", icon: "text-emerald-600", pill: "bg-emerald-50 text-emerald-700 ring-emerald-200" },
     copy: {
@@ -49,18 +58,9 @@ const CATEGORIES: {
     id: "progress", icon: TrendingUp, Mockup: ProgressMockup,
     accent: { chip: "bg-amber-50", icon: "text-amber-600", pill: "bg-amber-50 text-amber-700 ring-amber-200" },
     copy: {
-      fr: { label: "Progresser", feature: "Dashboard", title: "Mesurez vos progrès, call après call.", desc: "Votre score moyen, vos résultats et vos axes faibles réunis sur un seul écran. Vous savez où vous en êtes et sur quoi travailler cette semaine.", bullets: ["Score moyen et évolution dans le temps", "Historique de vos calls et de leurs résultats", "Votre axe faible récurrent mis en avant"] },
-      en: { label: "Improve", feature: "Dashboard", title: "Track your progress, call after call.", desc: "Your average score, outcomes and weak spots on a single screen. You know where you stand and what to work on this week.", bullets: ["Average score and trend over time", "History of your calls and their outcomes", "Your recurring weak spot highlighted"] },
-      pt: { label: "Progredir", feature: "Dashboard", title: "Meça o seu progresso, chamada após chamada.", desc: "A sua pontuação média, resultados e pontos fracos num único ecrã. Sabe onde está e no que trabalhar esta semana.", bullets: ["Pontuação média e evolução ao longo do tempo", "Histórico das chamadas e respetivos resultados", "O seu ponto fraco recorrente em destaque"] },
-    },
-  },
-  {
-    id: "live", icon: Headphones, Mockup: CopilotMockup, soon: true,
-    accent: { chip: "bg-fuchsia-50", icon: "text-fuchsia-600", pill: "bg-fuchsia-50 text-fuchsia-700 ring-fuchsia-200" },
-    copy: {
-      fr: { label: "En direct", feature: "Live Copilot", title: "La bonne réponse, au bon moment, pendant l'appel.", desc: "Rumios écoute votre appel, suit votre progression dans le script et vous souffle une réponse dès qu'une objection apparaît.", bullets: ["Détection des objections en temps réel", "Réponses tirées de votre propre script", "Suivi de l'étape en cours, discret à l'écran"] },
-      en: { label: "Live", feature: "Live Copilot", title: "The right answer, at the right time, during the call.", desc: "Rumios listens to your call, tracks where you are in your script and suggests a reply the moment an objection comes up.", bullets: ["Real-time objection detection", "Replies drawn from your own script", "Current-stage tracking, discreet on screen"] },
-      pt: { label: "Em direto", feature: "Live Copilot", title: "A resposta certa, no momento certo, durante a chamada.", desc: "O Rumios ouve a sua chamada, acompanha a sua posição no guião e sugere uma resposta assim que surge uma objeção.", bullets: ["Deteção de objeções em tempo real", "Respostas retiradas do seu próprio guião", "Acompanhamento da etapa atual, discreto no ecrã"] },
+      fr: { label: "Progresser", feature: "Statistiques", title: "Mesurez vos progrès, call après call.", desc: "Votre score moyen, vos résultats et vos axes faibles réunis sur un seul écran. Vous savez où vous en êtes et sur quoi travailler cette semaine.", bullets: ["Score moyen et évolution dans le temps", "Historique de vos calls et de leurs résultats", "Votre axe faible récurrent mis en avant"] },
+      en: { label: "Improve", feature: "Statistics", title: "Track your progress, call after call.", desc: "Your average score, outcomes and weak spots on a single screen. You know where you stand and what to work on this week.", bullets: ["Average score and trend over time", "History of your calls and their outcomes", "Your recurring weak spot highlighted"] },
+      pt: { label: "Progredir", feature: "Estatísticas", title: "Meça o seu progresso, chamada após chamada.", desc: "A sua pontuação média, resultados e pontos fracos num único ecrã. Sabe onde está e no que trabalhar esta semana.", bullets: ["Pontuação média e evolução ao longo do tempo", "Histórico das chamadas e respetivos resultados", "O seu ponto fraco recorrente em destaque"] },
     },
   },
 ];
