@@ -188,7 +188,7 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
         <div className="p-4 sm:p-5 flex flex-col gap-4 min-w-0">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-lg shrink-0" aria-hidden>👩‍💼</div>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 text-white text-[12px] font-semibold flex items-center justify-center shrink-0 ring-2 ring-white/10" aria-hidden>SL</div>
               <div className="min-w-0">
                 <p className="text-[12.5px] font-semibold text-white">Sophie</p>
                 <p className="text-[10.5px] text-stone-500 truncate">{t.role}</p>
@@ -359,19 +359,19 @@ const PROGRESS: L<{
   recentLabel: string; rows: { name: string; outcome: string; tone: string; score: number }[]; weakLabel: string; weak: string;
 }> = {
   fr: {
-    hello: "Bonjour Camille 👋", kpis: ["Scripts actifs", "Calls ce mois", "Score moyen"], delta: "+9 pts vs mois dernier",
+    hello: "Bonjour Camille", kpis: ["Scripts actifs", "Calls ce mois", "Score moyen"], delta: "+9 pts vs mois dernier",
     chartLabel: "Évolution du score", weeks: "8 dernières semaines", recentLabel: "Dernières analyses",
     rows: [{ name: "Marie D.", outcome: "Closé", tone: "text-emerald-600 bg-emerald-50", score: 78 }, { name: "Julien R.", outcome: "Prochain appel", tone: "text-sky-600 bg-sky-50", score: 71 }, { name: "Sarah K.", outcome: "Perdu", tone: "text-rose-600 bg-rose-50", score: 54 }],
     weakLabel: "Axe à travailler", weak: "Objections",
   },
   en: {
-    hello: "Hello Camille 👋", kpis: ["Active scripts", "Calls this month", "Average score"], delta: "+9 pts vs last month",
+    hello: "Hello Camille", kpis: ["Active scripts", "Calls this month", "Average score"], delta: "+9 pts vs last month",
     chartLabel: "Score trend", weeks: "Last 8 weeks", recentLabel: "Recent analyses",
     rows: [{ name: "Marie D.", outcome: "Closed", tone: "text-emerald-600 bg-emerald-50", score: 78 }, { name: "Julien R.", outcome: "Next call", tone: "text-sky-600 bg-sky-50", score: 71 }, { name: "Sarah K.", outcome: "Lost", tone: "text-rose-600 bg-rose-50", score: 54 }],
     weakLabel: "Focus area", weak: "Objections",
   },
   pt: {
-    hello: "Olá Camille 👋", kpis: ["Guiões ativos", "Chamadas este mês", "Pontuação média"], delta: "+9 pts vs mês passado",
+    hello: "Olá Camille", kpis: ["Guiões ativos", "Chamadas este mês", "Pontuação média"], delta: "+9 pts vs mês passado",
     chartLabel: "Evolução da pontuação", weeks: "Últimas 8 semanas", recentLabel: "Análises recentes",
     rows: [{ name: "Marie D.", outcome: "Fechado", tone: "text-emerald-600 bg-emerald-50", score: 78 }, { name: "Julien R.", outcome: "Próxima chamada", tone: "text-sky-600 bg-sky-50", score: 71 }, { name: "Sarah K.", outcome: "Perdido", tone: "text-rose-600 bg-rose-50", score: 54 }],
     weakLabel: "Eixo a trabalhar", weak: "Objeções",

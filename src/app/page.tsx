@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Plus, Minus, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check } from "lucide-react";
+import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, FileText, ClipboardPaste, Sparkles, Lock, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { useLang, type Lang } from "@/lib/lang-context";
@@ -15,7 +15,32 @@ const PROBLEM_STYLES = [
   { icon: TrendingDown,  iconBg: "bg-red-50", iconColor: "text-red-500", accent: "border-red-100" },
 ] as const;
 
-const STEP_COLORS = ["text-violet-400", "text-blue-400", "text-emerald-400"] as const;
+const STEP_STYLES: { icon: LucideIcon; chip: string; num: string }[] = [
+  { icon: FileText,       chip: "bg-violet-50 text-violet-600 ring-violet-100",   num: "text-violet-500" },
+  { icon: ClipboardPaste, chip: "bg-sky-50 text-sky-600 ring-sky-100",            num: "text-sky-500" },
+  { icon: TrendingUp,     chip: "bg-emerald-50 text-emerald-600 ring-emerald-100", num: "text-emerald-500" },
+];
+
+const PROFILE_STYLES: Record<"closer" | "coach" | "founder", { icon: LucideIcon; chip: string; bar: string }> = {
+  closer:  { icon: Target,        chip: "bg-rose-50 text-rose-600",   bar: "from-rose-400 to-rose-500" },
+  coach:   { icon: GraduationCap, chip: "bg-violet-50 text-violet-600", bar: "from-violet-400 to-violet-600" },
+  founder: { icon: Rocket,        chip: "bg-amber-50 text-amber-600", bar: "from-amber-300 to-amber-500" },
+};
+
+const UI_EXTRA: Record<Lang, { signin: string; trust: [string, string, string]; menu: string; footerLinks: string }> = {
+  fr: { signin: "Se connecter", trust: ["Gratuit pour commencer", "Sans carte bancaire", "Compatible tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Liens" },
+  en: { signin: "Sign in", trust: ["Free to start", "No credit card", "Works with tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Links" },
+  pt: { signin: "Entrar", trust: ["Grátis para começar", "Sem cartão de crédito", "Compatível com tl;dv, Fathom, Otter.ai"], menu: "Menu", footerLinks: "Links" },
+};
+
+const METRIC_CHIPS = [
+  "bg-violet-500/10 ring-violet-400/20",
+  "bg-sky-500/10 ring-sky-400/20",
+  "bg-emerald-500/10 ring-emerald-400/20",
+  "bg-amber-500/10 ring-amber-400/20",
+  "bg-blue-500/10 ring-blue-400/20",
+  "bg-violet-400/10 ring-violet-300/20",
+] as const;
 
 const METRIC_COLORS = [
   "text-violet-400",
@@ -96,9 +121,9 @@ const CONTENT = {
       label: "Pour qui",
       headline: "Pour tous ceux qui vendent leur expertise.",
       items: [
-        { emoji: "🎯", title: "Closers indépendants", desc: "Chaque deal compte. Analysez chaque call pour ne plus laisser de vente sur la table par manque de feedback." },
-        { emoji: "🧑‍💼", title: "Coachs", desc: "Vous vendez votre accompagnement en appel. Structurez votre closing, mesurez ce qui bloque, progressez à chaque conversation." },
-        { emoji: "🚀", title: "Entrepreneurs et freelances", desc: "La vente n'est pas votre métier, mais elle conditionne votre croissance. Rumios vous donne les outils pour la maîtriser." },
+        { kind: "closer", title: "Closers indépendants", desc: "Chaque deal compte. Analysez chaque call pour ne plus laisser de vente sur la table par manque de feedback." },
+        { kind: "coach", title: "Coachs", desc: "Vous vendez votre accompagnement en appel. Structurez votre closing, mesurez ce qui bloque, progressez à chaque conversation." },
+        { kind: "founder", title: "Entrepreneurs et freelances", desc: "La vente n'est pas votre métier, mais elle conditionne votre croissance. Rumios vous donne les outils pour la maîtriser." },
       ],
     },
     pricing: {
@@ -224,9 +249,9 @@ const CONTENT = {
       label: "Who it's for",
       headline: "For everyone who sells their expertise.",
       items: [
-        { emoji: "🎯", title: "Independent closers", desc: "Every deal matters. Analyze every call so you stop leaving sales on the table from lack of feedback." },
-        { emoji: "🧑‍💼", title: "Coaches", desc: "You sell your coaching over the phone. Structure your closing, measure what blocks, and improve with every conversation." },
-        { emoji: "🚀", title: "Entrepreneurs and freelancers", desc: "Sales isn't your job, but it drives your growth. Rumios gives you the tools to get good at it." },
+        { kind: "closer", title: "Independent closers", desc: "Every deal matters. Analyze every call so you stop leaving sales on the table from lack of feedback." },
+        { kind: "coach", title: "Coaches", desc: "You sell your coaching over the phone. Structure your closing, measure what blocks, and improve with every conversation." },
+        { kind: "founder", title: "Entrepreneurs and freelancers", desc: "Sales isn't your job, but it drives your growth. Rumios gives you the tools to get good at it." },
       ],
     },
     pricing: {
@@ -352,9 +377,9 @@ const CONTENT = {
       label: "Para quem",
       headline: "Para todos os que vendem a sua expertise.",
       items: [
-        { emoji: "🎯", title: "Closers independentes", desc: "Cada negócio conta. Analise cada chamada para não deixar vendas na mesa por falta de feedback." },
-        { emoji: "🧑‍💼", title: "Coaches", desc: "Vende o seu acompanhamento ao telefone. Estruture o seu fecho, meça o que bloqueia, progrida em cada conversa." },
-        { emoji: "🚀", title: "Empreendedores e freelancers", desc: "A venda não é o seu trabalho principal, mas condiciona o seu crescimento. O Rumios dá-lhe as ferramentas para a dominar." },
+        { kind: "closer", title: "Closers independentes", desc: "Cada negócio conta. Analise cada chamada para não deixar vendas na mesa por falta de feedback." },
+        { kind: "coach", title: "Coaches", desc: "Vende o seu acompanhamento ao telefone. Estruture o seu fecho, meça o que bloqueia, progrida em cada conversa." },
+        { kind: "founder", title: "Empreendedores e freelancers", desc: "A venda não é o seu trabalho principal, mas condiciona o seu crescimento. O Rumios dá-lhe as ferramentas para a dominar." },
       ],
     },
     pricing: {
@@ -420,7 +445,24 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const langRef = useRef<HTMLDivElement>(null);
+  const ui = UI_EXTRA[lang];
+
+  // Highlight the nav item of the section currently in view
+  useEffect(() => {
+    const ids = c.floatingNav.map(i => i.href);
+    const els = ids.map(id => document.querySelector(id)).filter((el): el is Element => !!el);
+    const obs = new IntersectionObserver(
+      entries => {
+        const visible = entries.filter(e => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setActiveSection(`#${visible.target.id}`);
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, [c.floatingNav]);
 
   function smoothScroll(targetY: number) {
     const startY = window.scrollY;
@@ -470,7 +512,9 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
         <div className="hidden md:flex items-center gap-1">
           <div className="w-px h-4 bg-white/10" />
           {c.floatingNav.map((item) => (
-            <button key={item.href} onClick={() => scrollToSection(item.href)} className="text-[12.5px] text-stone-400 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
+            <button key={item.href} onClick={() => scrollToSection(item.href)} aria-current={activeSection === item.href ? "true" : undefined}
+              className={cn("text-[12.5px] whitespace-nowrap px-3 py-1 rounded-full transition-colors",
+                activeSection === item.href ? "text-white bg-white/10" : "text-stone-400 hover:text-white hover:bg-white/8")}>
               {item.label}
             </button>
           ))}
@@ -478,6 +522,8 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
           <div ref={langRef} className="relative">
             <button
               onClick={() => setLangOpen(o => !o)}
+              aria-haspopup="listbox"
+              aria-expanded={langOpen}
               className="flex items-center gap-1 text-[11px] font-medium text-stone-400 hover:text-white px-2 py-1 rounded-full hover:bg-white/8 transition-colors"
             >
               {lang.toUpperCase()} <ChevronDown className="w-2.5 h-2.5" />
@@ -503,7 +549,7 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
-          <button onClick={() => setMobileOpen(o => !o)} className="p-1.5 rounded-full hover:bg-white/8 transition-colors">
+          <button onClick={() => setMobileOpen(o => !o)} aria-label={ui.menu} aria-expanded={mobileOpen} className="p-1.5 rounded-full hover:bg-white/8 transition-colors">
             {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
           </button>
           <Link href="/sign-up" className="text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
@@ -511,7 +557,10 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
           </Link>
         </div>
 
-        <Link href="/sign-up" className="hidden md:block ml-1 text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
+        <Link href="/sign-in" className="hidden md:block ml-1 whitespace-nowrap text-[12.5px] text-stone-300 hover:text-white px-3 py-1 rounded-full hover:bg-white/8 transition-colors">
+          {ui.signin}
+        </Link>
+        <Link href="/sign-up" className="hidden md:block whitespace-nowrap text-[12.5px] font-semibold bg-violet-600 text-white px-3.5 py-1.5 rounded-full hover:bg-violet-500 transition-colors">
           {ctaLabel}
         </Link>
       </div>
@@ -525,6 +574,11 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
                 {item.label}
               </button>
             ))}
+          </div>
+          <div className="border-t border-white/10 px-2 py-2">
+            <Link href="/sign-in" className="flex items-center w-full px-4 py-3 text-[14px] text-stone-300 hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+              {ui.signin}
+            </Link>
           </div>
           <div className="border-t border-white/10 px-2 py-2 space-y-0.5">
             {(["fr", "en", "pt"] as Lang[]).map(l => (
@@ -542,23 +596,29 @@ function FloatingNav({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => void
   );
 }
 
-function FaqItem({ q, a }: { q: string; a: string }) {
+function FaqItem({ q, a, id }: { q: string; a: string; id: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <button onClick={() => setOpen(o => !o)}
-      className="w-full text-left border border-stone-200 rounded-xl overflow-hidden hover:border-stone-300 hover:shadow-sm transition-all">
-      <div className="flex items-center justify-between px-5 py-4 gap-4">
-        <span className="text-[14px] font-medium text-stone-800">{q}</span>
-        <span className="shrink-0 w-5 h-5 rounded-full bg-stone-100 flex items-center justify-center">
-          {open ? <Minus className="w-3 h-3 text-stone-600" /> : <Plus className="w-3 h-3 text-stone-600" />}
-        </span>
-      </div>
-      {open && (
-        <div className="px-5 pb-4 text-[13.5px] text-stone-500 leading-relaxed border-t border-stone-100 pt-3.5 bg-stone-50/50">
-          {a}
+    <div className={cn("border rounded-xl bg-white transition-all", open ? "border-violet-200 shadow-sm" : "border-stone-200 hover:border-stone-300")}>
+      <h3>
+        <button
+          onClick={() => setOpen(o => !o)}
+          aria-expanded={open}
+          aria-controls={`faq-${id}`}
+          className="w-full flex items-center justify-between px-5 py-4 gap-4 text-left rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+        >
+          <span className="text-[14px] font-medium text-stone-800">{q}</span>
+          <span className={cn("shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-colors", open ? "bg-violet-100" : "bg-stone-100")}>
+            <ChevronDown className={cn("w-3.5 h-3.5 transition-transform duration-200", open ? "rotate-180 text-violet-600" : "text-stone-500")} />
+          </span>
+        </button>
+      </h3>
+      <div id={`faq-${id}`} role="region" className={cn("grid transition-[grid-template-rows] duration-200 ease-out", open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+        <div className="overflow-hidden">
+          <p className="px-5 pb-4 text-[13.5px] text-stone-500 leading-relaxed">{a}</p>
         </div>
-      )}
-    </button>
+      </div>
+    </div>
   );
 }
 
@@ -634,6 +694,15 @@ export default function HomePage() {
               {c.hero.ctaSecondary}
             </Link>
           </div>
+
+          {/* Trust row */}
+          <ul className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-x-5 gap-y-2 text-[12.5px] text-stone-400">
+            {UI_EXTRA[lang].trust.map(item => (
+              <li key={item} className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />{item}
+              </li>
+            ))}
+          </ul>
         </div>
 
         {/* Score card mock */}
@@ -672,9 +741,9 @@ export default function HomePage() {
             <div className="px-5 py-3 space-y-2">
               {c.mockCard.insights.map((ins, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className={cn("mt-0.5 w-4 h-4 rounded-full text-white text-[9px] font-bold flex items-center justify-center shrink-0", ins.type === "good" ? "bg-emerald-500" : "bg-amber-400")}>
-                    {ins.type === "good" ? "✓" : "!"}
-                  </span>
+                  {ins.type === "good"
+                    ? <CheckCircle2 className="mt-px w-4 h-4 text-emerald-500 shrink-0" />
+                    : <AlertTriangle className="mt-px w-4 h-4 text-amber-500 shrink-0" />}
                   <span className="text-[12px] text-stone-600 leading-snug">{ins.text}</span>
                 </div>
               ))}
@@ -739,7 +808,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             {c.metrics.items.map((m, i) => (
               <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3 hover:bg-white/8 hover:border-violet-700/30 transition-colors duration-200">
-                <div className="w-8 h-8 bg-white/8 rounded-lg flex items-center justify-center shrink-0">
+                <div className={cn("w-9 h-9 rounded-lg ring-1 flex items-center justify-center shrink-0", METRIC_CHIPS[i])}>
                   <m.icon className={cn("w-4 h-4", METRIC_COLORS[i])} />
                 </div>
                 <div>
@@ -753,23 +822,31 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how" className="py-14 px-5 md:py-24 md:px-6">
-        <div className="max-w-3xl mx-auto">
+      <section id="how" className="py-14 px-5 md:py-24 md:px-6 scroll-mt-20">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
             <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.steps.label}</p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
           </div>
-          <div className="space-y-3">
-            {c.steps.items.map((step, i) => (
-              <div key={step.number} className="flex items-start gap-4 md:gap-6 px-5 py-5 md:px-7 md:py-6 bg-white border border-stone-200 rounded-2xl hover:border-violet-200 hover:shadow-md hover:shadow-violet-100/40 transition-all duration-200">
-                <span className={cn("text-[32px] md:text-[36px] font-bold leading-none tabular-nums shrink-0 mt-0.5", STEP_COLORS[i])}>{step.number}</span>
-                <div>
-                  <h3 className="text-[14px] md:text-[15px] font-semibold text-stone-900 mb-1.5">{step.title}</h3>
-                  <p className="text-[13px] md:text-[13.5px] text-stone-500 leading-relaxed">{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <ol className="relative grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+            <span className="hidden md:block absolute top-[42px] left-[16%] right-[16%] border-t-2 border-dashed border-stone-200" aria-hidden />
+            {c.steps.items.map((step, i) => {
+              const st = STEP_STYLES[i];
+              const Icon = st.icon;
+              return (
+                <li key={step.number} className="relative bg-white border border-stone-200 rounded-2xl p-6 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 hover:-translate-y-0.5 transition-all duration-200">
+                  <div className="flex items-center justify-between mb-5">
+                    <span className={cn("relative w-12 h-12 rounded-2xl ring-4 ring-white flex items-center justify-center shadow-sm", st.chip)}>
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <span className={cn("text-[13px] font-bold tabular-nums tracking-wider", st.num)}>{step.number}</span>
+                  </div>
+                  <h3 className="text-[15px] font-semibold text-stone-900 mb-2 leading-snug">{step.title}</h3>
+                  <p className="text-[13px] text-stone-500 leading-relaxed">{step.description}</p>
+                </li>
+              );
+            })}
+          </ol>
           <div className="mt-8 text-center">
             <Link href="/sign-up" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-violet-600 hover:text-violet-700 transition-colors group">
               {lang === "fr" ? "Créer mon compte gratuitement" : lang === "en" ? "Create my free account" : "Criar a minha conta grátis"}
@@ -787,19 +864,26 @@ export default function HomePage() {
             <h2 className="text-[26px] md:text-[32px] font-bold tracking-tight">{c.profiles.headline}</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {c.profiles.items.map((p) => (
-              <div key={p.title} className="bg-white border border-stone-200 rounded-2xl p-6 hover:border-violet-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                <div className="text-2xl mb-3">{p.emoji}</div>
-                <h3 className="text-[14.5px] font-semibold text-stone-900 mb-2">{p.title}</h3>
-                <p className="text-[13px] text-stone-500 leading-relaxed">{p.desc}</p>
-              </div>
-            ))}
+            {c.profiles.items.map((p) => {
+              const st = PROFILE_STYLES[p.kind];
+              const Icon = st.icon;
+              return (
+                <div key={p.title} className="relative overflow-hidden bg-white border border-stone-200 rounded-2xl p-6 hover:border-violet-200 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                  <span className={cn("absolute inset-x-0 top-0 h-1 bg-gradient-to-r", st.bar)} aria-hidden />
+                  <span className={cn("w-11 h-11 rounded-xl flex items-center justify-center mb-4", st.chip)}>
+                    <Icon className="w-5 h-5" />
+                  </span>
+                  <h3 className="text-[15px] font-semibold text-stone-900 mb-2">{p.title}</h3>
+                  <p className="text-[13px] text-stone-500 leading-relaxed">{p.desc}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* ── PRICING ── */}
-      <section id="pricing" className="py-14 px-5 md:py-24 md:px-6">
+      <section id="pricing" className="py-14 px-5 md:py-24 md:px-6 scroll-mt-20">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
             <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.pricing.label}</p>
@@ -830,21 +914,24 @@ export default function HomePage() {
             </div>
 
             {/* Pro */}
-            <div className="bg-stone-50 border border-stone-200 rounded-2xl p-7 flex flex-col relative overflow-hidden">
+            <div className="bg-stone-50 border border-dashed border-stone-300 rounded-2xl p-7 flex flex-col relative overflow-hidden">
               <div className="absolute top-5 right-5">
-                <span className="text-[11px] font-medium bg-stone-800 text-stone-300 px-2.5 py-1 rounded-full">{c.pricing.pro.badge}</span>
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-stone-900 text-white px-2.5 py-1 rounded-full">
+                  <Sparkles className="w-3 h-3 text-violet-300" />{c.pricing.pro.badge}
+                </span>
               </div>
               <div className="mb-6">
-                <h3 className="text-[17px] font-bold text-stone-400 mb-1">{c.pricing.pro.name}</h3>
-                <p className="text-[13px] text-stone-400">{c.pricing.pro.desc}</p>
+                <h3 className="text-[17px] font-bold text-stone-700 mb-1">{c.pricing.pro.name}</h3>
+                <p className="text-[13px] text-stone-500">{c.pricing.pro.desc}</p>
               </div>
-              <div className="mb-7">
-                <span className="text-[42px] font-bold text-stone-300 tracking-tight">{c.pricing.pro.price}</span>
+              <div className="mb-7 flex items-center gap-2 h-[50px]">
+                <Lock className="w-5 h-5 text-stone-400" />
+                <span className="text-[22px] font-semibold text-stone-500 tracking-tight">{c.pricing.pro.price}</span>
               </div>
-              <ul className="space-y-3 mb-8 flex-1">
+              <ul className="space-y-3 mb-2 flex-1">
                 {c.pricing.pro.features.map((feat, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-[13.5px] text-stone-400">
-                    <CheckCircle2 className="w-4 h-4 text-stone-300 shrink-0" />
+                  <li key={i} className="flex items-center gap-2.5 text-[13.5px] text-stone-600">
+                    <CheckCircle2 className="w-4 h-4 text-stone-400 shrink-0" />
                     {feat}
                   </li>
                 ))}
@@ -854,30 +941,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA strip — before FAQ */}
-      <div className="py-14 px-5 md:px-6 bg-[#09090B]">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="text-white text-[20px] md:text-[24px] font-bold tracking-tight mb-2">
-            {lang === "fr" ? "Prêt à analyser votre prochain call ?" : lang === "en" ? "Ready to analyze your next call?" : "Pronto para analisar a sua próxima chamada?"}
-          </p>
-          <p className="text-stone-500 text-[14px] mb-6">
-            {lang === "fr" ? "Gratuit pour commencer. Sans carte bancaire." : lang === "en" ? "Free to start. No credit card." : "Grátis para começar. Sem cartão de crédito."}
-          </p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 bg-violet-600 text-white text-[14px] font-semibold px-7 py-3 rounded-lg hover:bg-violet-500 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-900/40 transition-all">
-            {lang === "fr" ? "Commencer gratuitement" : lang === "en" ? "Get started for free" : "Começar gratuitamente"} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-
       {/* ── FAQ ── */}
-      <section id="faq" className="py-14 px-5 md:py-24 md:px-6">
+      <section id="faq" className="py-14 px-5 md:py-24 md:px-6 bg-stone-50 border-t border-stone-100 scroll-mt-20">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
             <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.faq.label}</p>
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.faq.headline}</h2>
           </div>
           <div className="space-y-2">
-            {c.faq.items.map((item, i) => <FaqItem key={i} q={item.q} a={item.a} />)}
+            {c.faq.items.map((item, i) => <FaqItem key={i} id={String(i)} q={item.q} a={item.a} />)}
           </div>
         </div>
       </section>
@@ -898,18 +970,26 @@ export default function HomePage() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="border-t border-white/5 bg-[#09090B] py-6 px-5 md:py-7 md:px-6">
-        <div className="max-w-5xl mx-auto flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between text-[12px] text-stone-600">
-          <div className="flex items-center gap-2">
+      <footer className="border-t border-white/5 bg-[#09090B] py-8 px-5 md:px-6">
+        <div className="max-w-5xl mx-auto flex flex-col gap-6 md:flex-row md:items-center md:justify-between text-[12px] text-stone-500">
+          <div className="flex items-center justify-center gap-2">
             <RumiosLogo size={18} inverted />
-            <span className="font-medium text-stone-400">RUMIOS</span>
+            <span className="font-medium text-stone-300">RUMIOS</span>
             <span className="text-stone-700">·</span>
             <span>rumios.ai</span>
           </div>
-          <p>© 2026 · {c.footer}</p>
-          <p className="flex items-center gap-1 text-stone-600">
-            Made by Aurélien with <Heart className="w-3 h-3 fill-stone-500 text-stone-500" /> in Portugal
-          </p>
+          <nav aria-label={UI_EXTRA[lang].footerLinks} className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
+            {c.floatingNav.map(item => (
+              <a key={item.href} href={item.href} className="hover:text-white transition-colors">{item.label}</a>
+            ))}
+            <Link href="/sign-in" className="hover:text-white transition-colors">{UI_EXTRA[lang].signin}</Link>
+          </nav>
+          <div className="flex flex-col items-center md:items-end gap-1">
+            <p>© 2026 · {c.footer}</p>
+            <p className="flex items-center gap-1 text-stone-600">
+              Made by Aurélien with <Heart className="w-3 h-3 fill-rose-500 text-rose-500" /> in Portugal
+            </p>
+          </div>
         </div>
       </footer>
     </div>
