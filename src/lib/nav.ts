@@ -1,9 +1,9 @@
-import { LayoutDashboard, FileText, Headphones, PhoneCall, Swords, Settings, type LucideIcon } from "lucide-react";
+import { LayoutDashboard, FileText, Headphones, PhoneCall, Swords, Settings, BarChart3, type LucideIcon } from "lucide-react";
 import type { Lang } from "@/lib/lang-context";
 
 type Txt = Record<Lang, string>;
 
-export type NavGroupKey = "before" | "during" | "after" | null;
+export type NavGroupKey = "before" | "during" | "after" | "progress" | null;
 export type NavItem = { href: string; icon: LucideIcon; soon?: boolean; tone: string };
 
 export const NAV_LABELS: Record<string, Txt> = {
@@ -12,6 +12,7 @@ export const NAV_LABELS: Record<string, Txt> = {
   "/call-analysis": { fr: "Analyse de calls", en: "Call Analysis", pt: "Análise de chamadas" },
   "/playground":    { fr: "Playground",       en: "Playground",    pt: "Playground" },
   "/sessions":      { fr: "Live Copilot",     en: "Live Copilot",  pt: "Live Copilot" },
+  "/statistics":    { fr: "Statistiques",     en: "Statistics",    pt: "Estatísticas" },
   "/settings":      { fr: "Paramètres",       en: "Settings",      pt: "Definições" },
 };
 
@@ -22,6 +23,7 @@ export const NAV_GROUPS: { key: NavGroupKey; items: NavItem[] }[] = [
   { key: "before", items: [{ href: "/scripts", icon: FileText, tone: "bg-violet-50 text-violet-600" }, { href: "/playground", icon: Swords, tone: "bg-sky-50 text-sky-600" }] },
   { key: "during", items: [{ href: "/sessions", icon: Headphones, soon: true, tone: "bg-fuchsia-50 text-fuchsia-600" }] },
   { key: "after",  items: [{ href: "/call-analysis", icon: PhoneCall, tone: "bg-emerald-50 text-emerald-600" }] },
+  { key: "progress", items: [{ href: "/statistics", icon: BarChart3, tone: "bg-indigo-50 text-indigo-600" }] },
 ];
 
 const SETTINGS_ITEM: NavItem = { href: "/settings", icon: Settings, tone: "bg-stone-100 text-stone-600" };

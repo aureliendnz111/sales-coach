@@ -36,6 +36,7 @@ export const i18n = {
     recentTitle:       { fr: "Dernières analyses", en: "Recent analyses",  pt: "Análises recentes" } as Txt,
     analyzeCall:       { fr: "Analyser un call",   en: "Analyze a call",   pt: "Analisar uma chamada" } as Txt,
     noAnalysis:        { fr: "Aucune analyse pour l'instant", en: "No analysis yet", pt: "Nenhuma análise por enquanto" } as Txt,
+    seeStats:          { fr: "Voir les statistiques", en: "See statistics", pt: "Ver estatísticas" } as Txt,
     quickTitle:        { fr: "Que voulez-vous faire ?", en: "What do you want to do?", pt: "O que quer fazer?" } as Txt,
     qaScriptTitle:     { fr: "Préparer un script", en: "Prepare a script", pt: "Preparar um guião" } as Txt,
     qaScriptSub:       { fr: "Formalisez vos étapes et objections", en: "Write down your stages and objections", pt: "Formalize as suas etapas e objeções" } as Txt,
@@ -55,6 +56,7 @@ export const i18n = {
     before:            { fr: "Avant l'appel", en: "Before the call", pt: "Antes da chamada" } as Txt,
     during:            { fr: "Pendant l'appel", en: "During the call", pt: "Durante a chamada" } as Txt,
     after:             { fr: "Après l'appel", en: "After the call", pt: "Depois da chamada" } as Txt,
+    progress:          { fr: "Progresser", en: "Improve", pt: "Progredir" } as Txt,
   },
   layout: {
     desktopTitle:      { fr: "Rumios est disponible sur ordinateur", en: "Rumios is available on desktop", pt: "O Rumios está disponível no computador" } as Txt,
