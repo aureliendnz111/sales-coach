@@ -116,7 +116,7 @@ const CONTENT = {
       label: "Tarifs",
       headline: "Simple. Transparent.",
       free: {
-        name: "Gratuit",
+        name: "Start",
         desc: "Pour démarrer et tester Rumios.",
         price: "0 €",
         period: "pour toujours",
@@ -235,7 +235,7 @@ const CONTENT = {
       label: "Pricing",
       headline: "Simple. Transparent.",
       free: {
-        name: "Free",
+        name: "Start",
         desc: "To get started and try Rumios.",
         price: "$0",
         period: "forever",
@@ -354,7 +354,7 @@ const CONTENT = {
       label: "Preços",
       headline: "Simples. Transparente.",
       free: {
-        name: "Grátis",
+        name: "Start",
         desc: "Para começar e testar o Rumios.",
         price: "0 €",
         period: "para sempre",
