@@ -3,23 +3,18 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, FileText, ClipboardPaste, Sparkles, Lock, type LucideIcon } from "lucide-react";
+import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, Sparkles, Lock, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { useLang, type Lang } from "@/lib/lang-context";
 import { FeatureShowcase } from "@/components/landing/FeatureShowcase";
+import { ScoreCard } from "@/components/landing/ScoreCard";
 
 const PROBLEM_STYLES = [
   { icon: AlertTriangle, iconBg: "bg-rose-50", iconColor: "text-rose-500", accent: "border-rose-100" },
   { icon: RefreshCw,     iconBg: "bg-orange-50", iconColor: "text-orange-500", accent: "border-orange-100" },
   { icon: TrendingDown,  iconBg: "bg-red-50", iconColor: "text-red-500", accent: "border-red-100" },
 ] as const;
-
-const STEP_STYLES: { icon: LucideIcon; chip: string; num: string }[] = [
-  { icon: FileText,       chip: "bg-violet-50 text-violet-600 ring-violet-100",   num: "text-violet-500" },
-  { icon: ClipboardPaste, chip: "bg-sky-50 text-sky-600 ring-sky-100",            num: "text-sky-500" },
-  { icon: TrendingUp,     chip: "bg-emerald-50 text-emerald-600 ring-emerald-100", num: "text-emerald-500" },
-];
 
 const PROFILE_STYLES: Record<"closer" | "coach" | "founder", { icon: LucideIcon; chip: string; bar: string }> = {
   closer:  { icon: Target,        chip: "bg-rose-50 text-rose-600",   bar: "from-rose-400 to-rose-500" },
@@ -56,7 +51,6 @@ const CONTENT = {
     nav: { signin: "Se connecter", signup: "Essayer gratuitement" },
     floatingNav: [
       { label: "Fonctionnalités", href: "#features" },
-      { label: "Comment ça marche", href: "#how" },
       { label: "Tarifs", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
@@ -106,15 +100,6 @@ const CONTENT = {
         { icon: TrendingUp, label: "Conclusion", desc: "La demande de closing est-elle bien posée ?" },
         { icon: BarChart2, label: "Gestion des objections", desc: "Chaque objection est détectée et évaluée." },
         { icon: CheckCircle2, label: "Score global", desc: "Une note claire, comparable d'un call à l'autre." },
-      ],
-    },
-    steps: {
-      label: "Comment ça marche",
-      headline: "Trois étapes. Dix minutes.",
-      items: [
-        { number: "01", title: "Créez votre script", description: "Décrivez votre offre ou partez d'un template. Rumios structure vos étapes, vos questions clés et vos réponses aux objections. C'est votre référence pour chaque call." },
-        { number: "02", title: "Collez le transcript de votre call", description: "Enregistrez avec tl;dv, Fathom ou Otter.ai, puis collez le transcript dans Rumios. L'IA compare votre call à votre script et calcule un score sur 100 en quelques secondes." },
-        { number: "03", title: "Lisez le feedback, corrigez, progressez", description: "Score détaillé sur 6 dimensions, écarts par rapport à votre script, erreurs identifiées et trois actions concrètes pour le prochain call. Suivez votre progression dans le temps." },
       ],
     },
     profiles: {
@@ -185,7 +170,6 @@ const CONTENT = {
     nav: { signin: "Sign in", signup: "Try for free" },
     floatingNav: [
       { label: "Features", href: "#features" },
-      { label: "How it works", href: "#how" },
       { label: "Pricing", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
@@ -235,15 +219,6 @@ const CONTENT = {
         { icon: TrendingUp, label: "Close", desc: "Was the closing ask clear and well-timed?" },
         { icon: BarChart2, label: "Objection handling", desc: "Every objection is detected and evaluated." },
         { icon: CheckCircle2, label: "Overall score", desc: "A clear grade, comparable call to call." },
-      ],
-    },
-    steps: {
-      label: "How it works",
-      headline: "Three steps. Ten minutes.",
-      items: [
-        { number: "01", title: "Build your script", description: "Describe your offer or start from a template. Rumios structures your stages, key questions, and objection responses. This becomes your reference for every call." },
-        { number: "02", title: "Paste your call transcript", description: "Record with tl;dv, Fathom, or Otter.ai, then paste the transcript into Rumios. The AI compares your call against your script and generates a score out of 100 in seconds." },
-        { number: "03", title: "Read the feedback. Fix it. Repeat.", description: "Detailed score across 6 dimensions, gaps vs. your script, identified mistakes, and three concrete actions for the next call. Track your improvement over time." },
       ],
     },
     profiles: {
@@ -314,7 +289,6 @@ const CONTENT = {
     nav: { signin: "Entrar", signup: "Começar grátis" },
     floatingNav: [
       { label: "Funcionalidades", href: "#features" },
-      { label: "Como funciona", href: "#how" },
       { label: "Preços", href: "#pricing" },
       { label: "FAQ", href: "#faq" },
     ],
@@ -364,15 +338,6 @@ const CONTENT = {
         { icon: TrendingUp, label: "Fecho", desc: "O pedido de fecho foi bem colocado?" },
         { icon: BarChart2, label: "Gestão de objeções", desc: "Cada objeção é detetada e avaliada." },
         { icon: CheckCircle2, label: "Pontuação global", desc: "Uma nota clara, comparável de chamada em chamada." },
-      ],
-    },
-    steps: {
-      label: "Como funciona",
-      headline: "Três passos. Dez minutos.",
-      items: [
-        { number: "01", title: "Crie o seu guião", description: "Descreva a sua oferta ou parta de um modelo. O Rumios estrutura as suas etapas, perguntas-chave e respostas às objeções. É a sua referência para cada chamada." },
-        { number: "02", title: "Cole o transcript da sua chamada", description: "Grave com tl;dv, Fathom ou Otter.ai, depois cole o transcript no Rumios. A IA compara a sua chamada com o seu guião e calcula uma pontuação em 100 em segundos." },
-        { number: "03", title: "Leia o feedback, corrija, progrida", description: "Pontuação detalhada em 6 dimensões, desvios em relação ao seu guião, erros identificados e três ações concretas para a próxima chamada. Acompanhe o seu progresso ao longo do tempo." },
       ],
     },
     profiles: {
@@ -629,29 +594,9 @@ export default function HomePage() {
   const { isSignedIn, isLoaded } = useAuth();
   const router = useRouter();
   const { lang, setLang } = useLang();
-  const [heroScore, setHeroScore] = useState(0);
-  const [barsReady, setBarsReady] = useState(false);
-
   useEffect(() => {
     if (isLoaded && isSignedIn) router.push("/dashboard");
   }, [isLoaded, isSignedIn, router]);
-
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setBarsReady(true);
-      const duration = 1200;
-      const target = 78;
-      const start = performance.now();
-      const tick = (now: number) => {
-        const p = Math.min((now - start) / duration, 1);
-        const eased = 1 - Math.pow(1 - p, 3);
-        setHeroScore(Math.round(eased * target));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    }, 400);
-    return () => clearTimeout(t);
-  }, []);
 
   const c = CONTENT[lang];
 
@@ -708,51 +653,6 @@ export default function HomePage() {
           </ul>
         </div>
 
-        {/* Score card mock */}
-        <div className="max-w-xl mx-auto mt-16 relative z-10">
-          <div className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-black/50 ring-1 ring-white/10">
-            <div className="bg-[#0E0E16] px-5 py-4 flex items-start justify-between">
-              <div>
-                <p className="text-[11px] font-medium text-stone-500 uppercase tracking-widest">{c.mockCard.label}</p>
-                <p className="text-[14px] font-medium text-white mt-1">{c.mockCard.subtitle}</p>
-              </div>
-              <div className="text-right shrink-0">
-                <div className="text-[44px] font-bold text-violet-400 leading-none tabular-nums">{heroScore}</div>
-                <p className="text-[11px] text-stone-500 mt-0.5">{c.mockCard.scoreLabel}</p>
-              </div>
-            </div>
-            <div className="px-5 py-4 grid grid-cols-2 sm:grid-cols-3 gap-3 border-b border-stone-100">
-              {c.mockCard.items.map((item, i) => (
-                <div key={i} className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] text-stone-500">{item.label}</span>
-                    <span className="text-[11px] font-semibold text-stone-700">{item.score}{"suffix" in item ? item.suffix : ""}</span>
-                  </div>
-                  <div className="h-1 bg-stone-100 rounded-full overflow-hidden">
-                    <div
-                      className={cn("h-full rounded-full transition-all ease-out", item.color)}
-                      style={{
-                        width: barsReady ? `${item.score}%` : "0%",
-                        transitionDuration: "900ms",
-                        transitionDelay: barsReady ? `${i * 80}ms` : "0ms",
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="px-5 py-3 space-y-2">
-              {c.mockCard.insights.map((ins, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  {ins.type === "good"
-                    ? <CheckCircle2 className="mt-px w-4 h-4 text-emerald-500 shrink-0" />
-                    : <AlertTriangle className="mt-px w-4 h-4 text-amber-500 shrink-0" />}
-                  <span className="text-[12px] text-stone-600 leading-snug">{ins.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* ── PROBLEM ── */}
@@ -801,60 +701,36 @@ export default function HomePage() {
       <FeatureShowcase lang={lang} />
 
       {/* ── METRICS ── */}
-      <section className="py-14 px-5 md:py-20 md:px-6 bg-[#09090B] text-white">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8 md:mb-10">
+      <section className="relative py-14 px-5 md:py-24 md:px-6 bg-[#09090B] text-white overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_60%_at_25%_55%,rgba(124,58,237,0.16),transparent)] pointer-events-none" aria-hidden />
+        <div className="relative max-w-6xl mx-auto">
+          <div className="text-center mb-10 md:mb-14">
             <p className="text-[11px] font-semibold text-violet-400 uppercase tracking-widest mb-3">{c.metrics.label}</p>
-            <h2 className="text-[26px] md:text-[32px] font-bold tracking-tight mb-3">{c.metrics.headline}</h2>
+            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight mb-3">{c.metrics.headline}</h2>
             <p className="text-[14px] md:text-[15px] text-stone-400 max-w-lg mx-auto">{c.metrics.sub}</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {c.metrics.items.map((m, i) => (
-              <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-5 flex items-start gap-3 hover:bg-white/8 hover:border-violet-700/30 transition-colors duration-200">
-                <div className={cn("w-9 h-9 rounded-lg ring-1 flex items-center justify-center shrink-0", METRIC_CHIPS[i])}>
-                  <m.icon className={cn("w-4 h-4", METRIC_COLORS[i])} />
-                </div>
-                <div>
-                  <p className="text-[13px] font-semibold text-white">{m.label}</p>
-                  <p className="text-[12px] text-stone-500 mt-0.5 leading-relaxed">{m.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS ── */}
-      <section id="how" className="py-14 px-5 md:py-24 md:px-6 scroll-mt-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-8 md:mb-12">
-            <p className="text-[11px] font-semibold text-violet-500 uppercase tracking-widest mb-3">{c.steps.label}</p>
-            <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight">{c.steps.headline}</h2>
-          </div>
-          <ol className="relative grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
-            <span className="hidden md:block absolute top-[42px] left-[16%] right-[16%] border-t-2 border-dashed border-stone-200" aria-hidden />
-            {c.steps.items.map((step, i) => {
-              const st = STEP_STYLES[i];
-              const Icon = st.icon;
-              return (
-                <li key={step.number} className="relative bg-white border border-stone-200 rounded-2xl p-6 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-100/50 hover:-translate-y-0.5 transition-all duration-200">
-                  <div className="flex items-center justify-between mb-5">
-                    <span className={cn("relative w-12 h-12 rounded-2xl ring-4 ring-white flex items-center justify-center shadow-sm", st.chip)}>
-                      <Icon className="w-5 h-5" />
-                    </span>
-                    <span className={cn("text-[13px] font-bold tabular-nums tracking-wider", st.num)}>{step.number}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <ScoreCard
+              label={c.mockCard.label}
+              subtitle={c.mockCard.subtitle}
+              scoreLabel={c.mockCard.scoreLabel}
+              score={78}
+              items={c.mockCard.items}
+              insights={c.mockCard.insights}
+            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {c.metrics.items.map((m, i) => (
+                <div key={m.label} className="bg-white/5 border border-white/8 rounded-xl p-4 flex items-start gap-3 hover:bg-white/8 hover:border-violet-700/30 transition-colors duration-200">
+                  <div className={cn("w-9 h-9 rounded-lg ring-1 flex items-center justify-center shrink-0", METRIC_CHIPS[i])}>
+                    <m.icon className={cn("w-4 h-4", METRIC_COLORS[i])} />
                   </div>
-                  <h3 className="text-[15px] font-semibold text-stone-900 mb-2 leading-snug">{step.title}</h3>
-                  <p className="text-[13px] text-stone-500 leading-relaxed">{step.description}</p>
-                </li>
-              );
-            })}
-          </ol>
-          <div className="mt-8 text-center">
-            <Link href="/sign-up" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-violet-600 hover:text-violet-700 transition-colors group">
-              {lang === "fr" ? "Créer mon compte gratuitement" : lang === "en" ? "Create my free account" : "Criar a minha conta grátis"}
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </Link>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white">{m.label}</p>
+                    <p className="text-[12px] text-stone-400 mt-0.5 leading-relaxed">{m.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
