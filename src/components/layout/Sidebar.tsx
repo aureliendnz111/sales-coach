@@ -2,35 +2,18 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useUser, useClerk } from "@clerk/nextjs";
-import { LayoutDashboard, FileText, Headphones, PhoneCall, Swords, LogOut, Settings, ChevronUp, ChevronLeft, ChevronDown, Check } from "lucide-react";
+import { LogOut, Settings, ChevronUp, ChevronLeft, ChevronDown, Check } from "lucide-react";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { cn } from "@/lib/utils";
 import { useState, useRef, useEffect } from "react";
 import { useLang, type Lang } from "@/lib/lang-context";
 import { i18n } from "@/lib/i18n";
-
-const NAV_LABELS: Record<string, Record<Lang, string>> = {
-  "/dashboard":    { fr: "Dashboard",         en: "Dashboard",      pt: "Dashboard" },
-  "/scripts":      { fr: "Scripts",            en: "Scripts",        pt: "Guiões" },
-  "/call-analysis":{ fr: "Analyse de calls",   en: "Call Analysis",  pt: "Análise de chamadas" },
-  "/playground":   { fr: "Playground",         en: "Playground",     pt: "Playground" },
-  "/sessions":     { fr: "Live Copilot",       en: "Live Copilot",   pt: "Live Copilot" },
-};
+import { NAV_GROUPS, NAV_LABELS } from "@/lib/nav";
 
 const SOON_LABEL: Record<Lang, string> = { fr: "Bientôt", en: "Soon", pt: "Em breve" };
 const SETTINGS_LABEL: Record<Lang, string> = { fr: "Paramètres", en: "Settings", pt: "Definições" };
 const SIGNOUT_LABEL: Record<Lang, string> = { fr: "Se déconnecter", en: "Sign out", pt: "Terminar sessão" };
 const LANG_LABELS: Record<Lang, string> = { fr: "Français", en: "English", pt: "Português" };
-
-type NavItem = { href: string; icon: typeof LayoutDashboard; soon?: boolean };
-
-// Nav grouped by moment of the sales cycle — mirrors the categories on the landing page.
-const NAV_GROUPS: { key: "before" | "during" | "after" | null; items: NavItem[] }[] = [
-  { key: null,     items: [{ href: "/dashboard", icon: LayoutDashboard }] },
-  { key: "before", items: [{ href: "/scripts", icon: FileText }, { href: "/playground", icon: Swords }] },
-  { key: "during", items: [{ href: "/sessions", icon: Headphones, soon: true }] },
-  { key: "after",  items: [{ href: "/call-analysis", icon: PhoneCall }] },
-];
 
 function UserMenu({ collapsed, lang }: { collapsed: boolean; lang: Lang }) {
   const { user } = useUser();
