@@ -1,5 +1,6 @@
 "use client";
-import { FileText, PhoneCall, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { FileText, PhoneCall, TrendingUp, ArrowRight } from "lucide-react";
 import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
 import { RecentAnalyses } from "@/components/dashboard/RecentAnalyses";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -53,6 +54,12 @@ export function DashboardContent({ firstName, scripts, calls, avgScore, overallS
       <OnboardingChecklist hasScript={scripts > 0} hasTraining={hasTraining} hasAnalysis={hasAnalysis} />
 
       <QuickActions />
+
+      <div className="flex items-center justify-end -mb-4">
+        <Link href="/statistics" className="inline-flex items-center gap-1 text-[12px] font-medium text-violet-600 hover:text-violet-700">
+          {i18n.dashboard.seeStats[lang]} <ArrowRight className="w-3 h-3" />
+        </Link>
+      </div>
 
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5 space-y-1">
