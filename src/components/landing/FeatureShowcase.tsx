@@ -95,7 +95,7 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
     if (!target) return;
     e.preventDefault();
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    // scroll-mt on the target leaves room for the floating nav + sticky category bar
+    // scroll-mt on the target leaves room for the floating nav
     target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     history.replaceState(null, "", `#feature-${id}`);
     setActive(id);
@@ -120,7 +120,7 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
         </div>
 
         {/* Sticky category bar */}
-        <div className="sticky top-[72px] md:top-[84px] z-30 flex justify-center mb-6 md:mb-10 -mx-5 px-5 md:mx-0 md:px-0">
+        <div className="flex justify-center mb-6 md:mb-10 -mx-5 px-5 md:mx-0 md:px-0">
           <nav
             aria-label={ui.label}
             className="flex gap-1 overflow-x-auto max-w-full bg-white border border-stone-200 rounded-full p-1 shadow-lg shadow-stone-900/10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -162,9 +162,9 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
                 key={cat.id}
                 id={`feature-${cat.id}`}
                 aria-labelledby={`feature-title-${cat.id}`}
-                className="scroll-mt-40 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-gradient-to-b from-stone-50 to-white border border-stone-100 rounded-3xl p-5 sm:p-8 md:p-10"
+                className="scroll-mt-24 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center bg-violet-500/[0.04] border border-violet-100 rounded-3xl p-5 sm:p-8 md:p-10"
               >
-                <div className={cn("lg:col-span-5", flip && "lg:order-2")}>
+                <div className={cn("lg:col-span-5 xl:col-span-4", flip && "lg:order-2")}>
                   <div className="flex flex-wrap items-center gap-x-2.5 gap-y-2 mb-4">
                     <span className={cn("w-9 h-9 rounded-xl flex items-center justify-center", cat.accent.chip)}>
                       <cat.icon className={cn("w-[18px] h-[18px]", cat.accent.icon)} />
@@ -195,7 +195,7 @@ export function FeatureShowcase({ lang }: { lang: Lang }) {
                   )}
                 </div>
 
-                <div className={cn("lg:col-span-7 relative min-w-0", flip && "lg:order-1")}>
+                <div className={cn("lg:col-span-7 xl:col-span-8 relative min-w-0", flip && "lg:order-1")}>
                   <div className="absolute -inset-4 bg-[radial-gradient(ellipse_at_center,rgba(124,58,237,0.10),transparent_70%)] pointer-events-none" aria-hidden />
                   <div className="relative">
                     <Mockup lang={lang} />
