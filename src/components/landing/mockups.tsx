@@ -9,21 +9,43 @@ import type { Lang } from "@/lib/lang-context";
 
 type L<T> = Record<Lang, T>;
 
-function AppFrame({ url, children, dark = false, className }: { url: string; children: React.ReactNode; dark?: boolean; className?: string }) {
+// Every mockup is laid out on a fixed 16:9 canvas, then scaled to the width it
+// is given, so all of them keep the exact same proportions on desktop and mobile.
+const CANVAS_W = 800;
+const CANVAS_H = 450;
+
+function AppFrame({ url, children, dark = false }: { url: string; children: React.ReactNode; dark?: boolean }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number | null>(null);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const ro = new ResizeObserver(([entry]) => setScale(entry.contentRect.width / CANVAS_W));
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <div className={cn("flex flex-col h-[600px] sm:h-[520px] rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 ring-1", dark ? "ring-white/10 bg-[#0E0E16]" : "ring-stone-200 bg-stone-50", className)}>
-      <div className={cn("shrink-0 flex items-center gap-3 px-3.5 py-2.5 border-b", dark ? "bg-[#16161F] border-white/5" : "bg-stone-100 border-stone-200")}>
-        <div className="flex items-center gap-1.5 shrink-0" aria-hidden>
-          <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
+    <div ref={boxRef} className="relative w-full aspect-video">
+      <div
+        className={cn("absolute top-0 left-0 flex flex-col rounded-2xl overflow-hidden shadow-2xl shadow-stone-900/15 ring-1 origin-top-left transition-opacity duration-300",
+          dark ? "ring-white/10 bg-[#0E0E16]" : "ring-stone-200 bg-stone-50",
+          scale === null && "opacity-0")}
+        style={{ width: CANVAS_W, height: CANVAS_H, transform: `scale(${scale ?? 1})` }}
+      >
+        <div className={cn("shrink-0 flex items-center gap-3 px-3.5 py-2.5 border-b", dark ? "bg-[#16161F] border-white/5" : "bg-stone-100 border-stone-200")}>
+          <div className="flex items-center gap-1.5 shrink-0" aria-hidden>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#28C840]" />
+          </div>
+          <div className={cn("flex-1 min-w-0 rounded-md px-2.5 py-1 text-[10.5px] truncate", dark ? "bg-white/5 text-stone-500" : "bg-white text-stone-400")}>
+            {url}
+          </div>
         </div>
-        <div className={cn("flex-1 min-w-0 rounded-md px-2.5 py-1 text-[10.5px] truncate", dark ? "bg-white/5 text-stone-500" : "bg-white text-stone-400")}>
-          {url}
-        </div>
+        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">{children}</div>
       </div>
-      {/* All mockups share the same frame height; the body fills what's left */}
-      <div className="flex-1 min-h-0 overflow-hidden flex flex-col">{children}</div>
     </div>
   );
 }
@@ -72,8 +94,8 @@ export function ScriptBuilderMockup({ lang }: { lang: Lang }) {
   const active = 1;
   return (
     <AppFrame url="rumios.ai/scripts/closing-3-mois">
-      <div className="flex-1 bg-stone-50 p-4 sm:p-5">
-        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-4">
+      <div className="flex-1 bg-stone-50 p-5">
+        <div className="flex flex-row items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <FileText className="w-3.5 h-3.5 text-violet-500 shrink-0" />
@@ -90,8 +112,8 @@ export function ScriptBuilderMockup({ lang }: { lang: Lang }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-[150px_minmax(0,1fr)] gap-3">
-          <ol className="hidden sm:flex flex-col gap-1">
+        <div className="grid grid-cols-[150px_minmax(0,1fr)] gap-3">
+          <ol className="flex flex-col gap-1">
             {t.steps.map((s, i) => (
               <li key={s.name} className={cn("flex items-center gap-2 rounded-lg px-2 py-1.5 text-[11px]",
                 i === active ? "bg-white border border-violet-200 shadow-sm text-stone-900 font-medium" : "text-stone-500")}>
@@ -215,8 +237,8 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
   const caption = t.lines[t.lines.length - 1].text;
   return (
     <AppFrame url="rumios.ai/playground" dark>
-      <div className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_190px]">
-        <div className="p-3 sm:p-4 flex flex-col gap-3 min-w-0 min-h-0">
+      <div className="flex-1 min-h-0 grid grid-cols-[minmax(0,1fr)_190px]">
+        <div className="p-4 flex flex-col gap-3 min-w-0 min-h-0">
           {/* Call header */}
           <div className="flex items-center justify-between gap-3">
             <p className="text-[11px] font-medium text-stone-400 truncate">{t.title}</p>
@@ -231,7 +253,7 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
             <div className="relative h-full rounded-xl overflow-hidden bg-gradient-to-br from-violet-950 via-[#1A1530] to-[#101018] ring-2 ring-violet-500/70 flex flex-col items-center justify-center gap-2">
               <div className="relative">
                 <span className="absolute -inset-2 rounded-full bg-violet-500/25 animate-ping" aria-hidden />
-                <span className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-sky-400 flex items-center justify-center shadow-lg shadow-violet-900/50">
+                <span className="relative w-16 h-16 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-sky-400 flex items-center justify-center shadow-lg shadow-violet-900/50">
                   <Sparkles className="w-6 h-6 text-white" />
                 </span>
               </div>
@@ -270,7 +292,7 @@ export function PlaygroundMockup({ lang }: { lang: Lang }) {
           </div>
         </div>
 
-        <aside className="hidden sm:flex flex-col gap-2 border-l border-white/5 bg-white/[0.02] p-3">
+        <aside className="flex flex-col gap-2 border-l border-white/5 bg-white/[0.02] p-3">
           <p className="flex items-center gap-1.5 text-[9.5px] font-semibold uppercase tracking-wider text-stone-500">
             <FileText className="w-3 h-3" />{t.scriptLabel}
           </p>
@@ -358,7 +380,7 @@ export function AnalysisMockup({ lang }: { lang: Lang }) {
   const t = ANALYSIS[lang];
   return (
     <AppFrame url="rumios.ai/call-analysis/marie-d">
-      <div className="flex-1 bg-stone-50 p-4 sm:p-5 space-y-3">
+      <div className="flex-1 bg-stone-50 p-5 space-y-3">
         <div className="flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="text-[13px] font-semibold text-stone-900 truncate">{t.title}</p>
@@ -388,7 +410,7 @@ export function AnalysisMockup({ lang }: { lang: Lang }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <div className="bg-white border border-stone-200 rounded-xl p-3 space-y-2">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">{t.momentLabel}</p>
             <p className="text-[11px] text-stone-500 leading-snug"><span className="font-medium text-stone-700">{t.prospect} :</span> {t.prospectLine}</p>
@@ -445,14 +467,14 @@ const PROGRESS: L<{
 const TREND = [52, 58, 55, 63, 66, 64, 71, 78];
 
 function TrendChart() {
-  const w = 300, h = 92, pad = 6;
+  const w = 300, h = 56, pad = 5;
   const min = 40, max = 90;
   const pts = TREND.map((v, i) => [pad + (i * (w - pad * 2)) / (TREND.length - 1), h - pad - ((v - min) / (max - min)) * (h - pad * 2)] as const);
   const line = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
   const area = `${line} L${pts[pts.length - 1][0]},${h} L${pts[0][0]},${h} Z`;
   const last = pts[pts.length - 1];
   return (
-    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-[92px]" preserveAspectRatio="none" role="img" aria-label={TREND.join(", ")}>
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-[56px]" preserveAspectRatio="none" role="img" aria-label={TREND.join(", ")}>
       <defs>
         <linearGradient id="rumios-trend" x1="0" x2="0" y1="0" y2="1">
           <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.18" />
@@ -472,7 +494,7 @@ export function ProgressMockup({ lang }: { lang: Lang }) {
   const values = ["2", "12", "74"];
   return (
     <AppFrame url="rumios.ai/dashboard">
-      <div className="flex-1 bg-stone-50 p-4 sm:p-5 space-y-3">
+      <div className="flex-1 bg-stone-50 p-5 space-y-3">
         <p className="text-[15px] font-semibold text-stone-900 tracking-tight">{t.hello}</p>
         <div className="grid grid-cols-3 gap-2">
           {t.kpis.map((k, i) => (
@@ -490,7 +512,7 @@ export function ProgressMockup({ lang }: { lang: Lang }) {
           </div>
           <TrendChart />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_120px] gap-2">
+        <div className="grid grid-cols-[minmax(0,1fr)_120px] gap-2">
           <div className="bg-white border border-stone-200 rounded-lg overflow-hidden">
             <p className="text-[11px] font-semibold text-stone-700 px-3 py-2 border-b border-stone-100">{t.recentLabel}</p>
             {t.rows.map(r => {
@@ -504,7 +526,7 @@ export function ProgressMockup({ lang }: { lang: Lang }) {
               );
             })}
           </div>
-          <div className="hidden sm:flex flex-col justify-center bg-amber-50 border border-amber-100 rounded-lg p-3">
+          <div className="flex flex-col justify-center bg-amber-50 border border-amber-100 rounded-lg p-3">
             <p className="text-[9.5px] font-semibold uppercase tracking-wider text-amber-700/80">{t.weakLabel}</p>
             <p className="text-[13px] font-semibold text-amber-900 mt-1">{t.weak}</p>
             <p className="text-[18px] font-bold text-amber-600 tabular-nums mt-0.5">58</p>
@@ -542,7 +564,7 @@ export function CopilotMockup({ lang }: { lang: Lang }) {
   const t = COPILOT[lang];
   return (
     <AppFrame url="meet.google.com/abc-defg-hij" dark>
-      <div className="flex-1 min-h-0 p-3 sm:p-4 flex flex-col sm:flex-row gap-3">
+      <div className="flex-1 min-h-0 p-4 flex flex-row gap-3">
         <div className="flex-1 min-w-0 min-h-0 flex flex-col">
           <div className="flex-1 min-h-[110px] grid grid-cols-2 gap-2">
             <div className="h-full rounded-xl bg-gradient-to-br from-stone-700 to-stone-800 flex items-center justify-center relative">
@@ -555,14 +577,14 @@ export function CopilotMockup({ lang }: { lang: Lang }) {
             </div>
           </div>
           <p className="mt-2.5 text-center text-[11px] text-white/85 bg-black/50 rounded-lg px-3 py-1.5">{t.caption}</p>
-          <div className="hidden sm:flex items-center justify-center gap-2.5 mt-3" aria-hidden>
+          <div className="flex items-center justify-center gap-2.5 mt-3" aria-hidden>
             <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><Mic className="w-3.5 h-3.5 text-white" /></span>
             <span className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"><Video className="w-3.5 h-3.5 text-white" /></span>
             <span className="w-10 h-8 rounded-full bg-rose-600 flex items-center justify-center"><PhoneOff className="w-3.5 h-3.5 text-white" /></span>
           </div>
         </div>
 
-        <div className="sm:w-[210px] shrink-0 self-start bg-white rounded-xl shadow-2xl shadow-black/40 ring-1 ring-black/5 overflow-hidden">
+        <div className="w-[210px] shrink-0 self-start bg-white rounded-xl shadow-2xl shadow-black/40 ring-1 ring-black/5 overflow-hidden">
           <div className="flex items-center gap-1.5 px-3 py-2 bg-violet-600 text-white">
             <Sparkles className="w-3 h-3" />
             <span className="text-[10.5px] font-semibold">Rumios Copilot</span>
