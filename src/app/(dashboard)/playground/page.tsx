@@ -692,7 +692,7 @@ export default function PlaygroundPage() {
       </div>
 
       {/* Right: script panel */}
-      <div className="flex-1 flex flex-col bg-stone-50 border-l border-stone-200 min-w-0">
+      <div className="flex-1 flex flex-col bg-white border-l border-stone-200 min-w-0">
         <div className="px-5 py-4 border-b border-stone-200 bg-white shrink-0">
           <p className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider">{pg.processLabel[lang]}</p>
           <p className="text-[14px] font-semibold text-stone-800 mt-0.5 truncate">{fullScript?.name}</p>
