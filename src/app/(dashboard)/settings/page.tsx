@@ -155,7 +155,7 @@ export default function SettingsPage() {
                 <Camera className="w-3.5 h-3.5" />
                 {avatarUploading ? "Envoi…" : "Changer la photo"}
               </button>
-              <p className="text-[11px] text-stone-500">JPG, PNG ou GIF — max 10 Mo</p>
+              <p className="text-[11px] text-stone-500">JPG, PNG ou GIF (max 10 Mo)</p>
             </div>
             <input
               ref={fileInputRef}

@@ -15,7 +15,7 @@ const COMPANY = {
   site: "rumios.ai",
 };
 
-const HOST = "Netlify, Inc. — 512 2nd Street, Suite 200, San Francisco, CA 94107, USA — netlify.com";
+const HOST = "Netlify, Inc., 512 2nd Street, Suite 200, San Francisco, CA 94107, USA (netlify.com)";
 
 type Section = { title: string; body: React.ReactNode };
 

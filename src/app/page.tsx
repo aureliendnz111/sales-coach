@@ -3,12 +3,13 @@ import { useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
-import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, Sparkles, Lock, type LucideIcon } from "lucide-react";
+import { CheckCircle2, TrendingUp, BarChart2, ArrowRight, Mic, Target, Brain, Menu, X, AlertTriangle, RefreshCw, TrendingDown, Heart, ChevronDown, Check, GraduationCap, Rocket, Sparkles, Lock, Swords, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RumiosLogo } from "@/components/RumiosLogo";
 import { useLang, type Lang } from "@/lib/lang-context";
 import { FeatureShowcase } from "@/components/landing/FeatureShowcase";
 import { ScoreCard } from "@/components/landing/ScoreCard";
+import { CtaBand } from "@/components/landing/CtaBand";
 
 const PROBLEM_STYLES = [
   { icon: AlertTriangle, iconBg: "bg-rose-50", iconColor: "text-rose-500", accent: "border-rose-100" },
@@ -63,7 +64,7 @@ const CONTENT = {
       ctaSecondary: "Se connecter",
     },
     mockCard: {
-      label: "Analyse — Call avec Marie D.",
+      label: "Analyse · Call avec Marie D.",
       subtitle: "Découverte + Closing, 47 min",
       scoreLabel: "Score global",
       items: [
@@ -76,7 +77,7 @@ const CONTENT = {
       ],
       insights: [
         { type: "good", text: "Bonne phase de découverte, les douleurs sont bien identifiées" },
-        { type: "warn", text: "Objection prix non recadrée — à corriger au prochain call" },
+        { type: "warn", text: "Objection prix non recadrée, à corriger au prochain call" },
       ],
     },
     problem: {
@@ -126,7 +127,7 @@ const CONTENT = {
           "Accès aux templates",
           "Score sur 6 dimensions",
           "Synthèse IA après chaque call",
-          "Playground — simulation d'appels",
+          "Playground : simulation d'appels",
         ],
       },
       pro: {
@@ -150,7 +151,7 @@ const CONTENT = {
       headline: "Tout ce que vous voulez savoir.",
       items: [
         { q: "Ai-je besoin d'enregistrer mes calls ?", a: "Non. Vous avez juste besoin du transcript texte de votre call. Des outils comme tl;dv, Fathom ou Otter.ai génèrent ces transcripts automatiquement. Vous pouvez aussi en coller un manuellement." },
-        { q: "Quels types de calls peuvent être analysés ?", a: "Tout appel de vente avec un transcript : closing, découverte, suivi, relance. Peu importe le format ou la plateforme. Google Meet, Zoom, Teams — du moment que vous avez le texte, Rumios peut l'analyser." },
+        { q: "Quels types de calls peuvent être analysés ?", a: "Tout appel de vente avec un transcript : closing, découverte, suivi, relance. Peu importe le format ou la plateforme. Google Meet, Zoom, Teams : du moment que vous avez le texte, Rumios peut l'analyser." },
         { q: "Comment fonctionne le scoring ?", a: "L'IA analyse le transcript sur 6 dimensions (process, découverte, objections, posture, conclusion, score global) et retourne une note sur 100 avec des recommandations concrètes pour chaque axe." },
         { q: "C'est quoi le Playground ?", a: "Une simulation d'appel face à une IA qui joue le rôle du prospect. Vous pouvez vous entraîner autant de fois que vous voulez avant un vrai call, sans aucun enjeu. Choisissez un persona, lancez l'appel à la voix et entraînez-vous directement sur votre script." },
         { q: "Combien coûte Rumios ?", a: "Rumios est gratuit pour commencer : 2 scripts et 5 analyses de calls par mois. Des plans avec plus de capacités arriveront prochainement." },
@@ -182,7 +183,7 @@ const CONTENT = {
       ctaSecondary: "Sign in",
     },
     mockCard: {
-      label: "Analysis — Call with Marie D.",
+      label: "Analysis · Call with Marie D.",
       subtitle: "Discovery + Closing, 47 min",
       scoreLabel: "Overall score",
       items: [
@@ -195,13 +196,13 @@ const CONTENT = {
       ],
       insights: [
         { type: "good", text: "Strong discovery phase, pain points are well identified" },
-        { type: "warn", text: "Price objection not reframed — fix this on the next call" },
+        { type: "warn", text: "Price objection not reframed, fix this on the next call" },
       ],
     },
     problem: {
       label: "The problem",
       headline: "You leave every call with a feeling. Rarely with an analysis.",
-      sub: "Without data, you repeat the same mistakes. You don't know what made the deal close — or why it didn't.",
+      sub: "Without data, you repeat the same mistakes. You don't know what made the deal close, or why it didn't.",
       pains: [
         { title: "You don't know why you lost", desc: "Every lost deal stays vague. You improvise the next time." },
         { title: "Your script changes every call", desc: "Nothing is formalized. What works disappears with the call." },
@@ -245,7 +246,7 @@ const CONTENT = {
           "Access to templates",
           "Score across 6 dimensions",
           "AI summary after every call",
-          "Playground — call simulation",
+          "Playground: call simulation",
         ],
       },
       pro: {
@@ -269,7 +270,7 @@ const CONTENT = {
       headline: "Everything you need to know.",
       items: [
         { q: "Do I need to record my calls?", a: "No. You just need the text transcript of your call. Tools like tl;dv, Fathom, or Otter.ai generate these automatically. You can also paste one manually." },
-        { q: "What types of calls can be analyzed?", a: "Any sales call with a transcript: closing, discovery, follow-up, re-engagement. Format doesn't matter. Google Meet, Zoom, Teams — as long as you have the text, Rumios can analyze it." },
+        { q: "What types of calls can be analyzed?", a: "Any sales call with a transcript: closing, discovery, follow-up, re-engagement. Format doesn't matter. Google Meet, Zoom, Teams: as long as you have the text, Rumios can analyze it." },
         { q: "How does the scoring work?", a: "The AI analyzes the transcript across 6 dimensions (process, discovery, objections, posture, close, overall score) and returns a grade out of 100 with concrete recommendations for each area." },
         { q: "What is the Playground?", a: "A simulated sales call against an AI playing the prospect. You can practice as many times as you want before a real call, with nothing at stake. Pick a persona, start a voice call and practice directly on your own script." },
         { q: "How much does Rumios cost?", a: "Rumios is free to start: 2 scripts and 5 call analyses per month. Plans with higher limits are coming soon." },
@@ -301,7 +302,7 @@ const CONTENT = {
       ctaSecondary: "Entrar",
     },
     mockCard: {
-      label: "Análise — Chamada com Marie D.",
+      label: "Análise · Chamada com Marie D.",
       subtitle: "Descoberta + Fecho, 47 min",
       scoreLabel: "Pontuação global",
       items: [
@@ -314,7 +315,7 @@ const CONTENT = {
       ],
       insights: [
         { type: "good", text: "Boa fase de descoberta, as dores foram bem identificadas" },
-        { type: "warn", text: "Objeção de preço não recadrada — a corrigir na próxima chamada" },
+        { type: "warn", text: "Objeção de preço não recadrada, a corrigir na próxima chamada" },
       ],
     },
     problem: {
@@ -364,7 +365,7 @@ const CONTENT = {
           "Acesso aos modelos",
           "Pontuação em 6 dimensões",
           "Síntese IA após cada chamada",
-          "Playground — simulação de chamadas",
+          "Playground: simulação de chamadas",
         ],
       },
       pro: {
@@ -388,7 +389,7 @@ const CONTENT = {
       headline: "Tudo o que precisa de saber.",
       items: [
         { q: "Preciso de gravar as minhas chamadas?", a: "Não. Precisa apenas do transcript em texto da sua chamada. Ferramentas como tl;dv, Fathom ou Otter.ai geram esses transcripts automaticamente. Também pode colar um manualmente." },
-        { q: "Que tipos de chamadas podem ser analisadas?", a: "Qualquer chamada de venda com transcript: fecho, descoberta, acompanhamento, reativação. O formato não importa. Google Meet, Zoom, Teams — desde que tenha o texto, o Rumios pode analisar." },
+        { q: "Que tipos de chamadas podem ser analisadas?", a: "Qualquer chamada de venda com transcript: fecho, descoberta, acompanhamento, reativação. O formato não importa. Google Meet, Zoom, Teams: desde que tenha o texto, o Rumios pode analisar." },
         { q: "Como funciona a pontuação?", a: "A IA analisa o transcript em 6 dimensões (processo, descoberta, objeções, postura, fecho, pontuação global) e devolve uma nota em 100 com recomendações concretas para cada área." },
         { q: "O que é o Playground?", a: "Uma simulação de chamada com uma IA que interpreta o prospect. Pode praticar quantas vezes quiser antes de uma chamada real, sem nenhum risco. Escolha uma persona, inicie a chamada por voz e treine diretamente com o seu guião." },
         { q: "Quanto custa o Rumios?", a: "O Rumios é gratuito para começar: 2 guiões e 5 análises de chamadas por mês. Planos com mais capacidade chegam em breve." },
@@ -685,20 +686,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CTA strip — Problem */}
+      {/* CTA strip, problem */}
       <div className="px-5 md:px-6 pt-2 pb-16 md:pb-24 bg-stone-50">
-        <div className="relative overflow-hidden max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-5 bg-gradient-to-r from-violet-600 to-indigo-600 rounded-2xl px-7 py-8 md:px-9 md:py-9 shadow-xl shadow-violet-900/20">
-          <div className="absolute -right-10 -top-16 w-56 h-56 rounded-full bg-white/10 blur-2xl pointer-events-none" aria-hidden />
-          <div className="relative text-center sm:text-left">
-            <p className="text-[18px] md:text-[20px] font-bold text-white tracking-tight">
-              {lang === "fr" ? "Rumios règle ces 3 problèmes." : lang === "en" ? "Rumios fixes all three." : "O Rumios resolve estes 3 problemas."}
-            </p>
-            <p className="text-[13px] text-violet-100/80 mt-1">{UI_EXTRA[lang].trust[0]} · {UI_EXTRA[lang].trust[1]}</p>
-          </div>
-          <Link href="/sign-up" className="relative shrink-0 flex items-center gap-2 bg-white text-violet-700 text-[14px] font-semibold px-5 py-3 rounded-lg hover:bg-violet-50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-violet-950/30 transition-all">
-            {lang === "fr" ? "Commencer gratuitement" : lang === "en" ? "Get started for free" : "Começar gratuitamente"} <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+        <CtaBand
+          title={lang === "fr" ? "Rumios règle ces 3 problèmes." : lang === "en" ? "Rumios fixes all three." : "O Rumios resolve estes 3 problemas."}
+          sub={`${UI_EXTRA[lang].trust[0]} · ${UI_EXTRA[lang].trust[1]}`}
+          cta={lang === "fr" ? "Commencer gratuitement" : lang === "en" ? "Get started for free" : "Começar gratuitamente"}
+        />
       </div>
 
       {/* ── FEATURES (by category, with mockups) ── */}
@@ -713,7 +707,7 @@ export default function HomePage() {
             <h2 className="text-[26px] md:text-[34px] font-bold tracking-tight mb-3">{c.metrics.headline}</h2>
             <p className="text-[14px] md:text-[15px] text-stone-400 max-w-lg mx-auto">{c.metrics.sub}</p>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
             <ScoreCard
               label={c.mockCard.label}
               subtitle={c.mockCard.subtitle}
@@ -764,6 +758,16 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* CTA strip, practice */}
+      <div className="px-5 md:px-6 pt-14 md:pt-20">
+        <CtaBand
+          icon={Swords}
+          title={lang === "fr" ? "Entraînez-vous avant votre prochain call." : lang === "en" ? "Practice before your next call." : "Treine antes da sua próxima chamada."}
+          sub={lang === "fr" ? "Simulez un appel face à un prospect IA, gratuitement." : lang === "en" ? "Simulate a call with an AI prospect, for free." : "Simule uma chamada com um prospeto IA, gratuitamente."}
+          cta={lang === "fr" ? "Lancer une simulation" : lang === "en" ? "Start a simulation" : "Iniciar uma simulação"}
+        />
+      </div>
 
       {/* ── PRICING ── */}
       <section id="pricing" className="py-14 px-5 md:py-24 md:px-6 scroll-mt-20">

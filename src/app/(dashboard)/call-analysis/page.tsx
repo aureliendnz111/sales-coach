@@ -64,7 +64,7 @@ function EditableName({ id, name, onSave }: { id: string; name: string | null; o
 }
 
 function ScoreBadge({ score }: { score: number | null }) {
-  if (score === null) return <span className="text-stone-300 text-[12px]">—</span>;
+  if (score === null) return <span className="text-stone-300 text-[12px]">-</span>;
   const color = score >= 75 ? "text-emerald-600 bg-emerald-50" : score >= 50 ? "text-amber-600 bg-amber-50" : "text-rose-600 bg-rose-50";
   return <span className={cn("text-[13px] font-bold tabular-nums px-2 py-0.5 rounded-lg", color)}>{score}</span>;
 }
@@ -199,7 +199,7 @@ export default function CallAnalysisPage() {
                     <EditableName id={a.id} name={a.prospect_name} onSave={renameProspect} />
                   </td>
                   <td className="px-4 py-3 text-[12.5px] text-stone-600">
-                    {a.call_date ? new Date(a.call_date).toLocaleDateString(DATE_LOCALE[lang] ?? "fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                    {a.call_date ? new Date(a.call_date).toLocaleDateString(DATE_LOCALE[lang] ?? "fr-FR", { day: "numeric", month: "short", year: "numeric" }) : "-"}
                   </td>
                   <td className="px-4 py-3 text-[12.5px] text-stone-600 max-w-[160px] truncate">
                     {a.scripts?.name ?? <span className="text-stone-300">{i18n.callAnalysis.noScript[lang]}</span>}

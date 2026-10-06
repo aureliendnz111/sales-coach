@@ -113,12 +113,12 @@ Analyse le transcript et retourne UNIQUEMENT ce JSON (sans texte avant/après) :
     "conclusion": "<recommandation sur la tentative de closing et les prochaines étapes>"
   },
   "strengths": [
-    "<point fort 1 — formule en 1 phrase courte et concrète>",
+    "<point fort 1 : formule en 1 phrase courte et concrète>",
     "<point fort 2>",
     "<point fort 3>"
   ],
   "improvements": [
-    "<axe d'amélioration 1 — formule en 1 phrase courte et actionnable>",
+    "<axe d'amélioration 1 : formule en 1 phrase courte et actionnable>",
     "<axe d'amélioration 2>",
     "<axe d'amélioration 3>"
   ],
@@ -136,16 +136,16 @@ Analyse le transcript et retourne UNIQUEMENT ce JSON (sans texte avant/après) :
 Pour key_moments : détecte les timestamps dans le transcript (formats [MM:SS], [HH:MM:SS], ou en début de ligne). Indique les 4 à 8 moments les plus significatifs de l'appel (début d'une étape clé, objection importante, moment de closing…). Si le transcript n'a pas de timestamps, retourne un tableau vide [].
 Pour strengths et improvements : sois concret et actionnable, pas générique. Cite si possible ce qui s'est passé dans l'appel.
 
-Règles de scoring — IMPORTANT : sois juste et bienveillant, pas sévère :
+Règles de scoring (IMPORTANT) : sois juste et bienveillant, pas sévère :
 
 CALIBRATION (obligatoire) :
 - Un appel professionnel correct doit scorer entre 65 et 80
 - Un très bon appel score entre 80 et 92
 - Un appel exceptionnel score 92+
 - Moins de 50 uniquement si l'appel est vraiment catastrophique
-- Ne pénalise pas ce qui n'est pas mentionné dans le transcript — l'absence de preuve n'est pas une preuve d'absence
+- Ne pénalise pas ce qui n'est pas mentionné dans le transcript : l'absence de preuve n'est pas une preuve d'absence
 
-DÉTECTION DES ÉTAPES — RÈGLE FONDAMENTALE :
+DÉTECTION DES ÉTAPES (RÈGLE FONDAMENTALE) :
 Tu dois détecter l'INTENTION et non les mots exacts. Voici des équivalences universelles en vente :
 
 "Présentation de l'offre" / "Proposition commerciale" est couverte si l'une de ces situations se produit :
@@ -184,6 +184,7 @@ CRITÈRES :
 RECOMMANDATIONS : formule-les de manière constructive et encourageante. Commence par ce qui a bien fonctionné, puis suggère 1-2 axes d'amélioration concrets. Pas de liste exhaustive de reproches.
 
 Pour le talk_ratio, estime la répartition en comptant les lignes de texte par speaker.
+Style des textes : n'utilise jamais de tiret cadratin (—) ni de tiret demi-cadratin (–). Utilise une virgule, deux-points ou un point à la place.
 Réponds UNIQUEMENT avec le JSON valide`;
 
   try {
