@@ -444,7 +444,7 @@ export default function PlaygroundPage() {
                     </button>
                   </div>
 
-                  <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-1 rounded-full font-medium shrink-0 group-hover:opacity-0 transition-opacity">
+                  <span className="text-[10px] bg-stone-100 text-stone-400 px-2 py-1 rounded-full font-medium shrink-0">
                     {pg.scoreSoon[lang]}
                   </span>
                 </div>
