@@ -62,7 +62,7 @@ const CONTENT: Record<Lang, { back: string; title: string; updated: string; sect
         title: "Données personnelles",
         body: (
           <p>
-            {COMPANY.name} est responsable du traitement des données personnelles collectées via le site, conformément au Règlement
+            {COMPANY.name}{" "}est responsable du traitement des données personnelles collectées via le site, conformément au Règlement
             général sur la protection des données (RGPD). Vous disposez d&apos;un droit d&apos;accès, de rectification, d&apos;effacement,
             de limitation, de portabilité et d&apos;opposition, que vous pouvez exercer en écrivant à{" "}
             <a href={`mailto:${COMPANY.email}`}>{COMPANY.email}</a>. Vous pouvez également introduire une réclamation auprès de
