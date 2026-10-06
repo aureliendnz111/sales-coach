@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
-  Loader2, ArrowLeft, BookOpen, MessageSquare, Zap, Mic, CheckCircle2,
+  Loader2, BookOpen, MessageSquare, Zap, Mic, CheckCircle2,
   TrendingUp, TrendingDown, Clock, Archive, ArchiveX, Trash2,
 } from "lucide-react";
 import { ScoreGauge } from "@/components/call-analysis/ScoreGauge";
@@ -113,10 +113,7 @@ export default function PlaygroundSessionDetailPage() {
   );
 
   if (!session) return (
-    <div className="max-w-4xl mx-auto px-8 py-10">
-      <button onClick={() => router.push("/playground")} className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors mb-6">
-        <ArrowLeft className="w-4 h-4" /> Playground
-      </button>
+    <div className="max-w-6xl mx-auto px-8 py-10">
       <p className="text-stone-400 text-sm">{i18n.playground.notFound[lang]}</p>
     </div>
   );
@@ -150,13 +147,10 @@ export default function PlaygroundSessionDetailPage() {
   const hasDone = session.status === "done" && session.scores;
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+    <div className="max-w-6xl mx-auto px-8 py-10 space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <button onClick={() => router.push("/playground")} className="mt-1 text-stone-400 hover:text-stone-700 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-violet-50 flex items-center justify-center text-2xl shrink-0">
               {emoji}

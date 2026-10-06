@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScriptActions } from "@/components/scripts/ScriptActions";
 import { ScriptContent } from "@/components/scripts/ScriptContent";
 import { PlaceholderBanner } from "@/components/scripts/PlaceholderBanner";
-import { Clock, AlertTriangle, Pencil, ChevronLeft } from "lucide-react";
+import { Clock, AlertTriangle, Pencil } from "lucide-react";
 
 import Link from "next/link";
 
@@ -42,15 +42,9 @@ export default async function ScriptDetailPage({ params }: Params) {
     );
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
-      {/* Back + actions */}
-      <div className="flex items-center justify-between">
-        <Link
-          href="/scripts"
-          className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" /> Scripts
-        </Link>
+    <div className="max-w-6xl mx-auto px-8 py-10 space-y-8">
+      {/* Actions */}
+      <div className="flex items-center justify-end">
         <div className="flex items-center gap-2">
           <Link
             href={`/scripts/${id}/edit`}

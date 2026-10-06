@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Loader2, ArrowLeft, BookOpen, MessageSquare, Zap, Mic, CheckCircle2, TrendingUp, TrendingDown, Clock, Pencil } from "lucide-react";
+import { Loader2, BookOpen, MessageSquare, Zap, Mic, CheckCircle2, TrendingUp, TrendingDown, Clock, Pencil } from "lucide-react";
 import { ScoreGauge } from "@/components/call-analysis/ScoreGauge";
 import { TalkRatioBar } from "@/components/call-analysis/TalkRatioBar";
 import { OutcomeBadge, OUTCOME_STYLE, Outcome } from "@/components/call-analysis/OutcomeBadge";
@@ -144,13 +144,10 @@ export default function AnalysisDetailPage() {
   const outcomeKeys = ["closed", "next_call", "no_decision", "lost"] as const;
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10 space-y-6">
+    <div className="max-w-6xl mx-auto px-8 py-10 space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
-          <button onClick={() => router.push("/call-analysis")} className="mt-1 text-stone-400 hover:text-stone-700 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
           <div>
             {editingName ? (
               <input

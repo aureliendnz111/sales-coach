@@ -47,7 +47,7 @@ export function DashboardContent({ firstName, scripts, calls, avgScore, overallS
     : i18n.dashboard.noCallsThisMonth[lang];
 
   return (
-    <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
+    <div className="max-w-6xl mx-auto px-8 py-10 space-y-8">
       <DashboardGreeting initialFirstName={firstName} />
 
       <OnboardingChecklist hasScript={scripts > 0} hasTraining={hasTraining} hasAnalysis={hasAnalysis} />

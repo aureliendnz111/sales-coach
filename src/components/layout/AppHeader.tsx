@@ -1,4 +1,5 @@
 "use client";
+import { Fragment } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
@@ -32,18 +33,24 @@ export function AppHeader() {
             </>
           )}
           <li className="min-w-0 truncate">
-            {nav.subLabel ? (
+            {nav.sub ? (
               <Link href={nav.item.href} className="text-stone-500 hover:text-stone-900 transition-colors">{section}</Link>
             ) : (
               <span className="font-semibold text-stone-900" aria-current="page">{section}</span>
             )}
           </li>
-          {nav.subLabel && (
-            <>
+          {nav.subCrumbs.map(crumb => (
+            <Fragment key={crumb.label.en}>
               <li aria-hidden><ChevronRight className="w-3.5 h-3.5 text-stone-300" /></li>
-              <li className="font-semibold text-stone-900 whitespace-nowrap" aria-current="page">{nav.subLabel[lang]}</li>
-            </>
-          )}
+              <li className="whitespace-nowrap">
+                {crumb.href ? (
+                  <Link href={crumb.href} className="text-stone-500 hover:text-stone-900 transition-colors">{crumb.label[lang]}</Link>
+                ) : (
+                  <span className="font-semibold text-stone-900" aria-current="page">{crumb.label[lang]}</span>
+                )}
+              </li>
+            </Fragment>
+          ))}
         </ol>
       </nav>
     </header>

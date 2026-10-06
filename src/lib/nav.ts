@@ -40,5 +40,9 @@ export function resolveNav(pathname: string) {
   const rest = pathname.slice(match.item.href.length).split("/").filter(Boolean);
   const sub: keyof typeof SUB_LABELS | null =
     rest.length === 0 ? null : rest[0] === "new" ? "new" : rest[rest.length - 1] === "edit" ? "edit" : "detail";
-  return { ...match, sub, subLabel: sub ? SUB_LABELS[sub] : null };
+  // Crumbs after the section: an edit page also links back to the item it edits
+  const subCrumbs: { label: Txt; href?: string }[] = [];
+  if (sub === "edit" && rest.length > 1) subCrumbs.push({ label: SUB_LABELS.detail, href: `${match.item.href}/${rest[0]}` });
+  if (sub) subCrumbs.push({ label: SUB_LABELS[sub] });
+  return { ...match, sub, subCrumbs };
 }

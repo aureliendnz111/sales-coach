@@ -344,7 +344,7 @@ export default function PlaygroundPage() {
     }
 
     return (
-      <div className="max-w-4xl mx-auto px-8 py-10 space-y-8">
+      <div className="max-w-6xl mx-auto px-8 py-10 space-y-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">Playground</h1>
@@ -486,13 +486,13 @@ export default function PlaygroundPage() {
     const chosenPersona = personas.find(p => p.id === selectedPersonaId);
 
     return (
-      <div className="max-w-3xl mx-auto px-8 py-10 space-y-10">
+      <div className="max-w-5xl mx-auto px-8 py-10 space-y-10">
         <div>
           <button
             onClick={() => setPhase("home")}
             className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-700 transition-colors mb-6"
           >
-            <ChevronLeft className="w-4 h-4" /> Playground
+            <ChevronLeft className="w-4 h-4" /> {i18n.common.cancel[lang]}
           </button>
           <h1 className="text-[22px] font-semibold text-stone-900 tracking-tight">{pg.setupTitle[lang]}</h1>
           <p className="text-sm text-stone-500 mt-0.5">{pg.setupSub[lang]}</p>
