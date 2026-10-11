@@ -658,6 +658,8 @@ export default function HomePage() {
       <section className="relative pt-24 pb-20 px-5 md:pt-32 md:pb-24 md:px-6 bg-[#09090B] overflow-hidden">
         {/* Subtle violet radial glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_70%_40%_at_50%_0%,rgba(124,58,237,0.18),transparent)] pointer-events-none" />
+        {/* Grid overlay (same as the LinkedIn banner) */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.04)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
         <div className="max-w-3xl mx-auto text-center relative z-10">
           {/* Badge pill */}
